@@ -22,26 +22,25 @@ state_B <- define_state(
 state_B
 
 ## ------------------------------------------------------------------------
-state_list <- define_state_list(
-  state_A,
-  state_B
-)
-state_list
-
-## ------------------------------------------------------------------------
 mod_1 <- define_model(
   transition_matrix = mat_trans,
-  states = state_list
+  state_A,
+  state_B
 )
 mod_1
 
 ## ------------------------------------------------------------------------
 res_mod_1 <- run_model(
   mod_1,
-  cycles = 5
+  cycles = 10,
+  cost = cost,
+  effect = utility
 )
 res_mod_1
 
 ## ------------------------------------------------------------------------
 summary(res_mod_1)
+
+## ---- fig.width = 6, fig.height=4, fig.align='center'--------------------
+plot(res_mod_1)
 

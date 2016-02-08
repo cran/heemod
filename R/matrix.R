@@ -12,6 +12,9 @@
 #' 
 #' Matric cells are listed by row.
 #' 
+#' The completary probability of all other row probabilities
+#' can be conveniently reffered as \code{C}.
+#' 
 #' Only matrix size is checked during this step (the matrix 
 #' must be square). Other conditions (such as rowsums being 
 #' equal to 1) are tested later, during model evaluation.
@@ -28,54 +31,30 @@
 #' @param state_names character vector, optional. State 
 #'   names.
 #' @param .OBJECT An object of class \code{uneval_matrix}.
+#' @param x An \code{uneval_matrix} to plot.
+#' @param relsize Argument passed to \code{\link{plotmat}}.
+#' @param shadow.size Argument passed to \code{\link{plotmat}}.
 #'   
 #' @return An object of class \code{uneval_matrix} (actually
 #'   a named list of \code{lazy} expressions).
 #' @export
 #' 
-#' @examples
+#' @example inst/examples/example_define_matrix.R
 #' 
-#' # simple 3x3 transition matrix
-#' 
-#' mat_1 <- define_matrix(
-#'   .2, 0, .8,
-#'   0, .1, .9,
-#'   0, 0, 1
-#' )
-#' mat_1
-#' 
-#' # referencing parameters
-#' # rr must be present in a parameter object
-#' # that must later be linked with define_model
-#' 
-#' define_matrix(
-#'   .5 - rr, rr,
-#'   .4, .6
-#' )
-#' 
-#' # updating cells from mat_1
-#' 
-#' modify(
-#'   mat_1,
-#'   cell_2_1 = .2,
-#'   cell_2_3 = .7
-#' )
-#' 
-#' # only matrix size is check, it is thus possible
-#' # to define an incorrect matrix
-#' 
-#' # this matrix will generate an error later,
-#' # during model evaluation
-#' 
-#' define_matrix(
-#'   .5, 3,
-#'   -1, 2
-#' )
 define_matrix <- function(
   ...,
   state_names = LETTERS[seq_len(sqrt(length(lazyeval::lazy_dots(...))))]
 ) {
   .dots <- lazyeval::lazy_dots(...)
+  
+  define_matrix_(.dots = .dots, state_names = state_names)
+}
+
+define_matrix_ <- function(
+  .dots,
+  state_names = LETTERS[seq_len(sqrt(length(.dots)))]
+) {
+  
   n <- sqrt(length(.dots))
   
   stopifnot(
@@ -85,8 +64,8 @@ define_matrix <- function(
   )
   
   names(.dots) <- sprintf("cell_%i_%i",
-                           rep(seq_len(n), each = n),
-                           rep(seq_len(n), n))
+                          rep(seq_len(n), each = n),
+                          rep(seq_len(n), n))
   
   structure(.dots,
             class = c("uneval_matrix", class(.dots)),
@@ -112,6 +91,7 @@ define_matrix <- function(
 #'   
 check_matrix <- function(x, ...) {
   info <- list(...)
+
   stopifnot(
     isTRUE(
       all.equal(rowSums(x), rep(1, nrow(x)))
@@ -133,10 +113,23 @@ check_matrix <- function(x, ...) {
 #'   transition matrix, one per cycle).
 eval_matrix <- function(x, parameters) {
   
-  tab_res <- mutate_(parameters, .dots = x)[names(x)]
+  tab_res <- mutate_(parameters, C = -pi, .dots = x)[names(x)]
+  
+  n <- get_matrix_order(x)
   
   f <- function(...) {
-    res <- matrix(c(...), byrow = TRUE, nrow = get_matrix_order(x))
+    res <- matrix(c(...),
+                  byrow = TRUE,
+                  nrow = n)
+    posC <- res == -pi
+    
+    stopifnot(
+      rowSums(posC) <= 1
+    )
+    res[posC] <- 0
+    valC <- 1 - rowSums(res)[rowSums(posC) == 1]
+    res[posC] <- valC
+    
     check_matrix(res)
     list(res)
   }
@@ -144,12 +137,13 @@ eval_matrix <- function(x, parameters) {
   # bottleneck!
   
   res <- unlist(
-    purrr::map_rows(
-      tab_res, f, .labels = FALSE
-    )$.out,
+    dplyr::do(
+      dplyr::rowwise(tab_res),
+      res = f(unlist(.))
+    )$res,
     recursive = FALSE
   )
-  
+
   structure(res,
             class = c("eval_matrix", class(res)),
             state_names = get_state_names(x))
@@ -194,11 +188,29 @@ modify.uneval_matrix <- function(.OBJECT, ...){
   
   .dots <- lazyeval::lazy_dots(...)
   
+  modify_(.OBJECT = .OBJECT, .dots = .dots)
+}
+
+modify_.uneval_matrix <- function(.OBJECT, .dots){
+  
+  # !mod!
+  # modifier par rr simplment
+  
   stopifnot(
     all(names(.dots) %in% names(.OBJECT))
   )
   
   modifyList(.OBJECT, .dots)
+}
+
+to_char_uneval_matrix <- function(x) {
+  ex <- unlist(lapply(x, function(y) deparse(y$expr)))
+  
+  matrix(ex,
+         byrow = TRUE,
+         ncol = get_matrix_order(x),
+         dimnames = list(get_state_names(x),
+                         get_state_names(x)))
 }
 
 #' @export
@@ -208,12 +220,9 @@ print.uneval_matrix <- function(x, ...) {
     get_matrix_order(x)
   ))
   
-  ex <- unlist(lapply(x, function(y) deparse(y$expr)))
-  print(matrix(ex,
-               byrow = TRUE,
-               ncol = get_matrix_order(x),
-               dimnames = list(get_state_names(x),
-                               get_state_names(x))),
+  res <- to_char_uneval_matrix(x)
+  
+  print(res,
         quote = FALSE,
         ...)
 }
@@ -234,4 +243,14 @@ print.eval_matrix <- function(x, ...) {
   
   if (length(head(x, ...)) < length(x))
     cat("...\n")
+}
+
+#' @export
+#' @rdname define_matrix
+plot.uneval_matrix <- function(x, relsize = .75, shadow.size = 0,  ...) {
+  op <- graphics::par(mar = c(0, 0, 0, 0))
+  res <- to_char_uneval_matrix(x)
+  diagram::plotmat(t(res[rev(seq_len(nrow(res))),rev(seq_len(nrow(res)))]),
+  relsize = relsize, shadow.size = shadow.size, ...)
+  graphics::par(op)
 }

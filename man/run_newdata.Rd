@@ -5,19 +5,10 @@
 \title{Iteratively Run Markov Models Over New Parameter Sets 
 (Heterogeneity or Probabilistic analysis)}
 \usage{
-run_newdata(..., init, cycles, newdata)
+run_newdata(x, newdata)
 }
 \arguments{
-\item{...}{Either one or more unevaluated Markov models, 
-or the result of \code{\link{run_models}}.}
-
-\item{init}{Initial number of individual per state. Not 
-needed when working on \code{\link{run_models}} 
-results.}
-
-\item{cycles}{Number of Markov cycles to compute. Not 
-needed when working on \code{\link{run_models}} 
-results.}
+\item{x}{The result of \code{\link{run_models}}.}
 
 \item{newdata}{A data.frame of new parameter sets, one 
 column per parameter and one row per parameter set. Can
@@ -25,16 +16,14 @@ be prespecified for heterogeneity analysis or randomly
 drawn with resample for probability analysis.}
 }
 \value{
-A list with one data.frame per model.
+A \code{data.frame} with one row per model/value.
 }
 \description{
 Given a table of new parameter values with a new 
-parameter set per line, runs iteratively Markov odels 
+parameter set per line, runs iteratively Markov models 
 over these sets.
 }
 \examples{
-# running a single model
-
 mod1 <-
   define_model(
     parameters = define_parameters(
@@ -45,17 +34,17 @@ mod1 <-
       .5, .5,
       .1, .9
     ),
-    states = define_state_list(
-      define_state(
-        cost = 543 + age * 5
-      ),
-      define_state(
-        cost = 432 + age
-      )
+    define_state(
+      cost = 543 + age * 5,
+      ly = 1
+    ),
+    define_state(
+      cost = 432 + age,
+      ly = 1
     )
+    
   )
 
-# running several models
 mod2 <-
   define_model(
     parameters = define_parameters(
@@ -66,35 +55,30 @@ mod2 <-
       .5, .5,
       .1, .9
     ),
-    states = define_state_list(
-      define_state(
-        cost = 789 * age / 10
-      ),
-      define_state(
-        cost = 456 * age / 10
-      )
+    define_state(
+      cost = 789 * age / 10,
+      ly = 1
+    ),
+    define_state(
+      cost = 456 * age / 10,
+      ly = 1
     )
+    
   )
 
 res2 <- run_model(
   mod1, mod2,
   init = 1:0,
-  cycles = 10
+  cycles = 10,
+  cost = cost,
+  effect = ly
 )
 # generating table with new parameter sets
 new_tab <- data.frame(
-  age = 40:80
+  age_init = 40:80
 )
 
 # with run_model result
 ndt1 <- run_newdata(res2, newdata = new_tab)
-
-# with uneval models
-ndt2 <- run_newdata(
-  A = mod1, B = mod2,
-  init = 1:0, cycles = 10,
-  newdata = new_tab)
-
-identical(ndt1, ndt2)
 }
 

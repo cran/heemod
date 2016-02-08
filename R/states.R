@@ -8,100 +8,51 @@
 #' defined earlier.
 #' 
 #' For the \code{modify} function, existing values are
-#' modified, new values are added at the end by default
-#' if \code{BEFORE} is not specified. Values order
+#' modified, no new values can be added. Values order
 #' matters since only values defined earlier can be
 #' referenced in later expressions.
 #' 
 #' @param ... Name-value pairs of expressions defining state
 #'   values.
 #' @param .OBJECT An object of class \code{state}.
-#' @param BEFORE character, length 1. Name of state values 
-#'   before which new values are to be added.
 #'   
 #' @return An object of class \code{state} (actually a named
 #'   list of \code{lazy} expressions).
 #' @export
 #' 
-#' @examples
-#' 
-#' st <- define_state(
-#'   cost = 6453,
-#'   utility = .876
-#' )
-#' st
-#' 
-#' # this will fail at model evaluation
-#' st_2 <- define_state(
-#'   total_cost = cost_1 + cost_2
-#' )
-#' modify(
-#'   st_2,
-#'   cost_1 = 14,
-#'   cost_2 = 53
-#' )
-#' 
-#' # use BEFORE instead
-#' 
-#' modify(
-#'   st_2,
-#'   cost_1 = 14,
-#'   cost_2 = 53,
-#'   BEFORE = "total_cost"
-#' )
+#' @example inst/examples/example_define_state.R
 #' 
 define_state <- function(...) {
   .dots <- lazyeval::lazy_dots(...)
   
-  stopifnot(
-    ! is.null(names(.dots)),
-    ! any(names(.dots) == ""),
-    all(names(.dots) != "markov_cycle"),
-    ! anyNA(names(.dots))
-  )
+  define_state_(.dots)
+}
+
+define_state_ <- function(.dots) {
+  check_names(names(.dots))
   structure(.dots,
             class = c("state", class(.dots)))
 }
 
 #' @export
 #' @rdname define_state
-modify.state <- function(.OBJECT, ..., BEFORE) {
+modify.state <- function(.OBJECT, ...) {
   .dots <- lazyeval::lazy_dots(...)
   
-  stopifnot(
-    all(names(.dots) != "markov_cycle")
-  )
+  modify_(.OBJECT = .OBJECT, .dots = .dots)
+}
+
+modify_.state <- function(.OBJECT, .dots) {
+  check_names(names(.dots))
   # !mod!
   # message d'erreur informatif quand valeurs pas dans
   # bon ordre
-  #
-  # voire correction automatique ?
   
-  if (! missing(BEFORE)) {
-    
-    BEFORE <- if (is.language(substitute(BEFORE))) {
-      deparse(substitute(BEFORE))
-    } else {
-      BEFORE
-    }
-    
-    stopifnot(
-      length(BEFORE) == 1
-    )
-    
-    new_values <- setdiff(names(.dots), names(.OBJECT))
-    res <- modifyList(.OBJECT, .dots)
-    
-    pos_before <- which(names(res) == BEFORE)
-    
-    c(
-      res[seq_len(pos_before - 1)],
-      res[new_values],
-      res[seq(from = pos_before, to = length(res) - length(new_values))]
-    )
-  } else {
-    modifyList(.OBJECT, .dots)
-  }
+  stopifnot(
+    all(names(.dots) %in% names(.OBJECT))
+  )
+  
+  modifyList(.OBJECT, .dots)
 }
 
 #' @export
@@ -136,10 +87,9 @@ print.state <- function(x, ...) {
 #'   
 #' @return An object of class \code{uneval_state_list} (a
 #'   list of \code{state} objects).
-#' @export
 #' 
 #' @examples
-#' 
+#' \dontrun{
 #' s1 <- define_state(cost = 1, util = 1)
 #' s2 <- define_state(cost = 3, util = .4)
 #' 
@@ -158,17 +108,18 @@ print.state <- function(x, ...) {
 #'   healthy = s1_bis,
 #'   sicker = s3
 #' )
-#' 
+#' }
 define_state_list <- function(...) {
   .dots <- list(...)
   
+  define_state_list_(.dots)
+}
+define_state_list_ <- function(.dots) {
   stopifnot(
     ! any(duplicated(names(.dots))),
     all(unlist(lapply(.dots,
                       function(x) "state" %in% class(x))))
   )
-  
-  check_states(.dots)
   
   state_names <- names(.dots)
   
@@ -183,6 +134,7 @@ define_state_list <- function(...) {
     state_names <- LETTERS[seq_along(.dots)]
     names(.dots) <- state_names
   }
+  check_states(.dots)
   
   structure(
     .dots,
@@ -195,6 +147,10 @@ define_state_list <- function(...) {
 modify.uneval_state_list <- function(.OBJECT, ...) {
   .dots <- list(...)
   
+  modify_(.OBJECT = .OBJECT, .dots = .dots)
+}
+
+modify_.uneval_state_list <- function(.OBJECT, .dots) {
   res <- modifyList(.OBJECT, .dots)
   check_states(res)
   

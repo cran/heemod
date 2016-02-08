@@ -19,14 +19,12 @@ test_that(
       x = 987,
       y = 1726
     )
-    sl1 <- define_state_list(
-      X1 = s1,
-      X2 = s2
-    )
+
     mod1 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl1
+      X1 = s1,
+      X2 = s2
     )
     s3 <- define_state(
       x = 987,
@@ -36,14 +34,11 @@ test_that(
       x = 456,
       y = 1029
     )
-    sl2 <- define_state_list(
-      X1 = s3,
-      X2 = s4
-    )
     mod2 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl2
+      X1 = s3,
+      X2 = s4
     )
     expect_error(
       run_models(
@@ -102,14 +97,11 @@ test_that(
       x = 987,
       y = 1726
     )
-    sl1 <- define_state_list(
-      X1 = s1,
-      X2 = s2
-    )
     mod1 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl1
+      X1 = s1,
+      X2 = s2
     )
     s3 <- define_state(
       x = 987,
@@ -119,40 +111,42 @@ test_that(
       x = 456,
       y = 1029
     )
-    sl2 <- define_state_list(
-      X1 = s3,
-      X2 = s4
-    )
     mod2 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl2
+      X1 = s3,
+      X2 = s4
     )
     expect_identical(
-      run_model(mod1, mod2),
-      run_models(mod1, mod2)
+      run_model(mod1, mod2, cost = x, effect = y),
+      run_models(mod1, mod2, cost = x, effect = y)
     )
     expect_identical(
-      run_models(mod1, mod2, init = 1:0),
-      run_models(mod1, mod2)
+      run_models(mod1, mod2, init = 1:0, cost = x, effect = y),
+      run_models(mod1, mod2, cost = x, effect = y)
     )
     expect_identical(
-      run_models(mod1, mod2),
-      run_models(A = mod1, B = mod2)
+      run_models(mod1, mod2, cost = x, effect = y),
+      run_models(A = mod1, B = mod2, cost = x, effect = y)
     )
     expect_output(
-      str(run_models(mod1, mod2)),
-      "List of 2
- $ A:List of 5",
+      str(run_models(mod1, mod2, cost = x, effect = y)),
+      '2 obs. of  5 variables:
+ $ x           : num  309 934
+ $ y           : num  283 891
+ $ .model_names: chr  "A" "B"
+ $ .cost       : num  309 934
+ $ .effect     : num  283 891',
       fixed = TRUE
     )
     expect_output(
-      str(summary(run_models(mod1, mod2))),
-      'List of 4
- $ res       : num [1:2, 1:2] 309 934 283 891
-  ..- attr(*, "dimnames")=List of 2
-  .. ..$ : chr [1:2] "A" "B"
-  .. ..$ : chr [1:2] "x" "y"',
+      str(summary(run_models(mod1, mod2, cost = x, effect = y))),
+      "2 obs. of  5 variables:
+  ..$ x      : num [1:2] 309 934
+  ..$ y      : num [1:2] 283 891
+  ..$ .cost  : num [1:2] 0 625
+  ..$ .effect: num [1:2] 0 608
+  ..$ .icer  : num [1:2] -Inf 1.03",
       fixed = TRUE
     )
   }

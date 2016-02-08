@@ -40,18 +40,11 @@ y = 123',
   ..$ expr: num 111",
       fixed = TRUE
     )
-    expect_output(
-      str(
-        modify(
-          s1,
-          z = 111,
-          BEFORE = x
-        )
-      ),
-      "List of 3
- $ z:List of 2
-  ..$ expr: num 111",
-      fixed = TRUE
+    expect_error(
+      modify(
+        s1,
+        z = 111
+      )
     )
     expect_error(
       define_state(
@@ -82,11 +75,11 @@ test_that(
       x = 987,
       y = 1726
     )
-    sl1 <- define_state_list(
+    sl1 <- heemod:::define_state_list(
       X1 = s1,
       X2 = s2
     )
-    sl2 <- define_state_list(
+    sl2 <- heemod:::define_state_list(
       s1,
       s2
     )
@@ -111,7 +104,7 @@ State values:
 
 x
 y"
-      )
+    )
     expect_output(
       str(sl2),
       "List of 2
@@ -148,18 +141,13 @@ y"
       fixed = TRUE
     )
     expect_error(
-      define_state_list(
-        s1, s3
-      )
-    )
-    expect_error(
-      define_state_list(
+      heemod:::define_state_list(
         X1 = s1,
         X1 = s2
       )
     )
     expect_error(
-      define_state_list(
+      heemod:::define_state_list(
         1:2,
         s1
       )

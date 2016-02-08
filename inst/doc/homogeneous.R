@@ -16,12 +16,18 @@ rr <- .509
 
 mat_comb <-
   define_matrix(
-    1-(.202*rr+.067*rr+.010*rr), .202*rr,   .067*rr, .010*rr,
-    .000, 1-(.407*rr+.012*rr),   .407*rr,   .012*rr,
-    .000, .000,                  1-.250*rr, .250*rr,
-    .000, .000,                  .000,      1.00
+    C,    .202*rr, .067*rr, .010*rr,
+    .000, C,       .407*rr, .012*rr,
+    .000, .000,    C,       .250*rr,
+    .000, .000,    .000,    1.00
   )
 mat_comb
+
+## ---- fig.width = 6, fig.height=6, fig.align='center'--------------------
+plot(mat_mono)
+
+## ---- fig.width = 6, fig.height=6, fig.align='center'--------------------
+plot(mat_comb)
 
 ## ------------------------------------------------------------------------
 cost_zido <- 2278
@@ -91,45 +97,42 @@ D_comb <-
   )
 
 ## ------------------------------------------------------------------------
-states_mono <-
-  define_state_list(
-    A_mono,
-    B_mono,
-    C_mono,
-    D_mono
-  )
-states_mono
-
-## ------------------------------------------------------------------------
-
-states_comb <-
-  define_state_list(
-    A_comb,
-    B_comb,
-    C_comb,
-    D_comb
-  )
-
-## ------------------------------------------------------------------------
 mod_mono <- define_model(
   transition_matrix = mat_mono,
-  states = states_mono
+  A_mono,
+  B_mono,
+  C_mono,
+  D_mono
 )
 mod_mono
 
 ## ------------------------------------------------------------------------
 mod_comb <- define_model(
   transition_matrix = mat_comb,
-  states = states_comb
+  A_comb,
+  B_comb,
+  C_comb,
+  D_comb
 )
 
 ## ------------------------------------------------------------------------
 res_mod <- run_models(
   mono = mod_mono,
   comb = mod_comb,
-  cycles = 20
+  cycles = 20,
+  cost = cost_total,
+  effect = life_year
 )
 
 ## ------------------------------------------------------------------------
 summary(res_mod)
+
+## ---- fig.width = 6, fig.align='center'----------------------------------
+plot(res_mod, model = "mono", type = "counts")
+
+## ---- fig.width = 6, fig.align='center'----------------------------------
+plot(res_mod, model = "comb", type = "counts")
+
+## ---- fig.width = 4, fig.height=4, fig.align='center'--------------------
+plot(res_mod, type = "ce")
 

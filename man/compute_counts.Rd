@@ -4,8 +4,7 @@
 \alias{compute_counts}
 \title{Compute Count of Individual in Each State per Cycle}
 \usage{
-compute_counts(transition_matrix, init, method = c("final", "initial",
-  "exponential", "linear"), round = FALSE)
+compute_counts(transition_matrix, init, method)
 }
 \arguments{
 \item{transition_matrix}{An \code{eval_matrix} object.}
@@ -14,11 +13,7 @@ compute_counts(transition_matrix, init, method = c("final", "initial",
 model states. Number of individuals in each model state
 at the beginning.}
 
-\item{method}{character. One of \code{final},
-\code{initial}, \code{exponential} or \code{linear}.
-See details.}
-
-\item{round}{logical scalar. Should individual counts be rounded?}
+\item{method}{Counting method.}
 }
 \value{
 A \code{cycle_counts} object.

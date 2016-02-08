@@ -19,18 +19,21 @@ test_that(
       x = 987,
       y = 1726
     )
-    sl1 <- define_state_list(
-      X1 = s1,
-      X2 = s2
-    )
-    sl2 <- define_state_list(
-      X1 = s1,
-      X3 = s2
-    )
     mod1 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl1
+      X1 = s1,
+      X2 = s2
+    )
+    mat2 <- define_matrix(
+      1-a, a,
+      1-b, b
+    )
+    mod2 <- define_model(
+      parameters = par1,
+      transition_matrix = mat2,
+      s1,
+      s2
     )
     expect_output(
       print(mod1),
@@ -38,22 +41,29 @@ test_that(
 
     2 parameters,
     2 states,
-    2 state values.",
+    2 state values,
+    No starting values defined.",
       fixed = TRUE
     )
     expect_output(
       str(mod1),
-      "List of 3
+      "List of 4
  $ parameters       :List of 2
   ..$ a:List of 2
   .. ..$ expr: num 0.1",
+      fixed = TRUE
+    )
+    expect_output(
+      print(names(mod2$states)),
+      '"A" "B"',
       fixed = TRUE
     )
     expect_error(
       define_model(
         parameters = par1,
         transition_matrix = mat1,
-        states = sl2
+        X1 = s1,
+        X3 = s2
       )
     )
   }
@@ -78,44 +88,47 @@ test_that(
       x = 987,
       y = 1726
     )
-    sl1 <- define_state_list(
-      X1 = s1,
-      X2 = s2
-    )
-    sl2 <- define_state_list(
-      X1 = s1,
-      X3 = s2
-    )
     mod1 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl1
+      X1 = s1,
+      X2 = s2
     )
     e_mod <- run_model(
       mod1,
       init = c(1, 0),
-      cycles = 5
+      cycles = 5,
+      cost = x,
+      effect = y
     )
     expect_output(
       str(e_mod),
-      'List of 1
- $ A:List of 5
-  ..$ parameters',
+      '1 obs. of  5 variables:
+ $ x           : num 1593
+ $ y           : num 1515
+ $ .model_names: chr "A"
+ $ .cost       : num 1593
+ $ .effect     : num 1515',
       fixed = TRUE
     )
     expect_output(
       print(e_mod),
       "1 Markov model, run for 5 cycles.
 
-Model names:
+Model name:
 
 A",
       fixed = TRUE
     )
     expect_output(
       str(summary(e_mod)),
-      'List of 4
- $ res       : num [1, 1:2] 1593 1515',
+      "List of 5
+ $ res       :'data.frame':	1 obs. of  5 variables:
+  ..$ x      : num 1593
+  ..$ y      : num 1515
+  ..$ .cost  : num 0
+  ..$ .effect: num 0
+  ..$ .icer  : num -Inf",
       fixed = TRUE
     )
     expect_output(
@@ -127,8 +140,12 @@ Initial states:
    N
 X1 1
 X2 0
-         x        y
-A 1592.538 1514.507',
+         x        y .cost .effect .icer
+A 1592.538 1514.507     0       0  -Inf
+
+Efficiency frontier:
+
+A',
       fixed = TRUE
     )
     expect_error(
@@ -176,40 +193,34 @@ test_that(
       x = 987,
       y = 1726
     )
-    sl1 <- define_state_list(
-      X1 = s1,
-      X2 = s2
-    )
-    sl2 <- define_state_list(
-      X1 = s1,
-      X3 = s2
-    )
     mod1 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl1
-    )
-    
-    sl3 <- define_state_list(
       X1 = s1,
-      X2 = s1
+      X2 = s2
     )
     mod2 <- define_model(
       parameters = par1,
       transition_matrix = mat1,
-      states = sl3
+      X1 = s1,
+      X2 = s1
     )
     
     e_mod2 <- run_models(
       mod1, mod2,
       init = c(1, 0),
-      cycles = 5
+      cycles = 5,
+      cost = x,
+      effect = y
     )
     expect_output(
       str(e_mod2),
-      'List of 2
- $ A:List of 5
-  ..$ parameters       :',
+      '2 obs. of  5 variables:
+ $ x           : num  1593 1170
+ $ y           : num  1515 615
+ $ .model_names: chr  "A" "B"
+ $ .cost       : num  1593 1170
+ $ .effect     : num  1515 615',
       fixed = TRUE
     )
     expect_output(
@@ -224,8 +235,13 @@ B",
     )
     expect_output(
       str(summary(e_mod2)),
-      'List of 4
- $ res       : num [1:2, 1:2] 1593 1170 1515 615',
+      "List of 5
+ $ res       :'data.frame':	2 obs. of  5 variables:
+  ..$ x      : num [1:2] 1170 1593
+  ..$ y      : num [1:2] 615 1515
+  ..$ .cost  : num [1:2] 0 423
+  ..$ .effect: num [1:2] 0 900
+  ..$ .icer  : num [1:2] -Inf 0.47",
       fixed = TRUE
     )
     expect_output(
@@ -237,9 +253,13 @@ Initial states:
    N
 X1 1
 X2 0
-         x        y
-A 1592.538 1514.507
-B 1170.000  615.000',
+         x        y    .cost  .effect     .icer
+A 1170.000  615.000   0.0000   0.0000      -Inf
+B 1592.538 1514.507 422.5384 899.5074 0.4697442
+
+Efficiency frontier:
+
+B A',
       fixed = TRUE
     )
     expect_output(
@@ -247,7 +267,9 @@ B 1170.000  615.000',
         run_models(
           mod1 = mod1, mod2 = mod2,
           init = c(1, 0),
-          cycles = 5
+          cycles = 5,
+          cost = x,
+          effect = y
         )
       ),
       "2 Markov models, run for 5 cycles.

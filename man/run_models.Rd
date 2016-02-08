@@ -7,11 +7,13 @@
 \usage{
 run_models(..., init = c(1L, rep(0L,
   get_state_number(get_states(list(...)[[1]])) - 1)), cycles = 1,
-  count_args = NULL, newdata = NULL)
+  method = c("end", "beginning", "cycle-tree", "half-cycle"), cost, effect,
+  base_model)
 
 run_model(..., init = c(1L, rep(0L,
   get_state_number(get_states(list(...)[[1]])) - 1)), cycles = 1,
-  count_args = NULL, newdata = NULL)
+  method = c("end", "beginning", "cycle-tree", "half-cycle"), cost, effect,
+  base_model)
 }
 \arguments{
 \item{...}{One or more \code{uneval_model} object.}
@@ -23,10 +25,16 @@ at the beginning.}
 \item{cycles}{positive integer. Number of Markov Cycles 
 to compute.}
 
-\item{count_args}{Additional arguments passed as a list 
-to \code{compute_counts}.}
+\item{method}{Counting method.}
 
-\item{newdata}{data.frame. New parameter values.}
+\item{cost}{Names or expression to compute cost on the
+cost-effectiveness plane.}
+
+\item{effect}{Names or expression to compute effect on
+the cost-effectiveness plane.}
+
+\item{base_model}{Name of base model used as reference.
+By default the model with the lowest effectiveness.}
 }
 \value{
 A list of evaluated models with computed values.
@@ -49,11 +57,11 @@ value names).
 The initial number of individuals in each state and the 
 number of cycle will be the same for all models.
 
-Internally this function does 2 operations: first
-evaluating parameters, transition matrix, state values
-and computing individual counts through
-\code{\link{eval_model}}; and then using individual
-counts and evaluated state values to compute values at
+Internally this function does 2 operations: first 
+evaluating parameters, transition matrix, state values 
+and computing individual counts through 
+\code{\link{eval_model}}; and then using individual 
+counts and evaluated state values to compute values at 
 each cycle through \code{compute_values}.
 }
 \examples{
@@ -65,20 +73,23 @@ mod1 <-
       .5, .5,
       .1, .9
     ),
-    states = define_state_list(
-      define_state(
-        cost = 543
-      ),
-      define_state(
-        cost = 432
-      )
+    define_state(
+      cost = 543,
+      ly = 1
+    ),
+    define_state(
+      cost = 432,
+      ly = 1
     )
   )
+
 
 res <- run_model(
   mod1,
   init = c(100, 0),
-  cycles = 2
+  cycles = 2,
+  cost = cost,
+  effect = ly
 )
 
 # running several models
@@ -88,22 +99,24 @@ mod2 <-
       .5, .5,
       .1, .9
     ),
-    states = define_state_list(
-      define_state(
-        cost = 789
-      ),
-      define_state(
-        cost = 456
-      )
+    define_state(
+      cost = 789,
+      ly = 1
+    ),
+    define_state(
+      cost = 456,
+      ly = 1
     )
+    
   )
 
 
 res2 <- run_model(
   mod1, mod2,
   init = c(100, 0),
-  cycles = 10
+  cycles = 10,
+  cost = cost,
+  effect = ly
 )
-
 }
 

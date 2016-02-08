@@ -15,7 +15,7 @@
 #' \code{n()} or \code{row_numbers()} can be used.
 #' 
 #' This function relies heavily on the \code{dplyr} package.
-#' Parameter definitions should thus mimic the use of
+#' Parameter definitions should thus mimic the use of 
 #' functions such as \code{mutate}.
 #' 
 #' Variable names are searched first in the parameter 
@@ -24,94 +24,31 @@
 #' was called.
 #' 
 #' For the \code{modify} function, existing parameters are 
-#' modified, new parameters are added at the end by default 
-#' if \code{BEFORE} is not specified. Parameter order 
-#' matters since only parameters defined earlier can be 
-#' referenced in later expressions.
+#' modified, but no new parameter can be added. Parameter
+#' order matters since only parameters defined earlier can
+#' be referenced in later expressions.
 #' 
 #' @param ... Name-value pairs of expressions definig 
 #'   parameters.
-#' @param .OBJECT An object of class
+#' @param .OBJECT An object of class 
 #'   \code{uneval_parameters}.
-#' @param BEFORE character, length 1. Name of parameters 
-#'   before which new parameters are to be added.
 #'   
 #' @return An object of class \code{uneval_parameters} 
 #'   (actually a named list of \code{lazy} expressions).
 #' @export
 #' 
-#' @examples
-#' 
-#' # parameter 'age' depends on time:
-#' # simulating a cohort starting at 60 yo
-#' 
-#' define_parameters(
-#'   age_start = 60,
-#'   age = age_start + markov_cycle
-#' )
-#' 
-#' # other uses of markov_cycle are possible
-#' 
-#' define_parameters(
-#'   top_time = ifelse(markov_cycle < 10, 1, 0)
-#' )
+#' @example inst/examples/example_define_parameters.R
 #'   
-#' # more elaborate: risk function
-#' 
-#' define_parameters(
-#'   rate = 1 - exp(- markov_time * .5)
-#' )
-#' 
-#' \dontrun{
-#' # dont explicitely state lengths
-#' define_parameters(
-#'   var = seq(1, 15, 2)
-#' )
-#' }
-#' 
-#' # instead rely on markov_cycle or dplyr 
-#' # functions such as n() or row_number()
-#' 
-#' define_parameters(
-#'  var = seq(from = 1, length.out = n(), by = 3),
-#'  var2 = seq(1, length(markov_cycle), 2)
-#' )
-#' 
-#' param <- define_parameters(
-#'   age_start = 60,
-#'   age = age_start + markov_cycle
-#' )
-#' 
-#' # adding new parameters
-#' 
-#' modify(
-#'   param,
-#'   const = 4.4,
-#'   age_2 = age ^ 2
-#' )
-#' 
-#' # modify existing parameters
-#' 
-#' modify(
-#'   param,
-#'   age_start = 40
-#' )
-#' 
-#' # specify new parameter position
-#' 
-#' modify(
-#'   param,
-#'   var = 3.14,
-#'   BEFORE = "age"
-#' )
-#' 
 define_parameters <- function(...) {
   .dots <- lazyeval::lazy_dots(...)
+  define_parameters_(.dots)
+}
+
+define_parameters_ <- function(.dots) {
   
-  stopifnot(
-    all(names(.dots) != "markov_cycle")
-  )
-  
+  if (length(.dots)){
+    check_names(names(.dots))
+  }
   structure(.dots,
             class = c("uneval_parameters", class(.dots)))
 }
@@ -141,7 +78,7 @@ define_parameters <- function(...) {
 #' 
 eval_parameters <- function(x, cycles = 1) {
   # other datastructure?
-  res <- mutate_(
+  res <- dplyr::mutate_(
     data.frame(
       markov_cycle = seq_len(cycles)
     ),
@@ -186,52 +123,31 @@ get_parameter_names <- function(x) {
 modify <- function(.OBJECT, ...) {
   UseMethod("modify")
 }
+modify_ <- function(.OBJECT, .dots, ...) {
+  UseMethod("modify_")
+}
 
 #' @export
 #' @rdname define_parameters
-modify.uneval_parameters <- function(.OBJECT, ..., BEFORE) {
+modify.uneval_parameters <- function(.OBJECT, ...) {
   .dots <- lazyeval::lazy_dots(...)
   
-  stopifnot(
-    all(names(.dots) != "markov_cycle")
-  )
+  modify_(.OBJECT = .OBJECT, .dots = .dots)
+}
+
+modify_.uneval_parameters <- function(.OBJECT, .dots) {
+  
+  check_names(names(.dots))
   # !mod!
   # message d'erreur informatif quand parametres pas dans
   # bon ordre
   #
-  # voire correction automatique ?
   
-  if (! missing(BEFORE)) {
-    
-    BEFORE <- if (is.language(substitute(BEFORE))) {
-      deparse(substitute(BEFORE))
-    } else {
-      BEFORE
-    }
-    
-    stopifnot(
-      length(BEFORE) == 1
-    )
-    
-    new_values <- setdiff(
-      names(.dots),
-      c("markov_chain", get_parameter_names(.OBJECT))
-    )
-    res <- modifyList(.OBJECT, .dots)
-    
-    pos_before <- which(names(res) == BEFORE)
-    
-    structure(
-      c(
-        res[seq_len(pos_before - 1)],
-        res[new_values],
-        res[seq(from = pos_before, to = length(res) - length(new_values))]
-      ),
-      class = "uneval_parameters"
-    )
-  } else {
-    modifyList(.OBJECT, .dots)
-  }
+  stopifnot(
+    all(names(.dots) %in% names(.OBJECT))
+  )
+  
+  modifyList(.OBJECT, .dots)
 }
 
 #' @export

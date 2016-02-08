@@ -48,3 +48,45 @@ list_all_same <- function(x) {
 plur <- function(x) {
   if (x > 1) "s" else ""
 }
+
+#' Get values from a specific model
+#' 
+#' @param x A data.frame with results from several models.
+#' @param m Model name or position.
+#'   
+#' @return A data.frame with results from only one model.
+get_model <- function(x, m) {
+  model_names <- unique(x$.model_names)
+  names(model_names) <- model_names
+  x[x$.model_names == model_names[m], ]
+}
+
+#' Check Names
+#' 
+#' Throws an error if any of the names are reserved.
+#'
+#' Reserved names are \code{markov_cycle} and anything starting with \code{.}.
+#'
+#' @param x A character vector of names.
+#'
+#' @return Nothing, just throws an error if a reserved name is encountered.
+check_names <- function(x) {
+  if (is.null(x)) {
+    stop("Names must exist.")
+  }
+  if (anyNA(x)) {
+    stop("Missing names are not allowed.")
+  }
+  if (any("" %in% x)) {
+    stop("Empty string names are not allowed.")
+  }
+  if (any("markov_cycle" %in% x)) {
+    stop("'markov_cycle' is a reserved name.")
+  }
+  if (any("C" %in% x)) {
+    stop("'C' is a reserved name.")
+  }
+  if (any(grepl("^\\.", x))) {
+    stop("Names starting with '.' are reserved.")
+  }
+}

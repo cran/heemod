@@ -17,11 +17,11 @@
 #' The initial number of individuals in each state and the 
 #' number of cycle will be the same for all models.
 #' 
-#' Internally this function does 2 operations: first
-#' evaluating parameters, transition matrix, state values
-#' and computing individual counts through
-#' \code{\link{eval_model}}; and then using individual
-#' counts and evaluated state values to compute values at
+#' Internally this function does 2 operations: first 
+#' evaluating parameters, transition matrix, state values 
+#' and computing individual counts through 
+#' \code{\link{eval_model}}; and then using individual 
+#' counts and evaluated state values to compute values at 
 #' each cycle through \code{compute_values}.
 #' 
 #' @param ... One or more \code{uneval_model} object.
@@ -30,73 +30,43 @@
 #'   at the beginning.
 #' @param cycles positive integer. Number of Markov Cycles 
 #'   to compute.
-#' @param count_args Additional arguments passed as a list 
-#'   to \code{compute_counts}.
-#' @param newdata data.frame. New parameter values.
+#' @param cost Names or expression to compute cost on the
+#'   cost-effectiveness plane.
+#' @param effect Names or expression to compute effect on
+#'   the cost-effectiveness plane.
+#' @param base_model Name of base model used as reference.
+#'   By default the model with the lowest effectiveness.
+#' @param method Counting method.
 #'   
 #' @return A list of evaluated models with computed values.
 #' @export
 #' 
-#' @examples 
-
-#' # running a single model
-#' 
-#' mod1 <-
-#'   define_model(
-#'     transition_matrix = define_matrix(
-#'       .5, .5,
-#'       .1, .9
-#'     ),
-#'     states = define_state_list(
-#'       define_state(
-#'         cost = 543
-#'       ),
-#'       define_state(
-#'         cost = 432
-#'       )
-#'     )
-#'   )
-#' 
-#' res <- run_model(
-#'   mod1,
-#'   init = c(100, 0),
-#'   cycles = 2
-#' )
-#' 
-#' # running several models
-#' mod2 <-
-#'   define_model(
-#'     transition_matrix = define_matrix(
-#'       .5, .5,
-#'       .1, .9
-#'     ),
-#'     states = define_state_list(
-#'       define_state(
-#'         cost = 789
-#'       ),
-#'       define_state(
-#'         cost = 456
-#'       )
-#'     )
-#'   )
-#' 
-#' 
-#' res2 <- run_model(
-#'   mod1, mod2,
-#'   init = c(100, 0),
-#'   cycles = 10
-#' )
-#' 
+#' @example inst/examples/example_run_models.R
+#'   
 run_models <- function(...,
                        init = c(1L, rep(0L, get_state_number(get_states(list(...)[[1]])) - 1)),
                        cycles = 1,
-                       count_args = NULL,
-                       newdata = NULL) {
+                       method = c("end", "beginning", "cycle-tree", "half-cycle"),
+                       cost, effect, base_model) {
   list_models <- list(...)
+  
+  method <- match.arg(method)
   
   stopifnot(
     all(unlist(lapply(list_models,
-                      function(x) "uneval_model" %in% class(x))))
+                      function(x) "uneval_model" %in% class(x)))),
+    ! missing(cost),
+    ! missing(effect)
+  )
+  
+  list_ce <- list(
+    lazyeval::lazy(cost),
+    lazyeval::lazy(effect)
+  )
+  names(list_ce) <- c(".cost", ".effect")
+  ce <- c(
+    lazyeval::lazy_dots(),
+    list_ce
   )
   
   model_names <- names(list_models)
@@ -120,7 +90,7 @@ run_models <- function(...,
     list_all_same(lapply(list_models,
                          function(x) sort(get_state_value_names(x))))
   )
-
+  
   stopifnot(
     length(init) == get_state_number(list_models[[1]]),
     all(init >= 0)
@@ -133,21 +103,37 @@ run_models <- function(...,
     all(sort(names(init)) == sort(get_state_names(list_models[[1]])))
   )
   
+  eval_model_list <- lapply(list_models, eval_model, 
+                            init = init, 
+                            cycles = cycles,
+                            method = method)
+  
+  list_res <- lapply(eval_model_list, get_total_state_values)
+  
+  for (n in model_names){
+    list_res[[n]]$.model_names <- n
+  }
+  
+  res <- Reduce(dplyr::bind_rows, list_res)
+  
+  res <- dplyr::mutate_(res, .dots = ce)
+  
+  if (missing(base_model)) {
+    base_model <- get_base_model(res)
+  }
+  
   structure(
-    lapply(list_models, eval_model, 
-           init = init, 
-           cycles = cycles,
-           count_args = count_args),
+    res,
+    eval_model_list = eval_model_list,
     uneval_model_list = list_models,
-    names = model_names,
-    class = "eval_model_list",
+    class = c("eval_model_list", class(res)),
     init = init,
     cycles = cycles,
-    count_args = if (is.null(count_args)) NA else count_args
+    method = method,
+    ce = ce,
+    base_model = base_model
   )
 }
-
-
 
 #' @export
 #' @rdname run_models
@@ -157,41 +143,110 @@ run_model <- run_models
 print.eval_model_list <- function(x, ...) {
   cat(sprintf(
     "%i Markov model%s, run for %i cycle%s.\n\n",
-    length(x),
-    plur(length(x)),
+    nrow(x),
+    plur(nrow(x)),
     attr(x, "cycles"),
     plur(attr(x, "cycles"))
   ))
-  cat("Model names:\n\n")
-  cat(names(x), sep = "\n")
+  cat(sprintf("Model name%s:\n\n", plur(length(x$.model_names))))
+  cat(x$.model_names, sep = "\n")
 }
 
+get_total_state_values <- function(x) {
+  res <- as.list(colSums((x$values)[- 1]))
+  class(res) <- "data.frame"
+  attr(res, "row.names") <- c(NA, -1)
+  res
+}
+
+get_base_model <- function(x, ...) {
+  UseMethod("get_base_model")
+}
+
+get_base_model.default <- function(x, ...) {
+  x$.model_names[which(x$.effect == min(x$.effect))[1]]
+}
+get_base_model.eval_model_list <- function(x, ...) {
+  attr(x, "base_model")
+}
+get_base_model.probabilistic <- function(x, ...) {
+  get_base_model(attr(x, "model"))
+}
+
+#' Summarise Markov Model Results
+#' 
+#' @param object Output from \code{\link{run_models}}.
+#' @param ... additional arguments affecting the summary
+#'   produced.
+#'   
+#' @return A \code{summary_eval_model_list} object.
 #' @export
+#' 
 summary.eval_model_list <- function(object, ...) {
-  res <- unlist(
-    lapply(
-      object,
-      function(y) colSums((y$values)[- 1])
-    )
-  )
   
-  res <- matrix(
-    res,
-    nrow = length(object),
-    byrow = TRUE,
-    dimnames = list(
-      names(object),
-      get_state_value_names(object[[1]])
-    )
-  )
+  res <- as.data.frame(compute_icer(normalize_ce(object)))
+  
+  res <- dplyr::select(res, - .model_names)
+  
+  rownames(res) <- object$.model_names
   
   structure(
-    list(res = res,
-         cycles = attr(object, "cycles"),
-         init = attr(object, "init"),
-         count_args = attr(object, "count_args")),
+    list(
+      res = res,
+      cycles = attr(object, "cycles"),
+      init = attr(object, "init"),
+      count_args = attr(object, "count_args"),
+      frontier = get_frontier(object)
+    ),
     class = "summary_eval_model_list"
   )
+}
+if(getRversion() >= "2.15.1")
+  utils::globalVariables(c(".model_names"))
+
+#' Normalize Cost and Effect
+#' 
+#' Normalize cost and effect values taking base model as a 
+#' reference.
+#' 
+#' @param x Result of \code{run_model} or
+#'   \code{run_probabilistic}.
+#'   
+#' @return Input with normalized \code{.cost} and 
+#'   \code{.effect}, ordered by \code{.effect}.
+normalize_ce <- function(x) {
+  UseMethod("normalize_ce")
+}
+normalize_ce.eval_model_list <- function(x) {
+  bm <- get_base_model(x)
+  x$.cost <- x$.cost - x$.cost[x$.model_names == bm]
+  x$.effect <- x$.effect - x$.effect[x$.model_names == bm]
+  x[order(x$.effect), ]
+}
+
+#' Compute ICER
+#' 
+#' Compute ICER for Markov models.
+#' 
+#' Models are ordered by effectiveness and ICER are computed sequencially.
+#' 
+#' @param x Result of \code{\link{run_models}}.
+#'   
+#' @return A \code{data.frame} with computed ICER.
+#' @export
+#' 
+compute_icer <- function(x) {
+  tab <- x[order(x$.effect), ]
+  
+  for (i in seq_len(nrow(tab))) {
+    if ( i == 1) {
+      tab$.icer[i] <- -Inf
+    } else {
+      tab$.icer[i] <- (tab$.cost[i] - tab$.cost[i-1]) /
+        (tab$.effect[i] - tab$.effect[i-1])
+    }
+  }
+  tab
 }
 
 #' @export
@@ -212,6 +267,9 @@ print.summary_eval_model_list <- function(x, ...) {
     )
   ))
   print(x$res)
+  
+  cat("\nEfficiency frontier:\n\n")
+  cat(x$frontier)
 }
 
 #' @export

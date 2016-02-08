@@ -5,7 +5,7 @@
 \title{Iteratively Evaluate a Markov Model With New Parameter 
 Values}
 \usage{
-eval_model_newdata(model, cycles, init, count_args = NULL, newdata)
+eval_model_newdata(model, cycles, init, method, newdata)
 }
 \arguments{
 \item{model}{An \code{uneval_model} object.}
@@ -17,8 +17,7 @@ to compute.}
 model states. Number of individuals in each model state
 at the beginning.}
 
-\item{count_args}{Additional arguments passed as a list 
-to \code{compute_counts}.}
+\item{method}{Counting method.}
 
 \item{newdata}{a data.frame whose names match parameters 
 names. \code{model} will be evaluated iteratively, 
@@ -31,11 +30,16 @@ A data.frame containing the values of
 }
 \description{
 Given a data.frame with on set of new parameters values 
-per row, iteratively evaluate the model over the set of
+per row, iteratively evaluate the model over the set of 
 new values.
+}
+\details{
+New parameters with a missing value (\code{NA}) do not
+replace existing parameters.
 }
 \examples{
 
+\dontrun{
 par1 <- define_parameters(
   a = 1,
   b = 1 / (markov_cycle + a)
@@ -45,16 +49,11 @@ mat1 <- define_matrix(
   1-b, b,
   0, 1
 )
-
-sl1 <- define_state_list(
-  define_state(var = a),
-  define_state(var = a * markov_cycle)
-)
-
 mod1 <- define_model(
   parameters = par1,
   transition_matrix = mat1,
-  states = sl1
+  define_state(var = a),
+  define_state(var = a * markov_cycle)
 )
 
 new_tab <- data.frame(
@@ -67,6 +66,7 @@ eval_model_newdata(
   init = 1:0,
   newdata = new_tab
 )
+}
 
 }
 

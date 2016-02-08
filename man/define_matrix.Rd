@@ -3,12 +3,15 @@
 \name{define_matrix}
 \alias{define_matrix}
 \alias{modify.uneval_matrix}
+\alias{plot.uneval_matrix}
 \title{Define Transition Matrix for Markov Model}
 \usage{
 define_matrix(...,
   state_names = LETTERS[seq_len(sqrt(length(lazyeval::lazy_dots(...))))])
 
 \method{modify}{uneval_matrix}(.OBJECT, ...)
+
+\method{plot}{uneval_matrix}(x, relsize = 0.75, shadow.size = 0, ...)
 }
 \arguments{
 \item{...}{Name-value pairs of expressions definig matrix
@@ -19,6 +22,12 @@ cells. Can refer to parameters defined with
 names.}
 
 \item{.OBJECT}{An object of class \code{uneval_matrix}.}
+
+\item{x}{An \code{uneval_matrix} to plot.}
+
+\item{relsize}{Argument passed to \code{\link{plotmat}}.}
+
+\item{shadow.size}{Argument passed to \code{\link{plotmat}}.}
 }
 \value{
 An object of class \code{uneval_matrix} (actually
@@ -37,6 +46,9 @@ with the matrix through \code{\link{define_model}}; then
 in the environment where the matrix was defined.
 
 Matric cells are listed by row.
+
+The completary probability of all other row probabilities
+can be conveniently reffered as \code{C}.
 
 Only matrix size is checked during this step (the matrix 
 must be square). Other conditions (such as rowsums being 
@@ -59,12 +71,21 @@ mat_1 <- define_matrix(
 )
 mat_1
 
+plot(mat_1)
+
 # referencing parameters
 # rr must be present in a parameter object
 # that must later be linked with define_model
 
 define_matrix(
   .5 - rr, rr,
+  .4, .6
+)
+
+# can also use C
+
+define_matrix(
+  C, rr,
   .4, .6
 )
 

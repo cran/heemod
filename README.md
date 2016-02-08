@@ -1,4 +1,8 @@
-`heemod` is a toolset for health ecomomic evaluation modelling. It aims to provide a simple and consistent interface for Markov models specification and comparison. Non-homogenous Markov models (with time varying properties) are supported.
+# heemod - Health Ecomomic Evaluation MODelling
+
+[![Travis-CI Build Status](https://travis-ci.org/pierucci/heemod.svg?branch=master)](https://travis-ci.org/pierucci/heemod)
+
+`heemod` is an `R` toolset for health ecomomic evaluation modelling. It aims to provide a simple and consistent interface for Markov models specification and comparison. Non-homogeneous Markov models (with time varying properties) are supported.
 
 Most of the analyses presented in [Decision Modelling for Health Economic Evaluation](http://ukcatalogue.oup.com/product/9780198526629.do) can be performed with `heemod`.
 
@@ -12,40 +16,41 @@ You can install:
 install.packages("heemod")
 ```
 
-  * the latest development version from github (warning: package `devtools` needed) with:
+  * the latest development version from github with:
 
 ```r
-if (packageVersion("devtools") < 1.6) {
-  install.packages("devtools")
-}
 devtools::install_github("pierucci/heemod")
 ```
 
-# Main features
+## Main features
 
   * Time-varying transition probabilities.
   * Time-varying values attached to states.
   * Heterogeneity analysis.
+  * Probabilistic incertitude analysis.
+  * Deterministic sensitivity analysis.
 
-# Learning heemod
+## Learning heemod
 
-To get started read the intro vignette: `vignette("introduction", package = "heemod")`.
+To get started read the intro vignette (or `vignette("introduction", package = "heemod")`).
 
 Specific analysis examples (mostly inspired from Decision Modelling for Health Economic Evaluation) can be found in the following vignettes:
 
-  * Homogenous Markov model in `vignette("homogenous", package = "heemod")`.
-  * Non-homogenous Markov model in `vignette("non-homogenous", package = "heemod")`.
+  * Homogeneous Markov model (or `vignette("homogeneous", package = "heemod")`).
+  * Non-homogeneous Markov model (or `vignette("non-homogeneous", package = "heemod")`).
+  * Probabilistic incertitude analysis in `vignette("probabilistic", package = "heemod")`.
+  * Deterministic sensitivity analysis in `vignette("sensitivity", package = "heemod")`.
 
-# Future developments
+## Future developments
 
-In version 1.0 :
+In version 1.0.0 :
 
-  * Probabilistic incertitude analysis.
-  * Deterministic sensitivity analysis.
-  * Graphical analysis of Markov models.
+  * Multiple state membership correction methods.
 
 Upcoming vignettes:
 
   * Heterogeneity analysis in `vignette("heterogeneity", package = "heemod")`.
-  * Probabilistic incertitude analysis in `vignette("probabilistic", package = "heemod")`.
-  * Model comparison in `vignette("comparison", package = "heemod")`.
+
+## Devs
+
+[Kevin Zarca](http://www.urc-eco.fr/Kevin-ZARCA,402) and [Antoine Filipović-Pierucci](https://pierucci.github.io/).

@@ -1,11 +1,11 @@
 ---
-title: "Simple Markov models (homogenous)"
+title: "Simple Markov models (homogeneous)"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
-    keep_md: true
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{Simple Markov models (homogenous)}
+  %\VignetteIndexEntry{Simple Markov models (homogeneous)}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -14,9 +14,9 @@ vignette: >
 library(heemod)
 ```
 
-The most simple Markov models in health economic evaluation are models were transition probabilities between states do not change with time. Those are called *homogenous* or *time-homogenous* Markov models.
+The most simple Markov models in health economic evaluation are models were transition probabilities between states do not change with time. Those are called *homogeneous* or *time-homogeneous* Markov models.
 
-If you are not familiar with `heemod`, first consult the introduction vignette`vignette("introduction", package = "heemod")`.
+If you are not familiar with `heemod`, first consult the introduction vignette `vignette("introduction", package = "heemod")`.
 
 # Model description
 
@@ -55,13 +55,26 @@ rr <- .509
 
 mat_comb <-
   define_matrix(
-    1-(.202*rr+.067*rr+.010*rr), .202*rr,   .067*rr, .010*rr,
-    .000, 1-(.407*rr+.012*rr),   .407*rr,   .012*rr,
-    .000, .000,                  1-.250*rr, .250*rr,
-    .000, .000,                  .000,      1.00
+    C,    .202*rr, .067*rr, .010*rr,
+    .000, C,       .407*rr, .012*rr,
+    .000, .000,    C,       .250*rr,
+    .000, .000,    .000,    1.00
   )
 mat_comb
 ```
+
+We can plot the transition matrix for the monotherapy group:
+
+```{r, fig.width = 6, fig.height=6, fig.align='center'}
+plot(mat_mono)
+```
+
+And the combined therapy group:
+
+```{r, fig.width = 6, fig.height=6, fig.align='center'}
+plot(mat_comb)
+```
+
 
 # State values
 
@@ -148,34 +161,6 @@ D_comb <-
   )
 ```
 
-# State lists
-
-All states from a treatment group must be combined in a state list with `define_state_list`:
-
-```{r}
-states_mono <-
-  define_state_list(
-    A_mono,
-    B_mono,
-    C_mono,
-    D_mono
-  )
-states_mono
-```
-
-Similarly for combined therapy:
-
-```{r}
-
-states_comb <-
-  define_state_list(
-    A_comb,
-    B_comb,
-    C_comb,
-    D_comb
-  )
-```
-
 # Model definition
 
 Models can now be defined by combining a transition matrix and a state list with `define_model`:
@@ -183,7 +168,10 @@ Models can now be defined by combining a transition matrix and a state list with
 ```{r}
 mod_mono <- define_model(
   transition_matrix = mat_mono,
-  states = states_mono
+  A_mono,
+  B_mono,
+  C_mono,
+  D_mono
 )
 mod_mono
 ```
@@ -193,7 +181,10 @@ For the combined therapy model:
 ```{r}
 mod_comb <- define_model(
   transition_matrix = mat_comb,
-  states = states_comb
+  A_comb,
+  B_comb,
+  C_comb,
+  D_comb
 )
 ```
 
@@ -205,7 +196,9 @@ Both models can then be run for 20 years with `run_model`. Models are given simp
 res_mod <- run_models(
   mono = mod_mono,
   comb = mod_comb,
-  cycles = 20
+  cycles = 20,
+  cost = cost_total,
+  effect = life_year
 )
 ```
 
@@ -217,10 +210,23 @@ Model values can then be compared with `summary`:
 summary(res_mod)
 ```
 
-The incremental cost-effectiveness ratio of the combiend therapy strategy is thus:
+The incremental cost-effectiveness ratio of the combiend therapy strategy is thus £6187 per life-year gained.
 
-$$
-\frac{81026.56 - 44613.85}{13.864239 - 7.979173} = 6187.307
-$$
+The counts per state can be plotted for the monotherapy group:
 
-6187GBP per life-year gained.
+```{r, fig.width = 6, fig.align='center'}
+plot(res_mod, model = "mono", type = "counts")
+```
+
+And the combined therapy group:
+
+```{r, fig.width = 6, fig.align='center'}
+plot(res_mod, model = "comb", type = "counts")
+```
+
+We can plot the strategies on the cost-efficiency plane:
+
+```{r, fig.width = 4, fig.height=4, fig.align='center'}
+plot(res_mod, type = "ce")
+```
+
