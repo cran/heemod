@@ -38,7 +38,7 @@ Transition probabilities between states can be specified through a 2-way table w
 | **A** | 1 | 2 |
 | **B** | 3 | 4 |
 
-When starting a cycle in state `A` (row `A`), the probability to still be in state `A` at the end of the cycle is found in colunm `A` (row `1`) and the probability to change to state `B` is found in column `B` (cell `2`).
+When starting a cycle in state `A` (row `A`), the probability to still be in state `A` at the end of the cycle is found in colunm `A` (cell `1`) and the probability to change to state `B` is found in column `B` (cell `2`).
 
 Similarly, when starting a cycle from state `B` (row `B`), the probability to be in state `A` or `B` at the end of the cycle are found in cells `3` or `4` respectively.
 
@@ -49,7 +49,7 @@ In the context of Markov models, this 2-way table is called a *transition matrix
 | **A** | 0.9 | 0.1 |
 | **B** | 0.2 | 0.8 |
 
-This transition matrix can be defined with the following command:
+That transition matrix can be defined with the following command:
 
 ```{r}
 mat_trans <- define_matrix(
@@ -100,7 +100,7 @@ mod_1
 The model can then be run with `run_model` for a given number of cycles. The variables corresponding to valuation of cost and effect must be given at that point.
 
 ```{r}
-res_mod_1 <- run_model(
+res_mod_1 <- run_models(
   mod_1,
   cycles = 10,
   cost = cost,
@@ -119,10 +119,25 @@ The result can be explored with `summary`:
 summary(res_mod_1)
 ```
 
-We can plot the state membership counts over time. Over plot types are available.
+We can plot the state membership counts over time. Other plot types are available.
 
 ```{r, fig.width = 6, fig.height=4, fig.align='center'}
 plot(res_mod_1)
+```
+
+Plots can be modified using `ggplot2` syntax.
+
+```{r, fig.align='center', fig.height=4, fig.width=6, message=FALSE}
+library(ggplot2)
+
+plot(res_mod_1) +
+  xlab("Time") +
+  ylab("N") +
+  theme_minimal() +
+  scale_color_brewer(
+    name = "State",
+    palette = "Set1"
+  )
 ```
 
 # Going futher
@@ -130,3 +145,5 @@ plot(res_mod_1)
 In order to compare different strategies it is possible to run several models in parallel, examples are provided in `vignette("homogeneous", package = "heemod")` or `vignette("non-homogeneous", package = "heemod")`.
 
 Incertitude analysis `vignette("probabilistic", package = "heemod")` and sensitivity analysis `vignette("sensitivity", package = "heemod")` can be performed.
+
+Population-level country-specific mortality rates by age and sex (often used as transition probabilities in Markov models) can be downloaded from WHO databases with the `get_who_mr()` function.

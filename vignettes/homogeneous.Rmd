@@ -12,6 +12,7 @@ vignette: >
 
 ```{r, echo=FALSE, include=FALSE}
 library(heemod)
+library(ggplot2)
 ```
 
 The most simple Markov models in health economic evaluation are models were transition probabilities between states do not change with time. Those are called *homogeneous* or *time-homogeneous* Markov models.
@@ -49,6 +50,8 @@ mat_mono
 The combined therapy group has its transition probabilities multiplied by `rr`, the relative risk of event for the population treated by combined therapy. Since $rr < 1$, the combined therapy group has less chance to transition to worst health states.
 
 The probabilities to stay in the same state are equal to $1 - \sum p_{trans}$ where $p_{trans}$ are the probabilities to change to another state (because all transition probabilities from a given state must sum to 1).
+
+We use the alias `C` as a convenient way to specify the probability complement, equal to `1 - sum(row probabilities)`
 
 ```{r}
 rr <- .509
@@ -190,7 +193,7 @@ mod_comb <- define_model(
 
 # Running models
 
-Both models can then be run for 20 years with `run_model`. Models are given simple names (`mono` and `comb`) in order to facilitate result interpretation:
+Both models can then be run for 20 years with `run_model`. Models are given simple names (`mono` and `comb`) in order to facilitate result interpretation. To replicate results from the original study we assume transitions occur at the end of each cycles (`method = "end"`).
 
 ```{r}
 res_mod <- run_models(
@@ -198,7 +201,8 @@ res_mod <- run_models(
   comb = mod_comb,
   cycles = 20,
   cost = cost_total,
-  effect = life_year
+  effect = life_year,
+  method = "end"
 )
 ```
 
@@ -210,23 +214,30 @@ Model values can then be compared with `summary`:
 summary(res_mod)
 ```
 
-The incremental cost-effectiveness ratio of the combiend therapy strategy is thus £6187 per life-year gained.
+The incremental cost-effectiveness ratio of the combiend therapy strategy is thus £6,187 per life-year gained.
 
 The counts per state can be plotted for the monotherapy group:
 
-```{r, fig.width = 6, fig.align='center'}
-plot(res_mod, model = "mono", type = "counts")
+```{r, fig.align='center', fig.width=6, message=FALSE}
+plot(res_mod, model = "mono", type = "counts") +
+  xlab("Time") +
+  theme_minimal() +
+  scale_color_brewer(
+    name = "State",
+    palette = "Set1"
+  )
 ```
 
 And the combined therapy group:
 
-```{r, fig.width = 6, fig.align='center'}
-plot(res_mod, model = "comb", type = "counts")
+```{r, fig.align='center', fig.width=6, message=FALSE}
+plot(res_mod, model = "comb", type = "counts") +
+  xlab("Time") +
+  theme_minimal() +
+  scale_color_brewer(
+    name = "State",
+    palette = "Set1"
+  )
 ```
 
-We can plot the strategies on the cost-efficiency plane:
-
-```{r, fig.width = 4, fig.height=4, fig.align='center'}
-plot(res_mod, type = "ce")
-```
-
+Note that classic `ggplot2` syntax can be used to modifiy plot appearance.

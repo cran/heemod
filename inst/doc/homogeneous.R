@@ -1,5 +1,6 @@
 ## ---- echo=FALSE, include=FALSE------------------------------------------
 library(heemod)
+library(ggplot2)
 
 ## ------------------------------------------------------------------------
 mat_mono <-
@@ -121,18 +122,28 @@ res_mod <- run_models(
   comb = mod_comb,
   cycles = 20,
   cost = cost_total,
-  effect = life_year
+  effect = life_year,
+  method = "end"
 )
 
 ## ------------------------------------------------------------------------
 summary(res_mod)
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
-plot(res_mod, model = "mono", type = "counts")
+## ---- fig.align='center', fig.width=6, message=FALSE---------------------
+plot(res_mod, model = "mono", type = "counts") +
+  xlab("Time") +
+  theme_minimal() +
+  scale_color_brewer(
+    name = "State",
+    palette = "Set1"
+  )
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
-plot(res_mod, model = "comb", type = "counts")
-
-## ---- fig.width = 4, fig.height=4, fig.align='center'--------------------
-plot(res_mod, type = "ce")
+## ---- fig.align='center', fig.width=6, message=FALSE---------------------
+plot(res_mod, model = "comb", type = "counts") +
+  xlab("Time") +
+  theme_minimal() +
+  scale_color_brewer(
+    name = "State",
+    palette = "Set1"
+  )
 

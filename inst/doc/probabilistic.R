@@ -160,3 +160,15 @@ plot(pm, type = "ce")
 ## ---- fig.width = 6, fig.align='center'----------------------------------
 plot(pm, type = "ac", values = seq(0, 25e3, 1e3))
 
+## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE-------
+library(ggplot2)
+
+plot(pm, type = "ce") +
+  xlab("Life-years gained") +
+  ylab("Additional cost") +
+  scale_color_brewer(
+    name = "Strategy",
+    palette = "Set1"
+  ) +
+  theme_minimal()
+

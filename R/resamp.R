@@ -194,7 +194,7 @@ eval_correlation <- function(x, var_names) {
 
 #' Run Probabilistic Incertitude Analysis
 #' 
-#' @param model The result of \code{\link{run_model}}.
+#' @param model The result of \code{\link{run_models}}.
 #' @param resample Resampling distribution for parameters 
 #'   defined by \code{\link{define_resample}}.
 #' @param N > 0. Number of simulation to run.
@@ -288,7 +288,10 @@ plot.probabilistic <- function(x, type = c("ce", "ac"),
       tab <- normalize_ce(x)
       ggplot2::ggplot(data = tab,
                       aes(x = .effect, y = .cost, colour = .model_names)) +
-        ggplot2::geom_point()
+        ggplot2::geom_point() +
+        ggplot2::scale_colour_hue(name = "Model") +
+        ggplot2::xlab("Effect") +
+        ggplot2::ylab("Cost")
     },
     ac = {
       f <- function(.cost, .effect, .ceac, .model_names) {
@@ -316,7 +319,10 @@ plot.probabilistic <- function(x, type = c("ce", "ac"),
       })
       ggplot2::ggplot(tab, aes(x = .ceac, y = .p, colour = .top)) +
         ggplot2::geom_line() +
-        ggplot2::ylim(0, 1)
+        ggplot2::ylim(0, 1) +
+        ggplot2::scale_colour_hue(name = "Model") +
+        ggplot2::xlab("Willingness to pay") +
+        ggplot2::ylab("Probability of cost-effectiveness")
     },
     stop("Unknown plot type."))
 }

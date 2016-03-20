@@ -1,6 +1,6 @@
 # heemod - Health Ecomomic Evaluation MODelling
 
-[![Travis-CI Build Status](https://travis-ci.org/pierucci/heemod.svg?branch=master)](https://travis-ci.org/pierucci/heemod)
+[![Travis-CI Build Status](https://travis-ci.org/pierucci/heemod.svg?branch=master)](https://travis-ci.org/pierucci/heemod) [![](http://www.r-pkg.org/badges/version/heemod)](http://www.r-pkg.org/pkg/heemod) [![Coverage Status](https://img.shields.io/codecov/c/github/pierucci/heemod/master.svg)](https://codecov.io/github/pierucci/heemod?branch=master)
 
 `heemod` is an `R` toolset for health ecomomic evaluation modelling. It aims to provide a simple and consistent interface for Markov models specification and comparison. Non-homogeneous Markov models (with time varying properties) are supported.
 
@@ -24,11 +24,13 @@ devtools::install_github("pierucci/heemod")
 
 ## Main features
 
+  * Graphical user interface with `shiny`.
   * Time-varying transition probabilities.
   * Time-varying values attached to states.
   * Heterogeneity analysis.
   * Probabilistic incertitude analysis.
   * Deterministic sensitivity analysis.
+  * Multiple state membership correction methods (life-table, half-cycle...).
 
 ## Learning heemod
 
@@ -40,12 +42,16 @@ Specific analysis examples (mostly inspired from Decision Modelling for Health E
   * Non-homogeneous Markov model (or `vignette("non-homogeneous", package = "heemod")`).
   * Probabilistic incertitude analysis in `vignette("probabilistic", package = "heemod")`.
   * Deterministic sensitivity analysis in `vignette("sensitivity", package = "heemod")`.
+  
+## Graphical user interface
+
+Run the graphical user interface with:
+
+```r
+run_shiny()
+```
 
 ## Future developments
-
-In version 1.0.0 :
-
-  * Multiple state membership correction methods.
 
 Upcoming vignettes:
 

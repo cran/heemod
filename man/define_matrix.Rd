@@ -2,24 +2,30 @@
 % Please edit documentation in R/matrix.R
 \name{define_matrix}
 \alias{define_matrix}
+\alias{define_matrix_}
 \alias{modify.uneval_matrix}
 \alias{plot.uneval_matrix}
 \title{Define Transition Matrix for Markov Model}
 \usage{
-define_matrix(...,
-  state_names = LETTERS[seq_len(sqrt(length(lazyeval::lazy_dots(...))))])
+define_matrix(..., state_names)
+
+define_matrix_(.dots, state_names)
 
 \method{modify}{uneval_matrix}(.OBJECT, ...)
 
-\method{plot}{uneval_matrix}(x, relsize = 0.75, shadow.size = 0, ...)
+\method{plot}{uneval_matrix}(x, relsize = 0.75, shadow.size = 0,
+  latex = TRUE, ...)
 }
 \arguments{
 \item{...}{Name-value pairs of expressions definig matrix
 cells. Can refer to parameters defined with 
-\code{\link{define_parameters}}.}
+\code{\link{define_parameters}}. For \code{plot},
+additional arguments passed to \code{digram::plotmat}.}
 
 \item{state_names}{character vector, optional. State 
 names.}
+
+\item{.dots}{Used to work around non-standard evaluation.}
 
 \item{.OBJECT}{An object of class \code{uneval_matrix}.}
 
@@ -28,6 +34,8 @@ names.}
 \item{relsize}{Argument passed to \code{\link{plotmat}}.}
 
 \item{shadow.size}{Argument passed to \code{\link{plotmat}}.}
+
+\item{latex}{Argument passed to \code{\link{plotmat}}.}
 }
 \value{
 An object of class \code{uneval_matrix} (actually

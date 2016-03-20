@@ -9,15 +9,18 @@
 #' @importFrom dplyr as_data_frame
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr left_join
-#' @importFrom dplyr %>%
+#' @importFrom dplyr "%>%"
+#' @importFrom dplyr desc
 #' 
 #' @importFrom lazyeval lazy
 #' @importFrom lazyeval lazy_dots
+#' @importFrom lazyeval as.lazy_dots
 #' @importFrom lazyeval lazy_eval
 #' 
 #' @importFrom utils head
 #' @importFrom utils modifyList
 #' @importFrom utils globalVariables
+#' @importFrom utils as.roman
 #' 
 #' @importFrom stats pnorm
 #' @importFrom stats qbeta
@@ -43,7 +46,16 @@
 #' @importFrom ggplot2 xlab
 #' @importFrom ggplot2 ylab
 #' @importFrom ggplot2 aes
+#' @importFrom ggplot2 xlim
 #' 
 #' @importFrom tidyr gather_
+#' 
+#' @importFrom memoise memoise
+#' 
+#' @importFrom DT dataTableOutput
+#' @importFrom DT renderDataTable
+#' @importFrom DT datatable
+#' 
+#' @importFrom rgho get_gho_data
 #' 
 NULL

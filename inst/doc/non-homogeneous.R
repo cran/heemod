@@ -2,27 +2,8 @@
 library(heemod)
 
 ## ------------------------------------------------------------------------
-death_prob <- data.frame(
-  age = rep(seq(35, 85, 10), each = 2),
-  sex = rep(0:1, 6),
-  mr = c(
-    1.51e-3, .99e-3, 3.93e-3,
-    2.6e-3, 10.9e-3, 6.7e-3,
-    31.6e-3, 19.3e-3, 80.1e-3,
-    53.5e-3, 187.9e-3, 154.8e-3
-  )
-)
-death_prob
-
-## ------------------------------------------------------------------------
 # a function to return age-related mortality rate
 # given age and sex
-mr_func <- function(age, sex) {
-  age  <- floor(age/10-.5)*10+5
-  age <- ifelse(age > 85, 85, age)
-  merge(data.frame(age = age, sex = sex), death_prob)$mr
-}
-
 param_standard <- define_parameters(
     age_init = 60,
     sex = 0,
@@ -50,7 +31,8 @@ param_standard <- define_parameters(
                                      markov_cycle ^ gamma)),
     
     # age-related mortality rate
-    mr = mr_func(age, sex)
+    sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
+    mr = get_who_mr(age, sex_cat, country = "GBR")
 )
 param_standard
 
@@ -93,7 +75,7 @@ mod_standard <- define_model(
   transition_matrix = mat_trans,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 0
+    cost = 394
   ),
   SuccessP = define_state(
     utility = discount(.85, .015),
@@ -110,8 +92,7 @@ mod_standard <- define_model(
   Death = define_state(
     utility = 0,
     cost = 0
-  ),
-  starting_values = c(cost = 394)
+  )
 )
 mod_standard
 
@@ -120,7 +101,7 @@ mod_np1 <- define_model(
   transition_matrix = mat_trans,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 0
+    cost = 579
   ),
   SuccessP = define_state(
     utility = discount(.85, .015),
@@ -137,8 +118,7 @@ mod_np1 <- define_model(
   Death = define_state(
     utility = 0,
     cost = 0
-  ),
-  starting_values = c(cost = 579)
+  )
 )
 
 ## ------------------------------------------------------------------------
@@ -147,9 +127,9 @@ res_mod <- run_models(
   np1 = mod_np1,
   cycles = 60,
   cost = cost,
-  effect = utility
+  effect = utility,
+  method = "end"
 )
-res_mod
 
 ## ------------------------------------------------------------------------
 summary(res_mod)
@@ -159,7 +139,4 @@ plot(res_mod, model = "standard", type = "counts")
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
 plot(res_mod, model = "np1", type = "counts")
-
-## ---- fig.width = 4, fig.height=4, fig.align='center'--------------------
-plot(res_mod, type = "ce")
 

@@ -30,7 +30,7 @@ mod_1 <- define_model(
 mod_1
 
 ## ------------------------------------------------------------------------
-res_mod_1 <- run_model(
+res_mod_1 <- run_models(
   mod_1,
   cycles = 10,
   cost = cost,
@@ -43,4 +43,16 @@ summary(res_mod_1)
 
 ## ---- fig.width = 6, fig.height=4, fig.align='center'--------------------
 plot(res_mod_1)
+
+## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE-------
+library(ggplot2)
+
+plot(res_mod_1) +
+  xlab("Time") +
+  ylab("N") +
+  theme_minimal() +
+  scale_color_brewer(
+    name = "State",
+    palette = "Set1"
+  )
 

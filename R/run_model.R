@@ -37,6 +37,8 @@
 #' @param base_model Name of base model used as reference.
 #'   By default the model with the lowest effectiveness.
 #' @param method Counting method.
+#' @param list_models List of models, only used by 
+#'   \code{run_models_} to avoid using \code{...}.
 #'   
 #' @return A list of evaluated models with computed values.
 #' @export
@@ -44,13 +46,33 @@
 #' @example inst/examples/example_run_models.R
 #'   
 run_models <- function(...,
-                       init = c(1L, rep(0L, get_state_number(get_states(list(...)[[1]])) - 1)),
+                       init = c(1000L, rep(0L, get_state_number(get_states(list(...)[[1]])) - 1)),
                        cycles = 1,
-                       method = c("end", "beginning", "cycle-tree", "half-cycle"),
-                       cost, effect, base_model) {
+                       method = c("beginning", "end", "cycle-tree",
+                                  "half-cycle", "life-table", "spread-half-cycle"),
+                       cost, effect, base_model = NULL) {
   list_models <- list(...)
   
   method <- match.arg(method)
+  
+  run_models_(
+    list_models = list_models,
+    init = init,
+    cycles = cycles,
+    method = method,
+    cost = lazyeval::lazy(cost),
+    effect = lazyeval::lazy(effect),
+    base_model = base_model
+  )
+}
+
+#' @export
+#' @rdname run_models
+run_models_ <- function(list_models,
+                        init,
+                        cycles,
+                        method,
+                        cost, effect, base_model) {
   
   stopifnot(
     all(unlist(lapply(list_models,
@@ -60,8 +82,8 @@ run_models <- function(...,
   )
   
   list_ce <- list(
-    lazyeval::lazy(cost),
-    lazyeval::lazy(effect)
+    cost,
+    effect
   )
   names(list_ce) <- c(".cost", ".effect")
   ce <- c(
@@ -73,13 +95,13 @@ run_models <- function(...,
   
   if (is.null(model_names)) {
     message("No named model -> generating names.")
-    model_names <- LETTERS[seq_along(list_models)]
+    model_names <- as.character(utils::as.roman(seq_along(list_models)))
     names(list_models) <- model_names
   }
   
   if (any(model_names == "")) {
     warning("Not all models are named -> generating names.")
-    model_names <- LETTERS[seq_along(list_models)]
+    model_names <- as.character(utils::as.roman(seq_along(list_models)))
     names(list_models) <- model_names
   }
   
@@ -118,7 +140,7 @@ run_models <- function(...,
   
   res <- dplyr::mutate_(res, .dots = ce)
   
-  if (missing(base_model)) {
+  if (is.null(base_model)) {
     base_model <- get_base_model(res)
   }
   
@@ -136,23 +158,12 @@ run_models <- function(...,
 }
 
 #' @export
-#' @rdname run_models
-run_model <- run_models
-
-#' @export
 print.eval_model_list <- function(x, ...) {
-  cat(sprintf(
-    "%i Markov model%s, run for %i cycle%s.\n\n",
-    nrow(x),
-    plur(nrow(x)),
-    attr(x, "cycles"),
-    plur(attr(x, "cycles"))
-  ))
-  cat(sprintf("Model name%s:\n\n", plur(length(x$.model_names))))
-  cat(x$.model_names, sep = "\n")
+  print(summary(x, ...))
 }
 
 get_total_state_values <- function(x) {
+  # faster than as.data.frame or dplyr::as_data_frame
   res <- as.list(colSums((x$values)[- 1]))
   class(res) <- "data.frame"
   attr(res, "row.names") <- c(NA, -1)
@@ -183,16 +194,24 @@ get_base_model.probabilistic <- function(x, ...) {
 #' @export
 #' 
 summary.eval_model_list <- function(object, ...) {
-  
   res <- as.data.frame(compute_icer(normalize_ce(object)))
   
   res <- dplyr::select(res, - .model_names)
-  
+
   rownames(res) <- object$.model_names
   
+  res_comp <- res[c(".cost", ".effect", ".icer")]
+  is.na(res_comp$.icer) <- ! is.finite(res_comp$.icer)
+  res_comp$.icer <- format(res_comp$.icer)
+  res_comp$.icer[res_comp$.icer == "NA"] <- "-"
+  res_comp$.cost <- res_comp$.cost / sum(attr(object, "init"))
+  res_comp$.effect <- res_comp$.effect / sum(attr(object, "init"))
+  names(res_comp) <- c("Cost", "Effect", "ICER")
+
   structure(
     list(
-      res = res,
+      res = dplyr::select(res, - .cost, - .effect, - .icer),
+      res_comp = res_comp[-1, ],
       cycles = attr(object, "cycles"),
       init = attr(object, "init"),
       count_args = attr(object, "count_args"),
@@ -202,15 +221,15 @@ summary.eval_model_list <- function(object, ...) {
   )
 }
 if(getRversion() >= "2.15.1")
-  utils::globalVariables(c(".model_names"))
+  utils::globalVariables(c(".model_names", ".cost", ".effect", ".icer"))
 
 #' Normalize Cost and Effect
 #' 
 #' Normalize cost and effect values taking base model as a 
 #' reference.
 #' 
-#' @param x Result of \code{run_model} or
-#'   \code{run_probabilistic}.
+#' @param x Result of \code{\link{run_models}} or
+#'   \code{\link{run_probabilistic}}.
 #'   
 #' @return Input with normalized \code{.cost} and 
 #'   \code{.effect}, ordered by \code{.effect}.
@@ -268,8 +287,12 @@ print.summary_eval_model_list <- function(x, ...) {
   ))
   print(x$res)
   
-  cat("\nEfficiency frontier:\n\n")
-  cat(x$frontier)
+  if (nrow(x$res) > 1) {
+    cat("\nEfficiency frontier:\n\n")
+    cat(x$frontier)
+    cat("\n\nModel difference:\n\n")
+    print(x$res_comp)
+  }
 }
 
 #' @export

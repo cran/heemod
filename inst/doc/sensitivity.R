@@ -123,7 +123,7 @@ mod_comb <- define_model(
   D_comb
 )
 
-res_mod <- run_model(
+res_mod <- run_models(
   mono = mod_mono,
   comb = mod_comb,
   cycles = 20,
