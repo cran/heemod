@@ -1,6 +1,6 @@
 Package: heemod
 Title: Models for Health Economic Evaluation
-Version: 0.3.0
+Version: 0.3.1
 Author: Kevin Zarca [aut], Antoine Filipovic-Pierucci [aut,cre]
 Maintainer: Antoine Filipovic-Pierucci <pierucci@gmail.com>
 Description: Health Economic Evaluation Modelling.
@@ -19,6 +19,6 @@ Suggests: testthat, knitr, rmarkdown
 URL: https://github.com/pierucci/heemod, https://pierucci.github.io
 BugReports: https://github.com/pierucci/heemod/issues
 NeedsCompilation: no
-Packaged: 2016-03-20 13:30:11 UTC; antoine
+Packaged: 2016-04-04 12:32:31 UTC; Sap-g-urceco-stg
 Repository: CRAN
-Date/Publication: 2016-03-20 17:06:23
+Date/Publication: 2016-04-04 18:02:47

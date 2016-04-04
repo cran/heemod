@@ -4,7 +4,7 @@ library(heemod)
 ## ------------------------------------------------------------------------
 # a function to return age-related mortality rate
 # given age and sex
-param_standard <- define_parameters(
+param <- define_parameters(
     age_init = 60,
     sex = 0,
     # age increases with cycles
@@ -29,25 +29,14 @@ param_standard <- define_parameters(
     # revision probability of primary procedure
     standardRR = 1 - exp(lambda * ((markov_cycle - 1) ^ gamma -
                                      markov_cycle ^ gamma)),
+    np1RR = 1 - exp(lambda * rrNP1 * ((markov_cycle - 1) ^ gamma - 
+                                        markov_cycle ^ gamma)),
     
     # age-related mortality rate
     sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
     mr = get_who_mr(age, sex_cat, country = "GBR")
 )
-param_standard
-
-## ------------------------------------------------------------------------
-param_np1 <- modify(
-  param_standard,
-  standardRR = 1 - exp(
-    lambda *
-      rrNP1 *
-      (
-        (markov_cycle - 1) ^ gamma - 
-          markov_cycle ^ gamma)
-  )
-)
-param_np1
+param
 
 ## ------------------------------------------------------------------------
 mat_trans <- define_matrix(
@@ -71,7 +60,6 @@ plot(mat_trans)
 
 ## ------------------------------------------------------------------------
 mod_standard <- define_model(
-  parameters = param_standard,
   transition_matrix = mat_trans,
   PrimaryTHR = define_state(
     utility = 0,
@@ -97,7 +85,6 @@ mod_standard <- define_model(
 mod_standard
 
 mod_np1 <- define_model(
-  parameters = param_np1,
   transition_matrix = mat_trans,
   PrimaryTHR = define_state(
     utility = 0,
@@ -125,6 +112,7 @@ mod_np1 <- define_model(
 res_mod <- run_models(
   standard = mod_standard,
   np1 = mod_np1,
+  parameters = param,
   cycles = 60,
   cost = cost,
   effect = utility,

@@ -1,14 +1,10 @@
-context("Testing newdata and probabilistic analysis")
+context("Newdata & probabilistic")
 
 test_that(
   "run_newdata works", {
     
     mod1 <-
       define_model(
-        parameters = define_parameters(
-          age_init = 60,
-          age = age_init + markov_cycle
-        ),
         transition_matrix = define_matrix(
           .5, .5,
           .1, .9
@@ -26,10 +22,6 @@ test_that(
     
     mod2 <-
       define_model(
-        parameters = define_parameters(
-          age_init = 60,
-          age = age_init + markov_cycle
-        ),
         transition_matrix = define_matrix(
           .5, .5,
           .1, .9
@@ -46,6 +38,10 @@ test_that(
     
     res2 <- run_models(
       mod1, mod2,
+      parameters = define_parameters(
+        age_init = 60,
+        age = age_init + markov_cycle
+      ),
       init = 1:0,
       cycles = 10,
       cost = cost,
@@ -80,11 +76,6 @@ test_that(
     
     mod1 <-
       define_model(
-        parameters = define_parameters(
-          age_init = 60,
-          cost_init = 1000,
-          age = age_init + markov_cycle
-        ),
         transition_matrix = define_matrix(
           .5, .5,
           .1, .9
@@ -99,14 +90,8 @@ test_that(
         )
         
       )
-    
-    # running several models
     mod2 <-
       define_model(
-        parameters = define_parameters(
-          age_init = 60,
-          age = age_init + markov_cycle
-        ),
         transition_matrix = define_matrix(
           .5, .5,
           .1, .9
@@ -124,13 +109,18 @@ test_that(
     
     res2 <- run_models(
       mod1, mod2,
+      parameters = define_parameters(
+        age_init = 60,
+        cost_init = 1000,
+        age = age_init + markov_cycle
+      ),
       init = 1:0,
       cycles = 10,
       cost = cost,
       effect = ly
     )
     
-    rsp <- define_resample(
+    rsp1 <- define_distrib(
       age_init ~ normal(60, 10),
       cost_init ~ normal(1000, 100),
       
@@ -139,13 +129,25 @@ test_that(
         .4, 1
       ), byrow = TRUE, ncol = 2)
     )
+    rsp2 <- define_distrib(
+      age_init ~ normal(60, 10),
+      cost_init ~ normal(1000, 100),
+      
+      correlation = define_correlation(age_init, cost_init, .4)
+    )
     
     set.seed(1)
     # with run_model result
-    ndt1 <- run_probabilistic(res2, resample = rsp, N = 10)
-    ndt2 <- run_probabilistic(res2, resample = rsp, N = 1)
+    ndt1 <- run_probabilistic(res2, resample = rsp1, N = 10)
+    ndt2 <- run_probabilistic(res2, resample = rsp1, N = 1)
     
-    x <- define_resample(
+    plot(ndt1, type = "ce")
+    plot(ndt1, type = "ac")
+    
+    set.seed(1)
+    ndt3 <- run_probabilistic(res2, resample = rsp2, N = 10)
+    
+    x <- define_distrib(
       rate1 + rate2 + rate3 ~ multinom(10, 50, 40),
       a + b ~ multinom(15, 30)
     )
@@ -182,7 +184,7 @@ test_that(
         row.names = c(NA, -2L),
         class = "data.frame")
     )
-    
+    expect_identical(ndt1, ndt3)
     expect_output(
       str(ndt2),
       '2 obs. of  8 variables:
@@ -197,5 +199,21 @@ test_that(
       fixed = TRUE
     )
     
+    rsp3 <- define_distrib(
+      age_init ~ lognormal(60, 10),
+      cost_init ~ make_gamma (1000, 100),
+      p_trans ~ prop(.5, 100),
+      a ~ logitnormal(1, 1)
+    )
+    set.seed(1)
+    
+    res3 <- heemod:::eval_resample(rsp3, 2)
+    
+    expect_output(
+      print(res3),
+      "  age_init cost_init p_trans         a
+1 64.82732  1105.112    0.56 0.4842654
+2 77.79468  1164.304    0.57 0.6539179"
+    )
   }
 )

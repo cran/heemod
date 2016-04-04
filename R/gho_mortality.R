@@ -16,19 +16,22 @@
 #' )
 #' 
 get_who_mr_ <- function(age, sex, country, year = "latest") {
-  mr_data <- get_gho_mr(country = country, year = year)
+  mr_data <- get_gho_mr(country = country, year = as.character(year))
   
   age_gho <- trans_age_gho(age)
   sex_gho <- trans_sex_gho(sex)
   
-  dplyr::left_join(
-    dplyr::data_frame(
-      AGEGROUP = as.character(age_gho),
-      SEX = as.character(sex_gho)
-    ),
-    mr_data
-  )$Numeric
+  suppressMessages({
+    dplyr::left_join(
+      dplyr::data_frame(
+        AGEGROUP = as.character(age_gho),
+        SEX = as.character(sex_gho)
+      ),
+      mr_data
+    )$Numeric
+  })
 }
+
 #' @export
 #' @rdname get_who_mr_
 get_who_mr <- memoise::memoise(get_who_mr_)
@@ -43,14 +46,11 @@ get_gho_mr <- function(country, year) {
     )
   )
   
-  if (nrow(gho_data) == 0) {
-    stop(sprintf("No GHO mortality data for COUNTRY '%s'.", country))
-  }
-  
   years <- unique(gho_data$YEAR)
   
   if (year == "latest") {
     study_year <- max(years)
+    message(sprintf("Using latest year: %s", study_year))
   } else if (! year %in% years) {
     stop(sprintf(
       "Mortality data for YEAR '%s' not available for COUNTRY '%s'.",

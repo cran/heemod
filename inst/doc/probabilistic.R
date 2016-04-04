@@ -2,9 +2,10 @@
 library(heemod)
 
 ## ------------------------------------------------------------------------
-param_mono <- define_parameters(
+param <- define_parameters(
   rr = .509,
   
+  p_AA_base = .721,
   p_AB_base = .202,
   p_AC_base = .067,
   p_AD_base = .010,
@@ -15,16 +16,17 @@ param_mono <- define_parameters(
   p_CD_base = .250,
   
   
-  p_AB = p_AB_base,
-  p_AC = p_AC_base,
-  p_AD = p_AD_base,
+  p_AB_comb = p_AB_base * rr,
+  p_AC_comb = p_AC_base * rr,
+  p_AD_comb = p_AD_base * rr,
   
-  p_BC = p_BC_base,
-  p_BD = p_BD_base,
+  p_BC_comb = p_BC_base * rr,
+  p_BD_comb = p_BD_base * rr,
   
-  p_CD = p_CD_base,
+  p_CD_comb = p_CD_base * rr,
   
-  p_AA = 1 - (p_AB + p_AC + p_AD),
+  p_AA_comb = 1 - (p_AB_comb + p_AC_comb + p_AD_comb),
+  
   
   cost_zido = 2278,
   cost_lami = 2086,
@@ -35,24 +37,16 @@ param_mono <- define_parameters(
 )
 
 ## ------------------------------------------------------------------------
-param_comb <- modify(
-  param_mono,
-  
-  p_AB = p_AB_base * rr,
-  p_AC = p_AC_base * rr,
-  p_AD = p_AD_base * rr,
-  
-  p_BC = p_BC_base * rr,
-  p_BD = p_BD_base * rr,
-  
-  p_CD = p_CD_base * rr
+mat_trans_mono <- define_matrix(
+  p_AA_base, p_AB_base, p_AC_base, p_AD_base,
+  .000, C,    p_BC_base, p_BD_base,
+  .000, .000, C,    p_CD_base,
+  .000, .000, .000, 1.00
 )
-
-## ------------------------------------------------------------------------
-mat_trans <- define_matrix(
-  p_AA, p_AB, p_AC, p_AD,
-  .000, C,    p_BC, p_BD,
-  .000, .000, C,    p_CD,
+mat_trans_comb <- define_matrix(
+  p_AA_comb, p_AB_comb, p_AC_comb, p_AD_comb,
+  .000, C,    p_BC_comb, p_BD_comb,
+  .000, .000, C,    p_CD_comb,
   .000, .000, .000, 1.00
 )
 
@@ -109,8 +103,7 @@ D_comb <- define_state(
 
 ## ------------------------------------------------------------------------
 mod_mono <- define_model(
-  parameters = param_mono,
-  transition_matrix = mat_trans,
+  transition_matrix = mat_trans_mono,
   A_mono,
   B_mono,
   C_mono,
@@ -118,8 +111,7 @@ mod_mono <- define_model(
 )
 
 mod_comb <- define_model(
-  parameters = param_comb,
-  transition_matrix = mat_trans,
+  transition_matrix = mat_trans_comb,
   A_comb,
   B_comb,
   C_comb,
@@ -129,29 +121,33 @@ mod_comb <- define_model(
 res_mod <- run_models(
   mono = mod_mono,
   comb = mod_comb,
+  parameters = param,
   cycles = 20,
   cost = cost_total,
   effect = life_year
 )
 
 ## ------------------------------------------------------------------------
-rsp <- define_resample(
+rsp <- define_distrib(
   rr ~ lognormal(mean = .509, sdlog = .173),
   
   cost_A ~ make_gamma(mean = 2756, sd = sqrt(2756)),
   cost_B ~ make_gamma(mean = 3052, sd = sqrt(3052)),
   cost_C ~ make_gamma(mean = 9007, sd = sqrt(9007)),
   
-  p_CD ~ prop(prob = .25, size = 40),
+  p_CD_base ~ prop(prob = .25, size = 40),
   
-  p_AA + p_AB + p_AC + p_AD ~ multinom(721, 202, 67, 10)
+  p_AA_base +
+    p_AB_base +
+    p_AC_base + 
+    p_AD_base ~ multinom(721, 202, 67, 10)
 )
 
 ## ------------------------------------------------------------------------
 pm <- run_probabilistic(
   model = res_mod,
   resample = rsp,
-  N = 1e2
+  N = 100
 )
 
 ## ---- fig.width = 6, fig.height=4, fig.align='center'--------------------

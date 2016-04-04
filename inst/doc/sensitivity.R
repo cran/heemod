@@ -1,7 +1,7 @@
 ## ---- echo=FALSE, include=FALSE------------------------------------------
 library(heemod)
 
-param_mono <- define_parameters(
+param <- define_parameters(
   rr = .509,
   
   p_AB_base = .202,
@@ -23,7 +23,6 @@ param_mono <- define_parameters(
   
   p_CD = p_CD_base,
   
-  p_AA = 1 - (p_AB + p_AC + p_AD),
   
   cost_zido = 2278,
   cost_lami = 2086,
@@ -35,23 +34,17 @@ param_mono <- define_parameters(
   dr = .06
 )
 
-param_comb <- modify(
-  param_mono,
-  
-  p_AB = p_AB_base * rr,
-  p_AC = p_AC_base * rr,
-  p_AD = p_AD_base * rr,
-  
-  p_BC = p_BC_base * rr,
-  p_BD = p_BD_base * rr,
-  
-  p_CD = p_CD_base * rr
-)
-
-mat_trans <- define_matrix(
-  p_AA, p_AB, p_AC, p_AD,
+mat_trans_mono <- define_matrix(
+  C,    p_AB, p_AC, p_AD,
   .000, C,    p_BC, p_BD,
   .000, .000, C,    p_CD,
+  .000, .000, .000, 1.00
+)
+
+mat_trans_comb <- define_matrix(
+  C,    p_AB * rr, p_AC * rr, p_AD * rr,
+  .000, C,    p_BC * rr, p_BD * rr,
+  .000, .000, C,    p_CD * rr,
   .000, .000, .000, 1.00
 )
 
@@ -106,8 +99,7 @@ D_comb <- define_state(
 )
 
 mod_mono <- define_model(
-  parameters = param_mono,
-  transition_matrix = mat_trans,
+  transition_matrix = mat_trans_mono,
   A_mono,
   B_mono,
   C_mono,
@@ -115,8 +107,7 @@ mod_mono <- define_model(
 )
 
 mod_comb <- define_model(
-  parameters = param_comb,
-  transition_matrix = mat_trans,
+  transition_matrix = mat_trans_comb,
   A_comb,
   B_comb,
   C_comb,
@@ -126,6 +117,7 @@ mod_comb <- define_model(
 res_mod <- run_models(
   mono = mod_mono,
   comb = mod_comb,
+  parameters = param,
   cycles = 20,
   cost = cost_total,
   effect = life_year
