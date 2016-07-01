@@ -34,12 +34,18 @@ param <- define_parameters(
     
     # age-related mortality rate
     sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
-    mr = get_who_mr(age, sex_cat, country = "GBR")
+    mr = get_who_mr(age, sex_cat, country = "GBR"),
+    
+    # state values
+    u_SuccessP = .85,
+    u_RevisionTHR = .30,
+    u_SuccessR = .75,
+    c_RevisionTHR = 5294
 )
 param
 
 ## ------------------------------------------------------------------------
-mat_trans <- define_matrix(
+mat_standard <- define_matrix(
     state_names = c(
       "PrimaryTHR",
       "SuccessP",
@@ -53,28 +59,44 @@ mat_trans <- define_matrix(
     0, 0, rrr,        C, mr,
     0, 0, 0,          0, 1
 )
-mat_trans
+mat_standard
+
+mat_np1 <- define_matrix(
+    state_names = c(
+      "PrimaryTHR",
+      "SuccessP",
+      "RevisionTHR",
+      "SuccessR",
+      "Death"
+    ),
+    0, C, 0,          0, omrPTHR,
+    0, C, np1RR,      0, mr,
+    0, 0, 0,          C, omrRTHR+mr,
+    0, 0, rrr,        C, mr,
+    0, 0, 0,          0, 1
+)
+mat_np1
 
 ## ---- fig.width = 6, fig.height=6, fig.align='center'--------------------
-plot(mat_trans)
+plot(mat_standard)
 
 ## ------------------------------------------------------------------------
 mod_standard <- define_model(
-  transition_matrix = mat_trans,
+  transition_matrix = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 394
   ),
   SuccessP = define_state(
-    utility = discount(.85, .015),
+    utility = discount(u_SuccessP, .015),
     cost = 0
   ),
   RevisionTHR = define_state(
-    utility = discount(.30, .015),
-    cost = discount(5294, .06)
+    utility = discount(u_RevisionTHR, .015),
+    cost = discount(c_RevisionTHR, .06)
   ),
   SuccessR = define_state(
-    utility = discount(.75, .015),
+    utility = discount(u_SuccessR, .015),
     cost = 0
   ),
   Death = define_state(
@@ -85,21 +107,21 @@ mod_standard <- define_model(
 mod_standard
 
 mod_np1 <- define_model(
-  transition_matrix = mat_trans,
+  transition_matrix = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 579
   ),
   SuccessP = define_state(
-    utility = discount(.85, .015),
+    utility = discount(u_SuccessP, .015),
     cost = 0
   ),
   RevisionTHR = define_state(
-    utility = discount(.30, .015),
-    cost = discount(5294, .06)
+    utility = discount(u_RevisionTHR, .015),
+    cost = discount(c_RevisionTHR, .06)
   ),
   SuccessR = define_state(
-    utility = discount(.75, .015),
+    utility = discount(u_SuccessR, .015),
     cost = 0
   ),
   Death = define_state(

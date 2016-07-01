@@ -70,7 +70,7 @@ D_mono <-
 ## ------------------------------------------------------------------------
 A_comb <-
   define_state(
-    cost_health = 3052,
+    cost_health = 2756,
     cost_drugs = cost_zido + cost_lami,
     cost_total = discount(cost_health + cost_drugs, .06),
     life_year = 1
@@ -122,8 +122,7 @@ res_mod <- run_models(
   comb = mod_comb,
   cycles = 20,
   cost = cost_total,
-  effect = life_year,
-  method = "end"
+  effect = life_year
 )
 
 ## ------------------------------------------------------------------------

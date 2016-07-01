@@ -38,9 +38,6 @@ res_mod_1 <- run_models(
 )
 res_mod_1
 
-## ------------------------------------------------------------------------
-summary(res_mod_1)
-
 ## ---- fig.width = 6, fig.height=4, fig.align='center'--------------------
 plot(res_mod_1)
 

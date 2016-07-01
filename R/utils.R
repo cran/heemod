@@ -11,9 +11,16 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) {
 
 #' Discount a Quantity Over Time
 #' 
+#' This function should only take as an \code{x} argument
+#' the names of variables already defined in
+#' \code{\link{define_parameters}} or
+#' \code{\link{define_state}},
+#' and not numeric constants.
+#' 
 #' @param x numeric. A quantity to discount.
 #' @param r discount rate.
-#' @param first logical. Should the discouting start at the first value ?
+#' @param first logical. Should the discouting start 
+#'   at the first value ?
 #'   
 #' @return A numeric vector of the same length as \code{x}.
 #' @export
@@ -28,6 +35,10 @@ discount <- function(x, r, first = FALSE) {
     r >= 0,
     r <= 1
   )
+  
+  if (length(x) == 1)
+    warning("The function 'discount' should only take as an 'x' argument the names of variables already defined in 'define_parameteres' or 'define_state', and not numeric constants.")
+  
   x / (1 + r) ^ (seq_along(x) - (1 - isTRUE(first)))
 }
 

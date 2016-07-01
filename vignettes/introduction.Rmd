@@ -113,12 +113,6 @@ By default the model is run for one person starting in the first state (here sta
 
 # Analyse results
 
-The result can be explored with `summary`:
-
-```{r}
-summary(res_mod_1)
-```
-
 We can plot the state membership counts over time. Other plot types are available.
 
 ```{r, fig.width = 6, fig.height=4, fig.align='center'}
@@ -145,5 +139,7 @@ plot(res_mod_1) +
 In order to compare different strategies it is possible to run several models in parallel, examples are provided in `vignette("homogeneous", package = "heemod")` or `vignette("non-homogeneous", package = "heemod")`.
 
 Uncertainty analysis `vignette("probabilistic", package = "heemod")` and sensitivity analysis `vignette("sensitivity", package = "heemod")` can be performed.
+
+See vignette `vignette("reproduction", package = "heemod")` for an exact reproduction of the analyses from Decision Modelling for Health Economic Evaluation.
 
 Population-level country-specific mortality rates by age and sex (often used as transition probabilities in Markov models) can be downloaded from WHO databases with the `get_who_mr()` function.
