@@ -11,6 +11,11 @@ test_that(
       1-a, a,
       1-b, b
     )
+    mat2 <- define_matrix(
+      state_names = c("X1", "X3"),
+      1-a, a,
+      1-b, b
+    )
     s1 <- define_state(
       x = 234,
       y = 123
@@ -33,10 +38,24 @@ test_that(
       x = 456,
       y = 1029
     )
+    s5 <- define_state(
+      a = 456,
+      b = 1029
+    )
     mod2 <- define_model(
       transition_matrix = mat1,
       X1 = s3,
       X2 = s4
+    )
+    mod3 <- define_model(
+      transition_matrix = mat2,
+      X1 = s3,
+      X3 = s4
+    )
+    mod4 <- define_model(
+      transition_matrix = mat1,
+      X1 = s5,
+      X2 = s5
     )
     expect_error(
       run_models(
@@ -57,6 +76,13 @@ test_that(
         mod1, mod2,
         parameters = par1,
         init = c(-1, 0)
+      )
+    )
+    expect_error(
+      run_models(
+        mod1, mod2,
+        parameters = par1,
+        init = c(1, 0, 0)
       )
     )
     expect_error(
@@ -84,6 +110,29 @@ test_that(
         mod1, mod2,
         parameters = par1,
         method = "zzz"
+      )
+    )
+    expect_error(
+      run_models(
+        mod1, mod3, parameters = par1
+      )
+    )
+    expect_error(
+      run_models(
+        mod1, mod4, parameters = par1
+      )
+    )
+    expect_warning(
+      run_models(
+        mod1, mod2,
+        parameters = par1
+      )
+    )
+    expect_warning(
+      run_models(
+        mod1, mod2,
+        parameters = par1,
+        cost = x
       )
     )
   }
@@ -143,9 +192,14 @@ test_that(
       run_models(I = mod1, mod2,
                  parameters = par1, cost = x, effect = y)
     )
+    expect_warning(
+      summary(run_models(mod1, mod2,
+                         parameters = par1))
+    )
     expect_output(
       str(run_models(mod1, mod2,
-                     parameters = par1, cost = x, effect = y)),
+                     parameters = par1, cost = x, effect = y,
+                     method = "beginning")),
       '2 obs. of  5 variables:
  $ x           : num  309300 933900
  $ y           : num  283300 891300
@@ -154,18 +208,27 @@ test_that(
  $ .effect     : num  283300 891300',
       fixed = TRUE
     )
-    expect_output(
-      str(summary(run_models(mod1, mod2,
-                             parameters = par1, cost = x, effect = y))),
-      "List of 6
- $ res       :'data.frame':	2 obs. of  2 variables:
-  ..$ x: num [1:2] 309300 933900
-  ..$ y: num [1:2] 283300 891300",
-      fixed = TRUE
+    s_mod <- summary(
+      run_models(
+        mod1, mod2,
+        parameters = par1, cost = x, effect = y,
+        method = "beginning"))
+    expect_length(
+      s_mod, 6
+    )
+    expect_identical(
+      dim(s_mod$res), c(2L, 2L)
+    )
+    expect_identical(
+      round(s_mod$res$x), c(309300, 933900)
+    )
+    expect_identical(
+      round(s_mod$res$y), c(283300, 891300)
     )
     
     res_b <- run_models(mod1, mod2,
-                        parameters = par1, cost = x, effect = y)
+                        parameters = par1, cost = x, effect = y,
+                        method = "beginning")
     res_e <- run_models(mod1, mod2,
                         parameters = par1, cost = x, effect = y,
                         method = "end")
@@ -269,26 +332,19 @@ test_that("Discounting", {
     X1 = s6,
     X2 = s4
   )
-  s7 <- define_state(
-    x = discount(100, .1),
-    y = discount(200, .05, TRUE)
-  )
-  mod5 <- define_model(
-    transition_matrix = mat1,
-    X1 = s7,
-    X2 = s4
-  )
-  
   res <- run_models(mod1, mod2, cycles = 10,
-                    parameters = par1, cost = x, effect = y)
+                    parameters = par1, cost = x, effect = y,
+                    method = "beginning")
   expect_output(
     print(res),
     "II 3292.352 4193.422 0.7851231"
   )
   res1 <- run_models(mod1, mod2, cycles = 10,
-                    parameters = par1, cost = x, effect = y)
+                     parameters = par1, cost = x, effect = y,
+                     method = "beginning")
   res2 <- run_models(mod3, mod2, cycles = 10,
-                    parameters = par1, cost = x, effect = y)
+                     parameters = par1, cost = x, effect = y,
+                     method = "beginning")
   expect_output(
     print(res1),
     "I  3144649 2942952
@@ -302,10 +358,6 @@ II 6437001 7136374"
   
   expect_error(
     run_models(mod1, mod4, cycles = 10,
-               parameters = par1, cost = x, effect = y)
-  )
-  expect_warning(
-    run_models(mod1, mod5, cycles = 10,
                parameters = par1, cost = x, effect = y)
   )
 })

@@ -34,18 +34,24 @@ define_model <- function(...,
   )
 }
 
-#' @export
 #' @rdname define_model
+#' @export
 define_model_ <- function(transition_matrix, states) {
   
-  stopifnot(
-    get_state_number(states) == 0 |
-      get_state_number(states) == get_matrix_order(transition_matrix),
-    identical(
-      sort(get_state_names(states)),
-      sort(get_state_names(transition_matrix))
-    )
-  )
+  if (! get_state_number(states) == get_matrix_order(transition_matrix)) {
+    stop(sprintf(
+      "Number of state in model input (%i) differ from number of state in transition matrix (%i).",
+      get_state_number(states),
+      get_matrix_order(transition_matrix)
+    ))
+  }
+  
+  if (! identical(
+    sort(get_state_names(states)),
+    sort(get_state_names(transition_matrix))
+  )) {
+    stop("State names in model input differ from transition matrix.")
+  }
   
   structure(
     list(
@@ -58,13 +64,13 @@ define_model_ <- function(transition_matrix, states) {
 #' 
 #' Works on both unevaluated and evaluated models.
 #' 
-#' For internal use.
-#' 
-#' @param x An \code{uneval_model} or \code{eval_model}
+#' @param x An \code{uneval_model} or \code{eval_model} 
 #'   object.
 #'   
-#' @return An \code{uneval_matrix} or \code{uneval_matrix}
+#' @return An \code{uneval_matrix} or \code{uneval_matrix} 
 #'   object.
+#'   
+#' @keywords internal
 get_matrix <- function(x){
   UseMethod("get_matrix")
 }

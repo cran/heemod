@@ -50,6 +50,14 @@ test_that(
     )
     expect_error(
       define_model(
+        transition_matrix = mat2,
+        s1,
+        s2,
+        s2
+      )
+    )
+    expect_error(
+      define_model(
         transition_matrix = mat1,
         X1 = s1,
         X3 = s2
@@ -88,7 +96,8 @@ test_that(
       init = c(1, 0),
       cycles = 5,
       cost = x,
-      effect = y
+      effect = y,
+      method = "beginning"
     )
     expect_output(
       str(e_mod),
@@ -109,29 +118,41 @@ Initial states:
    N
 X1 1
 X2 0
+
+Counting method: 'beginning'.
+
          x        y
 I 1592.538 1514.507",
       fixed = TRUE
     )
-    expect_output(
-      str(summary(e_mod)),
-      "List of 6
- $ res       :'data.frame':	1 obs. of  2 variables:
-  ..$ x: num 1593
-  ..$ y: num 1515",
-      fixed = TRUE
+
+    s_mod <- summary(e_mod)
+    expect_length(
+      s_mod, 6
+    )
+    expect_identical(
+      dim(s_mod$res), c(1L, 2L)
+    )
+    expect_identical(
+      round(s_mod$res$x),  1593
+    )
+    expect_identical(
+      round(s_mod$res$y), 1515
     )
     expect_output(
       print(summary(e_mod)),
-      '1 Markov model run for 5 cycles.
+      "1 Markov model run for 5 cycles.
 
 Initial states:
 
    N
 X1 1
 X2 0
+
+Counting method: 'beginning'.
+
          x        y
-I 1592.538 1514.507',
+I 1592.538 1514.507",
       fixed = TRUE
     )
     expect_error(
@@ -196,7 +217,8 @@ test_that(
       init = c(1, 0),
       cycles = 5,
       cost = x,
-      effect = y
+      effect = y,
+      method = "beginning"
     )
     expect_output(
       str(e_mod2),
@@ -217,9 +239,12 @@ Initial states:
    N
 X1 1
 X2 0
+
+Counting method: 'beginning'.
+
           x        y
-I  1170.000  615.000
-II 1592.538 1514.507
+II 1170.000  615.000
+I  1592.538 1514.507
 
 Efficiency frontier:
 
@@ -227,30 +252,39 @@ II I
 
 Model difference:
 
-       Cost   Effect      ICER
-II 422.5384 899.5074 0.4697442",
+      Cost   Effect      ICER
+I 422.5384 899.5074 0.4697442",
       fixed = TRUE
     )
-    expect_output(
-      str(summary(e_mod2)),
-      "List of 6
- $ res       :'data.frame':	2 obs. of  2 variables:
-  ..$ x: num [1:2] 1170 1593
-  ..$ y: num [1:2] 615 1515",
-      fixed = TRUE
+    s_mod2 <- summary(e_mod2)
+    expect_length(
+      s_mod2, 6
     )
+    expect_identical(
+      dim(s_mod2$res), c(2L, 2L)
+    )
+    expect_identical(
+      round(s_mod2$res$x), c(1170, 1593)
+    )
+    expect_identical(
+      round(s_mod2$res$y), c(615, 1515)
+    )
+
     expect_output(
       print(summary(e_mod2)),
-      '2 Markov models run for 5 cycles.
+      "2 Markov models run for 5 cycles.
 
 Initial states:
 
    N
 X1 1
 X2 0
+
+Counting method: 'beginning'.
+
           x        y
-I  1170.000  615.000
-II 1592.538 1514.507
+II 1170.000  615.000
+I  1592.538 1514.507
 
 Efficiency frontier:
 
@@ -258,8 +292,8 @@ II I
 
 Model difference:
 
-       Cost   Effect      ICER
-II 422.5384 899.5074 0.4697442',
+      Cost   Effect      ICER
+I 422.5384 899.5074 0.4697442",
       fixed = TRUE
     )
     expect_output(
@@ -270,7 +304,8 @@ II 422.5384 899.5074 0.4697442',
           init = c(1, 0),
           cycles = 5,
           cost = x,
-          effect = y
+          effect = y,
+          method = "beginning"
         )
       ),
       "2 Markov models run for 5 cycles.
@@ -280,9 +315,12 @@ Initial states:
    N
 X1 1
 X2 0
+
+Counting method: 'beginning'.
+
             x        y
-mod1 1170.000  615.000
-mod2 1592.538 1514.507
+mod2 1170.000  615.000
+mod1 1592.538 1514.507
 
 Efficiency frontier:
 
@@ -291,7 +329,7 @@ mod2 mod1
 Model difference:
 
          Cost   Effect      ICER
-mod2 422.5384 899.5074 0.4697442",
+mod1 422.5384 899.5074 0.4697442",
       fixed = TRUE
     )
   }

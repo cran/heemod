@@ -23,9 +23,10 @@
 #' @return An \code{eval_model} object (actually a list of 
 #'   evaluated parameters, matrix, states and cycles 
 #'   counts).
-#' 
+#'   
 #' @example inst/examples/example_eval_model.R
-#' 
+#'   
+#' @keywords internal
 eval_model <- function(model, parameters, cycles, 
                        init, method) {
   
@@ -62,22 +63,14 @@ eval_model <- function(model, parameters, cycles,
     cycles = cycles)
 }
 
-get_counts <- function(x){
-  UseMethod("get_counts")
-}
-
-get_counts.eval_model <- function(x){
-  x$counts
-}
-
 #' Compute Count of Individual in Each State per Cycle
 #' 
 #' Given an initial number of individual and an evaluated 
 #' transition matrix, returns the number of individual per 
 #' state per cycle.
 #' 
-#' Use the \code{method} argument to specify if transitions
-#' are supposed to happen at the beginning or the end of
+#' Use the \code{method} argument to specify if transitions 
+#' are supposed to happen at the beginning or the end of 
 #' each cycle. Alternatively linear interpolation between 
 #' cycles can be performed.
 #' 
@@ -88,15 +81,20 @@ get_counts.eval_model <- function(x){
 #' @param method Counting method.
 #'   
 #' @return A \code{cycle_counts} object.
-#' 
+#'   
+#' @keywords internal
 compute_counts <- function(
   transition_matrix, init,
   method
 ) {
   
-  stopifnot(
-    length(init) == get_matrix_order(transition_matrix)
-  )
+  if (! length(init) == get_matrix_order(transition_matrix)) {
+    stop(sprintf(
+      "Length of 'init' vector (%i) differs from the number of states (%i).",
+      length(init),
+      get_matrix_order(transition_matrix)
+    ))
+  }
   
   list_counts <- Reduce(
     "%*%",
@@ -145,18 +143,18 @@ compute_counts <- function(
   
 }
 
-
 #' Compute State Values per Cycle
 #' 
-#' Given states and counts, computes the total state values
+#' Given states and counts, computes the total state values 
 #' per cycle.
 #' 
 #' @param states An object of class \code{eval_state_list}.
 #' @param counts An object of class \code{cycle_counts}.
 #'   
-#' @return A data.frame of state values, one column per
+#' @return A data.frame of state values, one column per 
 #'   state value and one row per cycle.
 #'   
+#' @keywords internal
 compute_values <- function(states, counts) {
   
   states_names <- get_state_names(states)

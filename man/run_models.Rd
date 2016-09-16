@@ -7,8 +7,8 @@
 \usage{
 run_models(..., parameters = define_parameters(), init = c(1000L, rep(0L,
   get_state_number(get_states(list(...)[[1]])) - 1)), cycles = 1,
-  method = c("beginning", "end", "half-cycle", "life-table"), cost, effect,
-  base_model = NULL)
+  method = c("life-table", "beginning", "end", "half-cycle"), cost = NULL,
+  effect = NULL, base_model = NULL)
 
 run_models_(list_models, parameters, init, cycles, method, cost, effect,
   base_model)
@@ -28,13 +28,13 @@ to compute.}
 
 \item{method}{Counting method.}
 
-\item{cost}{Names or expression to compute cost on the
+\item{cost}{Names or expression to compute cost on the 
 cost-effectiveness plane.}
 
-\item{effect}{Names or expression to compute effect on
+\item{effect}{Names or expression to compute effect on 
 the cost-effectiveness plane.}
 
-\item{base_model}{Name of base model used as reference.
+\item{base_model}{Name of base model used as reference. 
 By default the model with the lowest effectiveness.}
 
 \item{list_models}{List of models, only used by 

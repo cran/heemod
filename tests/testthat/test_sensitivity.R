@@ -83,8 +83,15 @@ test_that(
       init = c(100, 0),
       cycles = 10,
       cost = cost,
-      effect = ly
+      effect = ly,
+      method = "beginning"
     )
+    res3 <- suppressWarnings(run_models(
+      mod1, mod2,
+      parameters = param,
+      init = c(100, 0),
+      cycles = 10
+    ))
     
     ds <- define_sensitivity(
       p1 = c(.1, .9),
@@ -94,19 +101,43 @@ test_that(
     x <- run_sensitivity(res2, ds)
     
     expect_output(
-      str(x),
-      '8 obs. of  7 variables:
- $ p1          : num  0.1 0.9 NA NA 0.1 0.9 NA NA
- $ p2          : num  NA NA 0.1 0.3 NA NA 0.1 0.3
- $ cost        : num  514389 451356 456666 475359 703168 ...
- $ ly          : num  871 587 611 695 871 ...
- $ .model_names: chr  "I" "I" "I" "I" ...
- $ .cost       : num  514389 451356 456666 475359 703168 ...
- $ .effect     : num  871 587 611 695 871 ...',
+      str(head(as.data.frame(x))),
+      '6 obs. of  4 variables:
+ $ .mod        :List of 6',
       fixed = TRUE
     )
     
-    plot(x, type = "diff", model = "II")
-    plot(x, type = "simple", model = 2)
-    plot(x, type = "simple", model = "I")
+    expect_error(run_sensitivity(res3, ds))
+    
+    expect_output(
+      str(summary(x)),
+      '8 obs. of  8 variables:
+ $ .model_names: chr  "I" "II" "I" "II" ...
+ $ .par_names  : chr  "p1" "p1" "p1" "p1" ...
+ $ .par_value  : num  0.1 0.1 0.9 0.9 0.1 0.1 0.3 0.3
+ $ .cost       : num  514389 703168 451356 514069 456666 ...
+ $ .effect     : num  871 871 587 587 611 ...
+ $ .dcost      : num  NA 188779 NA 62712 NA ...
+ $ .deffect    : num  NA 0 NA 0 NA 0 NA 0
+ $ .icer       : num  -Inf Inf -Inf Inf -Inf ...',
+      fixed = TRUE
+    )
+    
+    expect_output(
+      print(x),
+      "p1 = 0.1 (I)  514389.5 871.1237",
+      fixed = TRUE
+    )
+    
+    plot(x, type = "simple", result = "cost")
+    plot(x, type = "simple", result = "effect")
+    
+    expect_error(
+      plot(x, type = "difference", result = "cost")
+    )
+    
+    plot(x, type = "difference", result = "cost", model = 2)
+    plot(x, type = "difference", result = "effect", model = 2)
+    plot(x, type = "difference", result = "icer", model = 2)
   })
+

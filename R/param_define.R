@@ -45,8 +45,8 @@ define_parameters <- function(...) {
   define_parameters_(.dots)
 }
 
-#' @export
 #' @rdname define_parameters
+#' @export
 define_parameters_ <- function(.dots) {
   
   if (length(.dots)){
@@ -56,17 +56,17 @@ define_parameters_ <- function(.dots) {
             class = c("uneval_parameters", class(.dots)))
 }
 
-
 #' Return parameters names
 #' 
 #' Extract parameters names from an \code{uneval_parameters}
 #' or \code{eval_parameters} object.
 #' 
-#' @param x \code{uneval_parameters} or
+#' @param x \code{uneval_parameters} or 
 #'   \code{eval_parameters} object.
 #'   
 #' @return A character vector of parameter names.
-#' 
+#'   
+#' @keywords internal
 get_parameter_names <- function(x) {
   names(x)[names(x) != "markov_cycle"]
 }
@@ -89,6 +89,7 @@ get_parameter_names <- function(x) {
 modify <- function(.OBJECT, ...) {
   UseMethod("modify")
 }
+
 modify_ <- function(.OBJECT, .dots, ...) {
   UseMethod("modify_")
 }

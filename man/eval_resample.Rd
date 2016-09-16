@@ -12,10 +12,11 @@ eval_resample(resample, N)
 \item{N}{> 0. Number of simulation to run.}
 }
 \value{
-A \code{data.frame} of resampled values with on
-column per parameter and \code{N} rows.
+A \code{data.frame} of resampled values with on 
+  column per parameter and \code{N} rows.
 }
 \description{
 Evaluate Resampling Definition
 }
+\keyword{internal}
 

@@ -6,8 +6,9 @@
 #' Parameter variations windows are given as length 2 vector
 #' of the form \code{c(min, max)}.
 #' 
-#' @param ... A named list of min and max values that
+#' @param ... A named list of min and max values that 
 #'   parameters will take.
+#' @param .dots Used to work around non-standard evaluation.
 #'   
 #' @return A \code{sensitivity} object.
 #' @export
@@ -24,12 +25,17 @@ define_sensitivity <- function(...) {
   define_sensitivity_(.dots)
 }
 
+#' @rdname define_sensitivity
 define_sensitivity_ <- function(.dots) {
   check_names(names(.dots))
-  stopifnot(
-    all(unlist(lapply(.dots, function(x) length(x))) == 2),
-    ! any(duplicated(names(.dots)))
-  )
+  
+  if (! all(unlist(lapply(.dots, function(x) length(x))) == 2)) {
+    stop("Incorrect number of elements in sensitivity definition, the correct form is A = c(A_min, A_max)...")
+  }
+  
+  if (any(duplicated(names(.dots)))) {
+    stop("Some names are duplicated.")
+  }
   
   f <- function(x, y) {
     x <- dplyr::data_frame(x = x)

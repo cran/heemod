@@ -4,10 +4,13 @@
 \alias{compute_icer}
 \title{Compute ICER}
 \usage{
-compute_icer(x)
+compute_icer(x, model_order = order(x$.effect))
 }
 \arguments{
 \item{x}{Result of \code{\link{run_models}}.}
+
+\item{model_order}{Order in which the models should be
+sorted. Default: by increasing effect.}
 }
 \value{
 A \code{data.frame} with computed ICER.
@@ -16,6 +19,8 @@ A \code{data.frame} with computed ICER.
 Compute ICER for Markov models.
 }
 \details{
-Models are ordered by effectiveness and ICER are computed sequencially.
+Models are ordered by effectiveness and ICER are computed
+sequencially.
 }
+\keyword{internal}
 

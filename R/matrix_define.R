@@ -27,14 +27,15 @@
 #' 
 #' @param ... Name-value pairs of expressions definig matrix
 #'   cells. Can refer to parameters defined with 
-#'   \code{\link{define_parameters}}. For \code{plot},
+#'   \code{\link{define_parameters}}. For \code{plot}, 
 #'   additional arguments passed to \code{digram::plotmat}.
 #' @param state_names character vector, optional. State 
 #'   names.
 #' @param .OBJECT An object of class \code{uneval_matrix}.
 #' @param x An \code{uneval_matrix} to plot.
 #' @param relsize Argument passed to \code{\link{plotmat}}.
-#' @param shadow.size Argument passed to \code{\link{plotmat}}.
+#' @param shadow.size Argument passed to
+#'   \code{\link{plotmat}}.
 #' @param latex Argument passed to \code{\link{plotmat}}.
 #' @param .dots Used to work around non-standard evaluation.
 #'   
@@ -43,7 +44,7 @@
 #' @export
 #' 
 #' @example inst/examples/example_define_matrix.R
-#' 
+#'   
 define_matrix <- function(
   ...,
   state_names
@@ -58,7 +59,6 @@ define_matrix <- function(
   define_matrix_(.dots = .dots, state_names = state_names)
 }
 
-#' @export
 #' @rdname define_matrix
 define_matrix_ <- function(
   .dots,
@@ -67,11 +67,22 @@ define_matrix_ <- function(
   
   n <- sqrt(length(.dots))
   
-  stopifnot(
-    is.wholenumber(n),
-    length(state_names) == n,
-    length(unique(state_names)) == length(state_names)
-  )
+  if (! is.wholenumber(n)) {
+    stop(sprintf(
+      "Impossible to build a square matrix with %i elements.",
+      length(.dots)))
+  }
+  
+  if (! length(state_names) == n) {
+    stop(sprintf(
+      "Length of 'state_names' (%i) and size of matrix (%i x %i) differ.",
+      length(state_names), n, n
+    ))
+  }
+  
+  if (! length(unique(state_names)) == length(state_names)) {
+    stop("A least one state name is duplicated.")
+  }
   
   names(.dots) <- sprintf("cell_%i_%i",
                           rep(seq_len(n), each = n),
@@ -88,14 +99,16 @@ get_state_names.uneval_matrix <- function(x, ...){
 
 #' Return Markov Model Transition Matrix Order
 #' 
-#' A generic that works both with
-#' \code{uneval_matrix} and \code{eval_matrix}.
+#' A generic that works both with \code{uneval_matrix} and
+#' \code{eval_matrix}.
 #' 
 #' For internal use.
-#'
+#' 
 #' @param x A transition matrix, evaluated or not.
-#'
+#'   
 #' @return An integer: matrix order.
+#'   
+#' @keywords internal
 get_matrix_order <- function(x){
   UseMethod("get_matrix_order")
 }
@@ -121,9 +134,12 @@ modify_.uneval_matrix <- function(.OBJECT, .dots){
   # !mod!
   # modifier par rr simplment
   
-  stopifnot(
-    all(names(.dots) %in% names(.OBJECT))
-  )
+  if (! all(names(.dots) %in% names(.OBJECT))) {
+    stop(sprintf(
+      "Trying to modify undefined cells (%s).",
+      paste(names(.dots)[! names(.dots) %in% names(.OBJECT)], collapse = ", ")
+    ))
+  }
   
   modifyList(.OBJECT, .dots)
 }

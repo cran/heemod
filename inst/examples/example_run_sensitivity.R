@@ -16,7 +16,7 @@ mod1 <-
     ),
     define_state(
       cost = 432,
-      ly = 1
+      ly = .5
     )
   )
 
@@ -32,7 +32,7 @@ mod2 <-
     ),
     define_state(
       cost = 456,
-      ly = 1
+      ly = .8
     )
   )
 
@@ -54,3 +54,4 @@ print(ds)
 x <- run_sensitivity(res2, ds)
 
 plot(x, value = "cost")
+plot(x, value = "icer", type = "difference", model = 2)
