@@ -32,14 +32,14 @@ heemod:::read_file(system.file("tabular/thr/THR_options.csv", package = "heemod"
   knitr::kable(row.names = FALSE)
 
 ## ------------------------------------------------------------------------
-result <- run_models_tabular(
+result <- run_model_tabular(
   location = system.file("tabular/thr", package = "heemod")
 )
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
 result$model_runs
 plot(result$psa,
-     type = "ac")
+     type = "ce")
 plot(result$dsa,
      type = "difference",
      result = "icer",

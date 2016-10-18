@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-09-16" />
+<meta name="date" content="2016-10-17" />
 
 <title>Reproducing Exact Results from DMHEE</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Reproducing Exact Results from DMHEE</h1>
-<h4 class="date"><em>2016-09-16</em></h4>
+<h4 class="date"><em>2016-10-17</em></h4>
 
 
 <div id="TOC">
@@ -78,7 +78,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 
-<p>The purpose of this vignette is to present how to reproduce exactly the results from <a href="http://ukcatalogue.oup.com/product/9780198526629.do">Decision Modelling for Health Economic Evaluation</a>. While other vignettes such as <code>vignette(&quot;homogeneous&quot;, package = &quot;heemod&quot;)</code>, <code>vignette(&quot;non-homogeneous&quot;, package = &quot;heemod&quot;)</code> or <code>vignette(&quot;probabilistic&quot;, package = &quot;heemod&quot;)</code> are greatly inspired from this book, key elements differ (mostly for the sake of clarity) and thus results differ, sometimes significantly, from the book. Here we show how to exactly reproduce the results with the <code>heemod</code> package.</p>
+<p>The purpose of this vignette is to present how to reproduce exactly the results from <a href="http://ukcatalogue.oup.com/product/9780198526629.do">Decision Modelling for Health Economic Evaluation</a>. While other vignettes such as <code>vignette(&quot;c-homogeneous&quot;, &quot;heemod&quot;)</code>, <code>vignette(&quot;d-non-homogeneous&quot;, &quot;heemod&quot;)</code> or <code>vignette(&quot;e-probabilistic&quot;, &quot;heemod&quot;)</code> are greatly inspired from this book, key elements differ (mostly for the sake of clarity) and thus results differ, sometimes significantly, from the book. Here we show how to exactly reproduce the results with the <code>heemod</code> package.</p>
 <div id="hiv-model" class="section level1">
 <h1>HIV model</h1>
 <p>Key differences in DMHEE:</p>
@@ -97,14 +97,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <span class="dt">cost_zido =</span> <span class="dv">2278</span>
 )
 
-mat_mono &lt;-<span class="st"> </span><span class="kw">define_matrix</span>(
+mat_mono &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
   <span class="dv">1251</span>/<span class="dv">1734</span>, <span class="dv">350</span>/<span class="dv">1734</span>, <span class="dv">116</span>/<span class="dv">1734</span>,  <span class="dv">17</span>/<span class="dv">1734</span>,
   <span class="dv">0</span>,         <span class="dv">731</span>/<span class="dv">1258</span>, <span class="dv">512</span>/<span class="dv">1258</span>,  <span class="dv">15</span>/<span class="dv">1258</span>,
   <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">1312</span>/<span class="dv">1749</span>, <span class="dv">437</span>/<span class="dv">1749</span>,
   <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">0</span>,         <span class="fl">1.00</span>
 )</code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mat_comb &lt;-<span class="st"> </span><span class="kw">define_matrix</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mat_comb &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
   C, <span class="dv">350</span>/<span class="dv">1734</span>*rr, <span class="dv">116</span>/<span class="dv">1734</span>*rr, <span class="dv">17</span>/<span class="dv">1734</span>*rr,
   <span class="dv">0</span>, C,           <span class="dv">512</span>/<span class="dv">1258</span>*rr, <span class="dv">15</span>/<span class="dv">1258</span>*rr,
   <span class="dv">0</span>, <span class="dv">0</span>,           C,           <span class="dv">437</span>/<span class="dv">1749</span>*rr,
@@ -169,7 +169,7 @@ D_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">life_year =</span> <span class="dv">0</span>
 )
 
-mod_mono &lt;-<span class="st"> </span><span class="kw">define_model</span>(
+mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   <span class="dt">transition_matrix =</span> mat_mono,
   A_mono,
   B_mono,
@@ -177,7 +177,7 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_model</span>(
   D_mono
 )</code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_comb &lt;-<span class="st"> </span><span class="kw">define_model</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_comb &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   <span class="dt">transition_matrix =</span> mat_comb,
   A_comb,
   B_comb,
@@ -185,7 +185,7 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_model</span>(
   D_comb
 )</code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_mod &lt;-<span class="st"> </span><span class="kw">run_models</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
   <span class="dt">mono =</span> mod_mono,
   <span class="dt">comb =</span> mod_comb,
   <span class="dt">parameters =</span> par_mod,
@@ -196,9 +196,9 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_model</span>(
   <span class="dt">init =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)
 )
 <span class="kw">summary</span>(res_mod)</code></pre></div>
-<pre><code>## 2 Markov models run for 20 cycles.
+<pre><code>## 2 strategies run for 20 cycles.
 ## 
-## Initial states:
+## Initial state counts:
 ## 
 ##   N
 ## A 1
@@ -214,7 +214,7 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_model</span>(
 ## 
 ## Efficiency frontier:
 ## 
-## mono comb
+## mono -&gt; comb
 ## 
 ## Model difference:
 ## 
@@ -293,7 +293,7 @@ death_prob</code></pre></div>
     <span class="dt">c_revisionTHR =</span> <span class="dv">5294</span>
 )
 
-mat_standard &lt;-<span class="st"> </span><span class="kw">define_matrix</span>(
+mat_standard &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
     <span class="dt">state_names =</span> <span class="kw">c</span>(
       <span class="st">&quot;PrimaryTHR&quot;</span>,
       <span class="st">&quot;SuccessP&quot;</span>,
@@ -308,7 +308,7 @@ mat_standard &lt;-<span class="st"> </span><span class="kw">define_matrix</span>
     <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          <span class="dv">0</span>, <span class="dv">1</span>
 )
 
-mat_np1 &lt;-<span class="st"> </span><span class="kw">define_matrix</span>(
+mat_np1 &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
     <span class="dt">state_names =</span> <span class="kw">c</span>(
       <span class="st">&quot;PrimaryTHR&quot;</span>,
       <span class="st">&quot;SuccessP&quot;</span>,
@@ -323,7 +323,7 @@ mat_np1 &lt;-<span class="st"> </span><span class="kw">define_matrix</span>(
     <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     <span class="dv">0</span>, <span class="dv">1</span>
 )
 
-mod_standard &lt;-<span class="st"> </span><span class="kw">define_model</span>(
+mod_standard &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   <span class="dt">transition_matrix =</span> mat_standard,
   <span class="dt">PrimaryTHR =</span> <span class="kw">define_state</span>(
     <span class="dt">utility =</span> <span class="dv">0</span>,
@@ -347,7 +347,7 @@ mod_standard &lt;-<span class="st"> </span><span class="kw">define_model</span>(
   )
 )
 
-mod_np1 &lt;-<span class="st"> </span><span class="kw">define_model</span>(
+mod_np1 &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   <span class="dt">transition_matrix =</span> mat_np1,
   <span class="dt">PrimaryTHR =</span> <span class="kw">define_state</span>(
     <span class="dt">utility =</span> <span class="dv">0</span>,
@@ -371,7 +371,7 @@ mod_np1 &lt;-<span class="st"> </span><span class="kw">define_model</span>(
   )
 )
 
-res_mod &lt;-<span class="st"> </span><span class="kw">run_models</span>(
+res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
   <span class="dt">standard =</span> mod_standard,
   <span class="dt">np1 =</span> mod_np1,
   <span class="dt">parameters =</span> param,
@@ -382,9 +382,9 @@ res_mod &lt;-<span class="st"> </span><span class="kw">run_models</span>(
   <span class="dt">init =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)
 )
 <span class="kw">summary</span>(res_mod)</code></pre></div>
-<pre><code>## 2 Markov models run for 60 cycles.
+<pre><code>## 2 strategies run for 60 cycles.
 ## 
-## Initial states:
+## Initial state counts:
 ## 
 ##             N
 ## PrimaryTHR  1
@@ -401,7 +401,7 @@ res_mod &lt;-<span class="st"> </span><span class="kw">run_models</span>(
 ## 
 ## Efficiency frontier:
 ## 
-## standard np1
+## standard -&gt; np1
 ## 
 ## Model difference:
 ## 

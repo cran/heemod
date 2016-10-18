@@ -2,7 +2,7 @@
 library(heemod)
 
 ## ------------------------------------------------------------------------
-mat_trans <- define_matrix(
+mat_trans <- define_transition(
   .9, .1,
   .2, .8
 )
@@ -22,16 +22,16 @@ state_B <- define_state(
 state_B
 
 ## ------------------------------------------------------------------------
-mod_1 <- define_model(
+strat_1 <- define_strategy(
   transition_matrix = mat_trans,
   state_A,
   state_B
 )
-mod_1
+strat_1
 
 ## ------------------------------------------------------------------------
-res_mod_1 <- run_models(
-  mod_1,
+res_mod_1 <- run_model(
+  strat_1,
   cycles = 10,
   cost = cost,
   effect = utility
@@ -55,6 +55,7 @@ plot(res_mod_1) +
 
 ## ------------------------------------------------------------------------
 get_counts(res_mod_1)
+get_values(res_mod_1)
 
 ## ------------------------------------------------------------------------
 rate_to_prob(r = 162, per = 1000, to = 5)

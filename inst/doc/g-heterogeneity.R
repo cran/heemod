@@ -42,7 +42,7 @@ param <- define_parameters(
     c_RevisionTHR = 5294
 )
 
-mat_standard <- define_matrix(
+mat_standard <- define_transition(
     state_names = c(
       "PrimaryTHR",
       "SuccessP",
@@ -57,7 +57,7 @@ mat_standard <- define_matrix(
     0, 0, 0,          0, 1
 )
 
-mat_np1 <- define_matrix(
+mat_np1 <- define_transition(
     state_names = c(
       "PrimaryTHR",
       "SuccessP",
@@ -72,7 +72,7 @@ mat_np1 <- define_matrix(
     0, 0, 0,          0, 1
 )
 
-mod_standard <- define_model(
+mod_standard <- define_strategy(
   transition_matrix = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
@@ -96,7 +96,7 @@ mod_standard <- define_model(
   )
 )
 
-mod_np1 <- define_model(
+mod_np1 <- define_strategy(
   transition_matrix = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
@@ -120,7 +120,7 @@ mod_np1 <- define_model(
   )
 )
 
-res_mod <- run_models(
+res_mod <- run_model(
   standard = mod_standard,
   np1 = mod_np1,
   parameters = param,
@@ -133,11 +133,11 @@ res_mod <- run_models(
 ## ----include = FALSE-----------------------------------------------------
 N <- 100
 
-tab_indiv <- dplyr::data_frame(
+tab_indiv <- tibble::tibble(
   age = round(rnorm(N, mean = 60, sd = 10)),
   sex = sample(0:1, N, TRUE)
 )
-tab_indiv_w <- dplyr::data_frame(
+tab_indiv_w <- tibble::tibble(
   age = round(rnorm(N, mean = 60, sd = 10)),
   sex = sample(0:1, N, TRUE),
   .weights = runif(N)
