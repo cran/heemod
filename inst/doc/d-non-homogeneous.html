@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-10-28" />
+<meta name="date" content="2016-11-11" />
 
 <title>Time-varying Markov Models (Non-Homogeneous)</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Time-varying Markov Models (Non-Homogeneous)</h1>
-<h4 class="date"><em>2016-10-28</em></h4>
+<h4 class="date"><em>2016-11-11</em></h4>
 
 
 <div id="TOC">
@@ -274,8 +274,11 @@ mat_np1</code></pre></div>
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">0</span>
   )
-)
-strat_standard</code></pre></div>
+)</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_standard, PrimaryTHR =
+## define_state(utility = 0, : Argument 'transition_matrix' is deprecated, use
+## 'transition' instead.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">strat_standard</code></pre></div>
 <pre><code>## A Markov model strategy:
 ## 
 ##     5 states,
@@ -302,8 +305,11 @@ strat_standard</code></pre></div>
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">0</span>
   )
-)
-strat_np1</code></pre></div>
+)</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_np1, PrimaryTHR =
+## define_state(utility = 0, : Argument 'transition_matrix' is deprecated, use
+## 'transition' instead.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">strat_np1</code></pre></div>
 <pre><code>## A Markov model strategy:
 ## 
 ##     5 states,
@@ -347,10 +353,10 @@ strat_np1</code></pre></div>
 ## 
 ## standard -&gt; np1
 ## 
-## Model difference:
+## Differences:
 ## 
-##         Cost     Effect     ICER
-## np1 88.32658 0.05177584 1705.942</code></pre>
+##     Cost Diff. Effect Diff.     ICER     Ref.
+## np1   88.32658   0.05177584 1705.942 standard</code></pre>
 <p>The new treatment costs £1706 more per QALY gained.</p>
 <p>It should be noted that this result differs from the original study. This difference is explained by higher population-level all-causes mortality rates in the original study than in the WHO database (used here). See vignette <code>vignette(&quot;i-reproduction&quot;, &quot;heemod&quot;)</code> for an exact reproduction of the analysis.</p>
 <p>We can plot the counts per state:</p>

@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-10-28" />
+<meta name="date" content="2016-11-11" />
 
 <title>Reproducing Exact Results from DMHEE</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Reproducing Exact Results from DMHEE</h1>
-<h4 class="date"><em>2016-10-28</em></h4>
+<h4 class="date"><em>2016-11-11</em></h4>
 
 
 <div id="TOC">
@@ -176,6 +176,8 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   C_mono,
   D_mono
 )</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_mono, A_mono, B_mono, :
+## Argument 'transition_matrix' is deprecated, use 'transition' instead.</code></pre>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_comb &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   <span class="dt">transition_matrix =</span> mat_comb,
@@ -184,6 +186,8 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   C_comb,
   D_comb
 )</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_comb, A_comb, B_comb, :
+## Argument 'transition_matrix' is deprecated, use 'transition' instead.</code></pre>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
   <span class="dt">mono =</span> mod_mono,
@@ -216,10 +220,10 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
 ## 
 ## mono -&gt; comb
 ## 
-## Model difference:
+## Differences:
 ## 
-##          Cost    Effect     ICER
-## comb 5938.198 0.9461822 6275.956</code></pre>
+##      Cost Diff. Effect Diff.     ICER Ref.
+## comb   5938.198    0.9461822 6275.956 mono</code></pre>
 </div>
 <div id="thr-model" class="section level1">
 <h1>THR model</h1>
@@ -345,9 +349,11 @@ mod_standard &lt;-<span class="st"> </span><span class="kw">define_strategy</spa
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">0</span>
   )
-)
-
-mod_np1 &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
+)</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_standard, PrimaryTHR =
+## define_state(utility = 0, : Argument 'transition_matrix' is deprecated, use
+## 'transition' instead.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_np1 &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
   <span class="dt">transition_matrix =</span> mat_np1,
   <span class="dt">PrimaryTHR =</span> <span class="kw">define_state</span>(
     <span class="dt">utility =</span> <span class="dv">0</span>,
@@ -369,9 +375,11 @@ mod_np1 &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">0</span>
   )
-)
-
-res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
+)</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_np1, PrimaryTHR =
+## define_state(utility = 0, : Argument 'transition_matrix' is deprecated, use
+## 'transition' instead.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
   <span class="dt">standard =</span> mod_standard,
   <span class="dt">np1 =</span> mod_np1,
   <span class="dt">parameters =</span> param,
@@ -403,10 +411,10 @@ res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
 ## 
 ## standard -&gt; np1
 ## 
-## Model difference:
+## Differences:
 ## 
-##        Cost     Effect     ICER
-## np1 97.8678 0.04451644 2198.464</code></pre>
+##     Cost Diff. Effect Diff.     ICER     Ref.
+## np1    97.8678   0.04451644 2198.464 standard</code></pre>
 </div>
 
 

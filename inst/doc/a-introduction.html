@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-10-28" />
+<meta name="date" content="2016-11-11" />
 
 <title>An Introduction to heemod</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">An Introduction to <code>heemod</code></h1>
-<h4 class="date"><em>2016-10-28</em></h4>
+<h4 class="date"><em>2016-11-11</em></h4>
 
 
 <div id="TOC">
@@ -82,6 +82,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#external-data">External data</a></li>
 <li><a href="#compare-strategies">Compare strategies</a></li>
 <li><a href="#time-variability">Time-variability</a></li>
+<li><a href="#transition-costs">Transition costs</a></li>
+<li><a href="#parallel-computing">Parallel computing</a></li>
 <li><a href="#going-further">Going further</a></li>
 </ul>
 </div>
@@ -190,6 +192,9 @@ state_B</code></pre></div>
   state_A,
   state_B
 )</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_trans, state_A,
+## state_B): Argument 'transition_matrix' is deprecated, use 'transition'
+## instead.</code></pre>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">strat_1</code></pre></div>
 <pre><code>## A Markov model strategy:
@@ -285,6 +290,21 @@ state_B</code></pre></div>
 <div id="time-variability" class="section level2">
 <h2>Time-variability</h2>
 <p>Time varying transition probabilities and state values are available through the <code>markov_cycle</code> and <code>state_cycle</code> variables. Time-varying probabilities and values are explained in <code>vignette(&quot;b-time-dependency&quot;, &quot;heemod&quot;)</code>.</p>
+</div>
+<div id="transition-costs" class="section level2">
+<h2>Transition costs</h2>
+<p>Transition costs between states can be defined by adding an additional state called a transition state. This is a special case of a tunnel state. A situation where the transtion from <code>A</code> to <code>B</code> (noted <code>A-&gt;B</code>) costs $100 and reduces utility by 0.1 points compared to the usual values of <code>B</code> can be modelled by adding a state <code>B_trans</code>.</p>
+<p>The cost and utility of <code>B_trans</code> are the same as those of <code>B</code> +$100 and -0.1 QALY respectively. <code>A-&gt;B_trans</code> is equal to the former value of <code>A-&gt;B</code>. <code>A-&gt;B</code> is set to 0 (all transitions from <code>A</code> to <code>B</code> must pass through <code>B_trans</code> from now on). The probability to stay in <code>B_trans</code> is 0, <code>B_trans-&gt;B</code> is equal to <code>B-&gt;B</code> and similarly all <code>B_trans-&gt;*</code> are equal to <code>B-&gt;*</code>.</p>
+</div>
+<div id="parallel-computing" class="section level2">
+<h2>Parallel computing</h2>
+<p>Some operation such as PSA can be significantly sped up using parallel computing. This can be done in the following way:</p>
+<ul>
+<li>Define a cluster with the <code>use_cluster()</code> functions (i.e. <code>use_cluster(4)</code> to use 4 cores).</li>
+<li>Run the analysis as usual.</li>
+<li>To stop using parallel computing use the <code>close_cluster()</code> function.</li>
+</ul>
+<p>Results may vary depending on the machine, but we found speed gains to be quite limited beyond 4 cores.</p>
 </div>
 <div id="going-further" class="section level2">
 <h2>Going further</h2>

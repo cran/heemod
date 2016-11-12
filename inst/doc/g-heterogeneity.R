@@ -33,7 +33,8 @@ param <- define_parameters(
     
     # age-related mortality rate
     sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
-    mr = get_who_mr(age, sex_cat, country = "GBR"),
+    mr = get_who_mr(age, sex_cat,
+                    country = "GBR", local = TRUE),
     
     # state values
     u_SuccessP = .85,

@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-10-28" />
+<meta name="date" content="2016-11-11" />
 
 <title>Simple Markov Models (Homogeneous)</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Simple Markov Models (Homogeneous)</h1>
-<h4 class="date"><em>2016-10-28</em></h4>
+<h4 class="date"><em>2016-11-11</em></h4>
 
 
 <div id="TOC">
@@ -218,6 +218,8 @@ D_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   C_mono,
   D_mono
 )</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_mono, A_mono, B_mono, :
+## Argument 'transition_matrix' is deprecated, use 'transition' instead.</code></pre>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_mono</code></pre></div>
 <pre><code>## A Markov model strategy:
@@ -232,6 +234,8 @@ D_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   C_comb,
   D_comb
 )</code></pre></div>
+<pre><code>## Warning in define_strategy(transition_matrix = mat_comb, A_comb, B_comb, :
+## Argument 'transition_matrix' is deprecated, use 'transition' instead.</code></pre>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 </div>
 <div id="running-the-model" class="section level2">
@@ -270,10 +274,10 @@ D_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
 ## 
 ## mono -&gt; comb
 ## 
-## Model difference:
+## Differences:
 ## 
-##          Cost   Effect    ICER
-## comb 44222.75 8.671094 5100.02</code></pre>
+##      Cost Diff. Effect Diff.    ICER Ref.
+## comb   44222.75     8.671094 5100.02 mono</code></pre>
 <p>The incremental cost-effectiveness ratio of the combiend therapy strategy is thus £5,100 per life-year gained.</p>
 <p>The counts per state can be plotted by model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(res_mod, <span class="dt">type =</span> <span class="st">&quot;counts&quot;</span>, <span class="dt">panel =</span> <span class="st">&quot;by_model&quot;</span>) +
