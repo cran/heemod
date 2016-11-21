@@ -103,7 +103,7 @@ D_comb <- define_state(
 
 ## ------------------------------------------------------------------------
 strat_mono <- define_strategy(
-  transition_matrix = mat_trans_mono,
+  transition = mat_trans_mono,
   A_mono,
   B_mono,
   C_mono,
@@ -111,7 +111,7 @@ strat_mono <- define_strategy(
 )
 
 strat_comb <- define_strategy(
-  transition_matrix = mat_trans_comb,
+  transition = mat_trans_comb,
   A_comb,
   B_comb,
   C_comb,
@@ -148,13 +148,17 @@ pm <- run_psa(
 )
 
 ## ------------------------------------------------------------------------
-pm
+summary(pm, 
+        threshold = c(1000, 5000, 6000, 1e4))
 
 ## ---- fig.width = 6, fig.height=4, fig.align='center'--------------------
 plot(pm, type = "ce")
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
-plot(pm, type = "ac", values = seq(0, 25e3, 1e3))
+plot(pm, type = "ac", max_wtp = 10000, log_scale = FALSE)
+
+## ---- fig.width = 6, fig.height = 4, fig.align='center'------------------
+plot(pm, type = "cov")
 
 ## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE-------
 library(ggplot2)

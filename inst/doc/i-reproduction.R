@@ -81,14 +81,14 @@ D_comb <- define_state(
 )
 
 mod_mono <- define_strategy(
-  transition_matrix = mat_mono,
+  transition = mat_mono,
   A_mono,
   B_mono,
   C_mono,
   D_mono
 )
 mod_comb <- define_strategy(
-  transition_matrix = mat_comb,
+  transition = mat_comb,
   A_comb,
   B_comb,
   C_comb,
@@ -191,7 +191,7 @@ mat_np1 <- define_transition(
 )
 
 mod_standard <- define_strategy(
-  transition_matrix = mat_standard,
+  transition = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 394
@@ -215,7 +215,7 @@ mod_standard <- define_strategy(
 )
 
 mod_np1 <- define_strategy(
-  transition_matrix = mat_np1,
+  transition = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 579

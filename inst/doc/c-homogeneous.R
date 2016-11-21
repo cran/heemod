@@ -3,8 +3,7 @@ library(heemod)
 library(ggplot2)
 
 ## ------------------------------------------------------------------------
-mat_mono <-
-  define_transition(
+mat_mono <- define_transition(
     .721, .202, .067, .010,
     0,    .581, .407, .012,
     0,    0,    .750, .250,
@@ -15,8 +14,7 @@ mat_mono
 ## ------------------------------------------------------------------------
 rr <- .509
 
-mat_comb <-
-  define_transition(
+mat_comb <- define_transition(
     C, .202*rr, .067*rr, .010*rr,
     0, C,       .407*rr, .012*rr,
     0, 0,       C,       .250*rr,
@@ -90,18 +88,18 @@ D_comb <- define_state(
   )
 
 ## ------------------------------------------------------------------------
-mod_mono <- define_strategy(
-  transition_matrix = mat_mono,
+strat_mono <- define_strategy(
+  transition = mat_mono,
   A_mono,
   B_mono,
   C_mono,
   D_mono
 )
-mod_mono
+strat_mono
 
 ## ------------------------------------------------------------------------
-mod_comb <- define_strategy(
-  transition_matrix = mat_comb,
+strat_comb <- define_strategy(
+  transition = mat_comb,
   A_comb,
   B_comb,
   C_comb,
@@ -110,31 +108,42 @@ mod_comb <- define_strategy(
 
 ## ------------------------------------------------------------------------
 res_mod <- run_model(
-  mono = mod_mono,
-  comb = mod_comb,
+  mono = strat_mono,
+  comb = strat_comb,
   cycles = 50,
   cost = cost_total,
   effect = life_year
 )
 
 ## ------------------------------------------------------------------------
-summary(res_mod)
+summary(res_mod,
+        threshold = c(1000, 5000, 6000, 1e4))
 
-## ---- fig.align='center', fig.width=6, message=FALSE---------------------
-plot(res_mod, type = "counts", panel = "by_model") +
+## ---- fig.align='center', fig.width=6, fig.height=6, message=FALSE-------
+plot(res_mod, type = "counts", panel = "by_strategy") +
   xlab("Time") +
-  theme_minimal() +
+  theme_bw() +
   scale_color_brewer(
     name = "State",
     palette = "Set1"
   )
 
-## ---- fig.align='center', fig.width=6, message=FALSE---------------------
+## ---- fig.align='center', fig.width=6, fig.height=8, message=FALSE-------
 plot(res_mod, type = "counts", panel = "by_state") +
   xlab("Time") +
-  theme_minimal() +
+  theme_bw() +
   scale_color_brewer(
-    name = "Model",
+    name = "Strategy",
+    palette = "Set1"
+  )
+
+## ---- fig.align='center', fig.width=6, fig.height=8, message=FALSE-------
+plot(res_mod, type = "values", panel = "by_value",
+     free_y = TRUE) +
+  xlab("Time") +
+  theme_bw() +
+  scale_color_brewer(
+    name = "Strategy",
     palette = "Set1"
   )
 

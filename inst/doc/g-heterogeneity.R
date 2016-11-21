@@ -74,7 +74,7 @@ mat_np1 <- define_transition(
 )
 
 mod_standard <- define_strategy(
-  transition_matrix = mat_standard,
+  transition = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 394
@@ -98,7 +98,7 @@ mod_standard <- define_strategy(
 )
 
 mod_np1 <- define_strategy(
-  transition_matrix = mat_np1,
+  transition = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 579
@@ -158,12 +158,19 @@ res_h <- update(res_mod, newdata = tab_indiv)
 summary(res_h)
 
 ## ---- fig.align='center', fig.height=4, fig.width=6----------------------
-plot(res_h, type = "icer", model = "np1", binwidth = 500)
-plot(res_h, type = "effect", model = "np1", binwidth = 50)
-plot(res_h, type = "cost", model = "np1", binwidth = 25000)
+plot(res_h, result = "effect", binwidth = 5)
+plot(res_h, result = "cost", binwidth = 50)
 
 ## ---- fig.align='center', fig.height=4, fig.width=6----------------------
-plot(res_h, type = "counts", model = "np1")
+plot(res_h, result = "icer", type = "difference",
+     binwidth = 500)
+plot(res_h, result = "effect", type = "difference",
+     binwidth = .1)
+plot(res_h, result = "cost", type = "difference",
+     binwidth = 30)
+
+## ---- fig.align='center', fig.height=4, fig.width=6----------------------
+plot(res_h, type = "counts")
 
 ## ------------------------------------------------------------------------
 tab_indiv_w

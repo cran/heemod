@@ -41,8 +41,7 @@ result$model_runs
 plot(result$psa,
      type = "ce")
 plot(result$dsa,
-     type = "difference",
-     result = "icer",
-     model = "new")
+     result = "cost",
+     strategy = "new")
 result$demographics
 

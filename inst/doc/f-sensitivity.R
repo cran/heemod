@@ -99,7 +99,7 @@ D_comb <- define_state(
 )
 
 mod_mono <- define_strategy(
-  transition_matrix = mat_trans_mono,
+  transition = mat_trans_mono,
   A_mono,
   B_mono,
   C_mono,
@@ -107,7 +107,7 @@ mod_mono <- define_strategy(
 )
 
 mod_comb <- define_strategy(
-  transition_matrix = mat_trans_comb,
+  transition = mat_trans_comb,
   A_comb,
   B_comb,
   C_comb,
@@ -134,39 +134,39 @@ se <- define_dsa(
 )
 
 ## ------------------------------------------------------------------------
-res <- run_dsa(
+res_dsa <- run_dsa(
   model = res_mod,
-  sensitivity = se
+  dsa = se
 )
 
 ## ------------------------------------------------------------------------
-res
+res_dsa
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
-plot(res,
-     model = "mono",
+plot(res_dsa,
+     strategy = "mono",
      result = "cost",
      type = "simple")
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
-plot(res,
-     model = "comb",
+plot(res_dsa,
+     strategy = "comb",
      result = "cost",
      type = "simple")
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
-plot(res, 
-     model = "comb",
+plot(res_dsa, 
+     strategy = "comb",
      result = "effect",
      type = "simple")
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
-plot(res,
-     model = "comb",
+plot(res_dsa,
+     strategy = "comb",
      result = "cost",
      type = "difference")
-plot(res,
-     model = "comb",
+plot(res_dsa,
+     strategy = "comb",
      result = "icer",
      type = "difference")
 

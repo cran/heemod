@@ -1,5 +1,6 @@
 ## ---- echo=FALSE, include=FALSE------------------------------------------
 library(heemod)
+library(ggplot2)
 
 ## ------------------------------------------------------------------------
 param <- define_parameters(
@@ -81,7 +82,7 @@ plot(mat_standard)
 
 ## ------------------------------------------------------------------------
 strat_standard <- define_strategy(
-  transition_matrix = mat_standard,
+  transition = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 394
@@ -106,7 +107,7 @@ strat_standard <- define_strategy(
 strat_standard
 
 strat_np1 <- define_strategy(
-  transition_matrix = mat_np1,
+  transition = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
     cost = 579
@@ -133,7 +134,7 @@ strat_np1
 ## ------------------------------------------------------------------------
 res_mod <- run_model(
   standard = strat_standard,
-  np1 =      strat_np1,
+  np1      = strat_np1,
   parameters = param,
   cycles = 60,
   cost = cost,
@@ -145,5 +146,10 @@ res_mod <- run_model(
 summary(res_mod)
 
 ## ---- fig.width = 6, fig.height=6, fig.align='center'--------------------
-plot(res_mod, type = "counts", panel = "by_state")
+plot(res_mod, type = "counts", panel = "by_state", free_y = TRUE) +
+  theme_bw() +
+  scale_color_brewer(
+    name = "Strategy",
+    palette = "Set1"
+  )
 

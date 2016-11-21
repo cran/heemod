@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-11-11" />
+<meta name="date" content="2016-11-21" />
 
 <title>Reproducing Exact Results from DMHEE</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Reproducing Exact Results from DMHEE</h1>
-<h4 class="date"><em>2016-11-11</em></h4>
+<h4 class="date"><em>2016-11-21</em></h4>
 
 
 <div id="TOC">
@@ -170,24 +170,20 @@ D_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
 )
 
 mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
-  <span class="dt">transition_matrix =</span> mat_mono,
+  <span class="dt">transition =</span> mat_mono,
   A_mono,
   B_mono,
   C_mono,
   D_mono
 )</code></pre></div>
-<pre><code>## Warning in define_strategy(transition_matrix = mat_mono, A_mono, B_mono, :
-## Argument 'transition_matrix' is deprecated, use 'transition' instead.</code></pre>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_comb &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
-  <span class="dt">transition_matrix =</span> mat_comb,
+  <span class="dt">transition =</span> mat_comb,
   A_comb,
   B_comb,
   C_comb,
   D_comb
 )</code></pre></div>
-<pre><code>## Warning in define_strategy(transition_matrix = mat_comb, A_comb, B_comb, :
-## Argument 'transition_matrix' is deprecated, use 'transition' instead.</code></pre>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
   <span class="dt">mono =</span> mod_mono,
@@ -211,6 +207,8 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
 ## D 0
 ## 
 ## Counting method: 'beginning'.
+## 
+## Values:
 ## 
 ##      cost_health cost_drugs cost_total life_year
 ## mono    45541.24   18203.97   44663.45  7.991207
@@ -328,7 +326,7 @@ mat_np1 &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
 )
 
 mod_standard &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
-  <span class="dt">transition_matrix =</span> mat_standard,
+  <span class="dt">transition =</span> mat_standard,
   <span class="dt">PrimaryTHR =</span> <span class="kw">define_state</span>(
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">394</span>
@@ -349,12 +347,10 @@ mod_standard &lt;-<span class="st"> </span><span class="kw">define_strategy</spa
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">0</span>
   )
-)</code></pre></div>
-<pre><code>## Warning in define_strategy(transition_matrix = mat_standard, PrimaryTHR =
-## define_state(utility = 0, : Argument 'transition_matrix' is deprecated, use
-## 'transition' instead.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_np1 &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
-  <span class="dt">transition_matrix =</span> mat_np1,
+)
+
+mod_np1 &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
+  <span class="dt">transition =</span> mat_np1,
   <span class="dt">PrimaryTHR =</span> <span class="kw">define_state</span>(
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">579</span>
@@ -375,11 +371,9 @@ mod_standard &lt;-<span class="st"> </span><span class="kw">define_strategy</spa
     <span class="dt">utility =</span> <span class="dv">0</span>,
     <span class="dt">cost =</span> <span class="dv">0</span>
   )
-)</code></pre></div>
-<pre><code>## Warning in define_strategy(transition_matrix = mat_np1, PrimaryTHR =
-## define_state(utility = 0, : Argument 'transition_matrix' is deprecated, use
-## 'transition' instead.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
+)
+
+res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
   <span class="dt">standard =</span> mod_standard,
   <span class="dt">np1 =</span> mod_np1,
   <span class="dt">parameters =</span> param,
@@ -402,6 +396,8 @@ mod_standard &lt;-<span class="st"> </span><span class="kw">define_strategy</spa
 ## Death       0
 ## 
 ## Counting method: 'end'.
+## 
+## Values:
 ## 
 ##           utility     cost
 ## standard 14.65282 512.4474
