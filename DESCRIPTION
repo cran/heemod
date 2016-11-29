@@ -1,6 +1,6 @@
 Package: heemod
 Title: Models for Health Economic Evaluation
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: c(
     person("Antoine", "Filipovic-Pierucci", email = "pierucci@gmail.com", role = c("aut", "cre")),
     person("Kevin", "Zarca", email = "kevin.zarca@urc-eco.fr", role = "aut"),
@@ -24,7 +24,7 @@ Suggests: knitr, parallel, formatR, mgcv, readxl, rmarkdown, testthat
 URL: https://github.com/pierucci/heemod, https://pierucci.org
 BugReports: https://github.com/pierucci/heemod/issues
 NeedsCompilation: no
-Packaged: 2016-11-21 14:57:00 UTC; antoine
+Packaged: 2016-11-23 15:38:37 UTC; antoine
 Author: Antoine Filipovic-Pierucci [aut, cre],
   Kevin Zarca [aut],
   Matthew Wiener [ctb],
@@ -32,4 +32,4 @@ Author: Antoine Filipovic-Pierucci [aut, cre],
   Vojtech Filipec [ctb]
 Maintainer: Antoine Filipovic-Pierucci <pierucci@gmail.com>
 Repository: CRAN
-Date/Publication: 2016-11-21 16:50:57
+Date/Publication: 2016-11-29 12:43:51
