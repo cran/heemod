@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2016-11-23" />
+<meta name="date" content="2017-02-10" />
 
 <title>Deterministic Sensitivity Analysis</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Deterministic Sensitivity Analysis</h1>
-<h4 class="date"><em>2016-11-23</em></h4>
+<h4 class="date"><em>2017-02-10</em></h4>
 
 
 <div id="TOC">
@@ -107,6 +107,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <span class="dt">model =</span> res_mod,
   <span class="dt">dsa =</span> se
 )</code></pre></div>
+<pre><code>## Running DSA on strategy 'mono'...</code></pre>
+<pre><code>## Running DSA on strategy 'comb'...</code></pre>
 </div>
 <div id="interpretation" class="section level2">
 <h2>Interpretation</h2>
@@ -122,40 +124,57 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 
 ## Sensitivity analysis:
 ## 
-##                       cost_health cost_drugs cost_total life_year Cost    
-## mono cost_lami = 1500 46725886    19279596   48417031    8463.387     0.00
-## comb cost_lami = 1500 71019861    53642502   79593035   14198.651 31176.00
-## mono cost_lami = 3000 46725886    19279596   48417031    8463.387     0.00
-## comb cost_lami = 3000 71019861    74940478   93812382   14198.651 45395.35
-## mono cost_zido = 1500 46725886    12695081   43363208    8463.387     0.00
-## comb cost_zido = 1500 71019861    50916361   77772959   14198.651 34409.75
-## mono cost_zido = 3000 46725886    25390162   53107083    8463.387     0.00
-## comb cost_zido = 3000 71019861    72214337   91992306   14198.651 38885.22
-## mono dr = 0.04        46725886    19279596   53238469    8463.387     0.00
-## comb dr = 0.04        71019861    61962911   97480846   14198.651 44242.38
-## mono dr = 0.08        46725886    19279596   44351921    8463.387     0.00
-## comb dr = 0.08        71019861    61962911   75259528   14198.651 30907.61
-## mono rr = 0.4         46725886    19279596   48417031    8463.387     0.00
-## comb rr = 0.4         74749377    69178956   89573275   15852.190 41156.24
-## mono rr = 0.6         46725886    19279596   48417031    8463.387     0.00
-## comb rr = 0.6         66652719    56216918   80800674   12881.970 32383.64
-##                       Effect   ICER     Cost Diff. Effect Diff. Ref.
-## mono cost_lami = 1500 0.000000 -        -          -            -   
-## comb cost_lami = 1500 5.735263 5435.845 31176.00   5.735263     mono
-## mono cost_lami = 3000 0.000000 -        -          -            -   
-## comb cost_lami = 3000 5.735263 7915.129 45395.35   5.735263     mono
-## mono cost_zido = 1500 0.000000 -        -          -            -   
-## comb cost_zido = 1500 5.735263 5999.681 34409.75   5.735263     mono
-## mono cost_zido = 3000 0.000000 -        -          -            -   
-## comb cost_zido = 3000 5.735263 6780.024 38885.22   5.735263     mono
-## mono dr = 0.04        0.000000 -        -          -            -   
-## comb dr = 0.04        5.735263 7714.097 44242.38   5.735263     mono
-## mono dr = 0.08        0.000000 -        -          -            -   
-## comb dr = 0.08        5.735263 5389.047 30907.61   5.735263     mono
-## mono rr = 0.4         0.000000 -        -          -            -   
-## comb rr = 0.4         7.388802 5570.083 41156.24   7.388802     mono
-## mono rr = 0.6         0.000000 -        -          -            -   
-## comb rr = 0.6         4.418583 7328.966 32383.64   4.418583     mono</code></pre>
+##                        cost_health cost_drugs cost_total life_year
+## mono, cost_lami = 1500 46725886    19279596   48417031    8463.387
+## comb, cost_lami = 1500 71019861    53642502   79593035   14198.651
+## mono, cost_lami = 3000 46725886    19279596   48417031    8463.387
+## comb, cost_lami = 3000 71019861    74940478   93812382   14198.651
+## mono, cost_zido = 1500 46725886    12695081   43363208    8463.387
+## comb, cost_zido = 1500 71019861    50916361   77772959   14198.651
+## mono, cost_zido = 3000 46725886    25390162   53107083    8463.387
+## comb, cost_zido = 3000 71019861    72214337   91992306   14198.651
+## mono, dr = 0.04        46725886    19279596   53238469    8463.387
+## comb, dr = 0.04        71019861    61962911   97480846   14198.651
+## mono, dr = 0.08        46725886    19279596   44351921    8463.387
+## comb, dr = 0.08        71019861    61962911   75259528   14198.651
+## mono, rr = 0.4         46725886    19279596   48417031    8463.387
+## comb, rr = 0.4         74749377    69178956   89573275   15852.190
+## mono, rr = 0.6         46725886    19279596   48417031    8463.387
+## comb, rr = 0.6         66652719    56216918   80800674   12881.970
+##                        Cost     Effect   ICER     Cost Diff. Effect Diff.
+## mono, cost_lami = 1500     0.00 0.000000 -        -          -           
+## comb, cost_lami = 1500 31176.00 5.735263 5435.845 31176.00   5.735263    
+## mono, cost_lami = 3000     0.00 0.000000 -        -          -           
+## comb, cost_lami = 3000 45395.35 5.735263 7915.129 45395.35   5.735263    
+## mono, cost_zido = 1500     0.00 0.000000 -        -          -           
+## comb, cost_zido = 1500 34409.75 5.735263 5999.681 34409.75   5.735263    
+## mono, cost_zido = 3000     0.00 0.000000 -        -          -           
+## comb, cost_zido = 3000 38885.22 5.735263 6780.024 38885.22   5.735263    
+## mono, dr = 0.04            0.00 0.000000 -        -          -           
+## comb, dr = 0.04        44242.38 5.735263 7714.097 44242.38   5.735263    
+## mono, dr = 0.08            0.00 0.000000 -        -          -           
+## comb, dr = 0.08        30907.61 5.735263 5389.047 30907.61   5.735263    
+## mono, rr = 0.4             0.00 0.000000 -        -          -           
+## comb, rr = 0.4         41156.24 7.388802 5570.083 41156.24   7.388802    
+## mono, rr = 0.6             0.00 0.000000 -        -          -           
+## comb, rr = 0.6         32383.64 4.418583 7328.966 32383.64   4.418583    
+##                        Ref. .nmb     .dnmb   
+## mono, cost_lami = 1500 -         0.0 -       
+## comb, cost_lami = 1500 mono 140881.9 140881.9
+## mono, cost_lami = 3000 -         0.0 -       
+## comb, cost_lami = 3000 mono 126662.5 126662.5
+## mono, cost_zido = 1500 -         0.0 -       
+## comb, cost_zido = 1500 mono 137648.1 137648.1
+## mono, cost_zido = 3000 -         0.0 -       
+## comb, cost_zido = 3000 mono 133172.7 133172.7
+## mono, dr = 0.04        -         0.0 -       
+## comb, dr = 0.04        mono 127815.5 127815.5
+## mono, dr = 0.08        -         0.0 -       
+## comb, dr = 0.08        mono 141150.3 141150.3
+## mono, rr = 0.4         -         0.0 -       
+## comb, rr = 0.4         mono 180507.8 180507.8
+## mono, rr = 0.6         -         0.0 -       
+## comb, rr = 0.6         mono 100173.8 100173.8</code></pre>
 <p>Two distinct plot types are available. The basic plot (<code>type = &quot;simple&quot;</code>) displays cost variations for each model, around the base cost.</p>
 <p>As expected <code>mono</code> model costs are not senstive to <code>cost_lami</code>, since this drug was not given to this group. Similarly it is not sensitive to <code>rr</code>, because this parameters only modifies transition probabilities in the other model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(res_dsa,

@@ -3,19 +3,19 @@ library(heemod)
 
 ## ------------------------------------------------------------------------
 define_parameters(
-  mr = exp(- state_cycle * lambda),
-  age = 50 + markov_cycle
+  mr = exp(- state_time * lambda),
+  age = 50 + model_time
 )
 
 define_state(
-  cost = 100 - state_cycle,
+  cost = 100 - state_time,
   effect = 10
 )
 
 f <- function(x) abs(sin(x))
 
 define_transition(
-  C,  f(state_cycle),
+  C,  f(state_time),
   .1, .9
 )
 

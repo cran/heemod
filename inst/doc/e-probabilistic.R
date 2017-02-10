@@ -51,71 +51,55 @@ mat_trans_comb <- define_transition(
 )
 
 ## ------------------------------------------------------------------------
-A_mono <- define_state(
-  cost_health = cost_A,
-  cost_drugs = cost_zido,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 1
-)
-B_mono <- define_state(
-  cost_health = cost_B,
-  cost_drugs = cost_zido,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 1
-)
-C_mono <- define_state(
-  cost_health = cost_C,
-  cost_drugs = cost_zido,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 1
-)
-D_mono <- define_state(
-  cost_health = 0,
-  cost_drugs = 0,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 0
-)
-
-A_comb <- define_state(
-  cost_health = cost_A,
-  cost_drugs = cost_zido + cost_lami,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 1
-)
-B_comb <- define_state(
-  cost_health = cost_B,
-  cost_drugs = cost_zido + cost_lami,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 1
-)
-C_comb <- define_state(
-  cost_health = cost_C,
-  cost_drugs = cost_zido + cost_lami,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 1
-)
-D_comb <- define_state(
-  cost_health = 0,
-  cost_drugs = 0,
-  cost_total = discount(cost_health + cost_drugs, .06),
-  life_year = 0
-)
+state_A <- define_state(
+    cost_health = 2756,
+    cost_drugs = dispatch_strategy(
+      mono = cost_zido,
+      comb = cost_zido + cost_lami
+    ),
+    cost_total = discount(cost_health + cost_drugs, .06),
+    life_year = 1
+  )
+state_B <- define_state(
+    cost_health = 3052,
+    cost_drugs = dispatch_strategy(
+      mono = cost_zido,
+      comb = cost_zido + cost_lami
+    ),
+    cost_total = discount(cost_health + cost_drugs, .06),
+    life_year = 1
+  )
+state_C <- define_state(
+    cost_health = 9007,
+    cost_drugs = dispatch_strategy(
+      mono = cost_zido,
+      comb = cost_zido + cost_lami
+    ),
+    cost_total = discount(cost_health + cost_drugs, .06),
+    life_year = 1
+  )
+state_D <- define_state(
+    cost_health = 0,
+    cost_drugs = 0,
+    cost_total = discount(cost_health + cost_drugs, .06),
+    life_year = 0
+  )
 
 ## ------------------------------------------------------------------------
 strat_mono <- define_strategy(
   transition = mat_trans_mono,
-  A_mono,
-  B_mono,
-  C_mono,
-  D_mono
+  state_A,
+  state_B,
+  state_C,
+  state_D
 )
 
 strat_comb <- define_strategy(
   transition = mat_trans_comb,
-  A_comb,
-  B_comb,
-  C_comb,
-  D_comb
+  state_A,
+  state_B,
+  state_C,
+  state_D
 )
 
 res_mod <- run_model(
@@ -131,19 +115,19 @@ res_mod <- run_model(
 rsp <- define_psa(
   rr ~ lognormal(mean = .509, sdlog = .173),
   
-  cost_A ~ make_gamma(mean = 2756, sd = sqrt(2756)),
-  cost_B ~ make_gamma(mean = 3052, sd = sqrt(3052)),
-  cost_C ~ make_gamma(mean = 9007, sd = sqrt(9007)),
+  cost_A ~ gamma(mean = 2756, sd = sqrt(2756)),
+  cost_B ~ gamma(mean = 3052, sd = sqrt(3052)),
+  cost_C ~ gamma(mean = 9007, sd = sqrt(9007)),
   
-  p_CD_base ~ prop(prob = .25, size = 40),
+  p_CD_mono ~ binomial(prob = .25, size = 40),
   
-  p_AA_base + p_AB_base + p_AC_base + p_AD_base ~ multinom(721, 202, 67, 10)
+  p_AA_mono + p_AB_mono + p_AC_mono + p_AD_mono ~ multinomial(721, 202, 67, 10)
 )
 
 ## ------------------------------------------------------------------------
 pm <- run_psa(
   model = res_mod,
-  resample = rsp,
+  psa = rsp,
   N = 100
 )
 
@@ -156,9 +140,13 @@ plot(pm, type = "ce")
 
 ## ---- fig.width = 6, fig.align='center'----------------------------------
 plot(pm, type = "ac", max_wtp = 10000, log_scale = FALSE)
+plot(pm, type = "evpi", max_wtp = 10000, log_scale = FALSE)
 
 ## ---- fig.width = 6, fig.height = 4, fig.align='center'------------------
 plot(pm, type = "cov")
+
+## ---- fig.width = 4, fig.height = 4, fig.align='center'------------------
+plot(pm, type = "cov", diff = TRUE, threshold = 5000)
 
 ## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE-------
 library(ggplot2)

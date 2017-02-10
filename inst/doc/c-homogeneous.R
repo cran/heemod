@@ -33,54 +33,37 @@ cost_zido <- 2278
 cost_lami <- 2086
 
 ## ------------------------------------------------------------------------
-A_mono <- define_state(
+state_A <- define_state(
     cost_health = 2756,
-    cost_drugs = cost_zido,
+    cost_drugs = dispatch_strategy(
+      mono = cost_zido,
+      comb = cost_zido + cost_lami
+    ),
     cost_total = discount(cost_health + cost_drugs, .06),
     life_year = 1
   )
-A_mono
+state_A
 
 ## ------------------------------------------------------------------------
-B_mono <- define_state(
+state_B <- define_state(
     cost_health = 3052,
-    cost_drugs = cost_zido,
+    cost_drugs = dispatch_strategy(
+      mono = cost_zido,
+      comb = cost_zido + cost_lami
+    ),
     cost_total = discount(cost_health + cost_drugs, .06),
     life_year = 1
   )
-C_mono <- define_state(
+state_C <- define_state(
     cost_health = 9007,
-    cost_drugs = cost_zido,
+    cost_drugs = dispatch_strategy(
+      mono = cost_zido,
+      comb = cost_zido + cost_lami
+    ),
     cost_total = discount(cost_health + cost_drugs, .06),
     life_year = 1
   )
-D_mono <- define_state(
-    cost_health = 0,
-    cost_drugs = 0,
-    cost_total = discount(cost_health + cost_drugs, .06),
-    life_year = 0
-  )
-
-## ------------------------------------------------------------------------
-A_comb <- define_state(
-    cost_health = 2756,
-    cost_drugs = cost_zido + cost_lami,
-    cost_total = discount(cost_health + cost_drugs, .06),
-    life_year = 1
-  )
-B_comb <- define_state(
-    cost_health = 3052,
-    cost_drugs = cost_zido + cost_lami,
-    cost_total = discount(cost_health + cost_drugs, .06),
-    life_year = 1
-  )
-C_comb <- define_state(
-    cost_health = 9007,
-    cost_drugs = cost_zido + cost_lami,
-    cost_total = discount(cost_health + cost_drugs, .06),
-    life_year = 1
-  )
-D_comb <- define_state(
+state_D <- define_state(
     cost_health = 0,
     cost_drugs = 0,
     cost_total = discount(cost_health + cost_drugs, .06),
@@ -90,20 +73,20 @@ D_comb <- define_state(
 ## ------------------------------------------------------------------------
 strat_mono <- define_strategy(
   transition = mat_mono,
-  A_mono,
-  B_mono,
-  C_mono,
-  D_mono
+  state_A,
+  state_B,
+  state_C,
+  state_D
 )
 strat_mono
 
 ## ------------------------------------------------------------------------
 strat_comb <- define_strategy(
   transition = mat_comb,
-  A_comb,
-  B_comb,
-  C_comb,
-  D_comb
+  state_A,
+  state_B,
+  state_C,
+  state_D
 )
 
 ## ------------------------------------------------------------------------
