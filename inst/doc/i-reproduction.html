@@ -4,14 +4,14 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-02-10" />
+<meta name="date" content="2017-04-07" />
 
 <title>Reproducing Exact Results from DMHEE</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Reproducing Exact Results from DMHEE</h1>
-<h4 class="date"><em>2017-02-10</em></h4>
+<h4 class="date"><em>2017-04-07</em></h4>
 
 
 <div id="TOC">
@@ -88,7 +88,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>treatment stops after 2 years,</li>
 <li>rounding errors.</li>
 </ol>
-<p>It is possible to reproduce 1. and 2. by making transition happen at the <em>beginning</em> of each year (equivalent to transition happening at the <em>end</em> + ignoring the first year) with <code>method = &quot;beginning&quot;</code>. Since with this method the first year is actually the second, costs should be discounted from the start with the argument <code>first = TUE</code> in <code>discount()</code>.</p>
+<p>It is possible to reproduce 1. and 2. by making transition happen at the <em>beginning</em> of each year (equivalent to transition happening at the <em>end</em> + ignoring the first year) with <code>method = &quot;beginning&quot;</code>. Since with this method the first year is actually the second, costs should be discounted from the start with the argument <code>first = TRUE</code> in <code>discount()</code>.</p>
 <p>Point 3. is reproduced by making <code>rr</code> and <code>cost_lami</code> a time changing variable like this <code>rr = ifelse(markov_cycle &lt;= 2, .509, 1.00)</code>.</p>
 <p>The last point is reproduced by writing transition probabilities as fractions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">par_mod &lt;-<span class="st"> </span><span class="kw">define_parameters</span>(
@@ -200,11 +200,10 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
 ## 
 ## Initial state counts:
 ## 
-##   N
-## A 1
-## B 0
-## C 0
-## D 0
+## A = 1
+## B = 0
+## C = 0
+## D = 0
 ## 
 ## Counting method: 'beginning'.
 ## 
@@ -388,12 +387,11 @@ res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
 ## 
 ## Initial state counts:
 ## 
-##             N
-## PrimaryTHR  1
-## SuccessP    0
-## RevisionTHR 0
-## SuccessR    0
-## Death       0
+## PrimaryTHR = 1
+## SuccessP = 0
+## RevisionTHR = 0
+## SuccessR = 0
+## Death = 0
 ## 
 ## Counting method: 'end'.
 ## 

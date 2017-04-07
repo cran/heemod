@@ -4,14 +4,14 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-02-10" />
+<meta name="date" content="2017-04-07" />
 
 <title>Simple Markov Models (Homogeneous)</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Simple Markov Models (Homogeneous)</h1>
-<h4 class="date"><em>2017-02-10</em></h4>
+<h4 class="date"><em>2017-04-07</em></h4>
 
 
 <div id="TOC">
@@ -231,18 +231,17 @@ state_D &lt;-<span class="st"> </span><span class="kw">define_state</span>(
 </div>
 <div id="result-interpretation" class="section level2">
 <h2>Result interpretation</h2>
-<p>Strategy values can then be compared with <code>summary()</code> (optionnaly net monetary benefits can be calculated with the <code>threshold</code> option):</p>
+<p>Strategy values can then be compared with <code>summary()</code> (optionally net monetary benefits can be calculated with the <code>threshold</code> option):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res_mod,
         <span class="dt">threshold =</span> <span class="kw">c</span>(<span class="dv">1000</span>, <span class="dv">5000</span>, <span class="dv">6000</span>, <span class="fl">1e4</span>))</code></pre></div>
 <pre><code>## 2 strategies run for 50 cycles.
 ## 
 ## Initial state counts:
 ## 
-##      N
-## A 1000
-## B    0
-## C    0
-## D    0
+## A = 1000L
+## B = 0L
+## C = 0L
+## D = 0L
 ## 
 ## Counting method: 'life-table'.
 ## 

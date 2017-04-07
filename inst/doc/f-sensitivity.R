@@ -170,3 +170,10 @@ plot(res_dsa,
      result = "icer",
      type = "difference")
 
+## ---- fig.width = 6, fig.align='center'----------------------------------
+plot(res_dsa,
+     strategy = "comb",
+     result = "icer",
+     type = "difference",
+     limits_by_bars = FALSE)
+

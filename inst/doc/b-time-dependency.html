@@ -4,14 +4,14 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-02-10" />
+<meta name="date" content="2017-04-07" />
 
 <title>Time-varying values</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Time-varying values</h1>
-<h4 class="date"><em>2017-02-10</em></h4>
+<h4 class="date"><em>2017-04-07</em></h4>
 
 
 <div id="TOC">
@@ -86,7 +86,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>These two situations can be modelled using the <code>model_time</code> (or its alias <code>markov_cycle</code>) and <code>state_time</code> variables, respectively.</p>
 <div id="how-to-specifiy-time-dependency" class="section level2">
 <h2>How to specifiy time-dependency</h2>
-<p>These variables takes increasing values with each cycles, starting from 1. For example the age of individuals at any moment can be defined as <code>Initial age + markov_cycle</code>. The time an individual spends in a state is equal to <code>state_cucle</code>.</p>
+<p>These variables takes increasing values with each cycles, starting from 1. For example the age of individuals at any moment can be defined as <code>Initial age + model_time</code>. The time an individual spends in a state is equal to <code>state_time</code>.</p>
 <p>Both variables can be used in <code>define_parameters()</code>, <code>define_state()</code>, or <code>define_transition()</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">define_parameters</span>(
   <span class="dt">mr =</span> <span class="kw">exp</span>(-<span class="st"> </span>state_time *<span class="st"> </span>lambda),
@@ -126,7 +126,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <span class="dt">I =</span>  strat_1,
   <span class="dt">II =</span> strat_2,
   <span class="dt">cycles =</span> <span class="dv">100</span>,
-  <span class="dt">state_cycle_limit =</span> <span class="kw">list</span>(
+  <span class="dt">state_time_limit =</span> <span class="kw">list</span>(
     <span class="dt">I =</span> <span class="kw">c</span>(<span class="dt">B =</span> <span class="dv">10</span>, <span class="dt">D =</span> <span class="dv">20</span>),
     <span class="dt">II =</span> <span class="kw">c</span>(<span class="dt">B =</span> <span class="dv">15</span>)
   )
