@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-05-09" />
+<meta name="date" content="2017-09-14" />
 
 <title>Simple Markov Models (Homogeneous)</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Simple Markov Models (Homogeneous)</h1>
-<h4 class="date"><em>2017-05-09</em></h4>
+<h4 class="date"><em>2017-09-14</em></h4>
 
 
 <div id="TOC">
@@ -163,9 +163,9 @@ state_A</code></pre></div>
 ## 
 ## cost_health = discount(2756, 0.06)
 ## cost_drugs = discount(dispatch_strategy(mono = cost_zido, comb = cost_zido + 
-## cost_total =     cost_lami), 0.06)
-## life_year = cost_health + cost_drugs
-## cost_health = 1</code></pre>
+##     cost_lami), 0.06)
+## cost_total = cost_health + cost_drugs
+## life_year = 1</code></pre>
 <p>The other states for the monotherapy treatment group can be specified in the same way:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">state_B &lt;-<span class="st"> </span><span class="kw">define_state</span>(
     <span class="dt">cost_health =</span> <span class="kw">discount</span>(<span class="dv">3052</span>, .<span class="dv">06</span>),
@@ -254,9 +254,9 @@ state_D &lt;-<span class="st"> </span><span class="kw">define_state</span>(
 ## 
 ## Net monetary benefit difference:
 ## 
-##       1000     5000     6000    10000
-## 1 35551.66 867.2847    0.000     0.00
-## 2     0.00   0.0000 7803.809 42488.19
+##          1000     5000     6000    10000
+## mono 35551.66 867.2847    0.000     0.00
+## comb     0.00   0.0000 7803.809 42488.19
 ## 
 ## Efficiency frontier:
 ## 

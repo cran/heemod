@@ -66,7 +66,7 @@ km_poor_join <- join(
   fitcov_poor,
   at = 365
 )
-models_all <- pool(
+models_all <- mix(
   fitcov_good, fitcov_medium, fitcov_poor,
   weights = c(0.25, 0.25, 0.5)
 )
@@ -85,7 +85,7 @@ fit_cov %>%
     fitcov_poor,
     at = 3
   ) %>%
-  pool(
+  mix(
     fitcov_medium,
     weights = c(0.25, 0.75)
   ) %>%
@@ -94,14 +94,14 @@ fit_cov %>%
   ) %>% 
   compute_surv(time = 1:5)
 
-## ----warning=FALSE, fig.width=6, fig.height=6----------------------------
+## ----fig.width=6, fig.height=6-------------------------------------------
 param <- define_parameters(
   p1 = compute_surv(
     surv_dist_1,
     time = model_time # can also be state_time
   ),
-  p2 = km_medium %>%
-    join(fitcov_medium, at = 730) %>%
+  p2 = km_1 %>%
+    join(fit_w, at = 730) %>%
     compute_surv(
       time = model_time,
       cycle_length = 365  # time is in days in km_medium, in years in model_time
@@ -109,9 +109,9 @@ param <- define_parameters(
 )
 
 tm <- define_transition(
-  C, p1, 0,
-  0, C,  p2,
-  0, 0,  C
+  C, p1 - p2, p2,
+  0, C,       p2,
+  0, 0,       C
 )
 
 plot(tm)
@@ -134,14 +134,14 @@ stratTM <- define_strategy(
 resTM <- run_model(
   parameters = param,
   stratTM,
-  cycles = 10
+  cycles = 15,
+  cost = cost, effect = ut
 )
-
 
 ## ----fig.width=6, fig.height=4-------------------------------------------
 plot(resTM)
 
-## ----warning=FALSE, fig.width=6, fig.height=4----------------------------
+## ----fig.width=6, fig.height=4-------------------------------------------
 ps <- define_part_surv(
   pfs = surv_dist_1,
   os  = km_1 %>%
@@ -156,7 +156,8 @@ stratPS <- define_strategy(
 
 resPS <- run_model(
   stratPS,
-  cycles = 10
+  cycles = 15,
+  cost = cost, effect = ut
 )
 
 plot(resPS)

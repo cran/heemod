@@ -85,7 +85,7 @@ strat_standard <- define_strategy(
   transition = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 394
+    cost = 0
   ),
   SuccessP = define_state(
     utility = discount(u_SuccessP, .015),
@@ -102,6 +102,9 @@ strat_standard <- define_strategy(
   Death = define_state(
     utility = 0,
     cost = 0
+  ),
+  starting_values = define_starting_values(
+    cost = 394
   )
 )
 strat_standard
@@ -110,7 +113,7 @@ strat_np1 <- define_strategy(
   transition = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 579
+    cost = 0
   ),
   SuccessP = define_state(
     utility = discount(u_SuccessP, .015),
@@ -127,6 +130,9 @@ strat_np1 <- define_strategy(
   Death = define_state(
     utility = 0,
     cost = 0
+  ),
+  starting_values = define_starting_values(
+    cost = 579
   )
 )
 strat_np1
@@ -138,8 +144,7 @@ res_mod <- run_model(
   parameters = param,
   cycles = 60,
   cost = cost,
-  effect = utility,
-  method = "end"
+  effect = utility
 )
 
 ## ------------------------------------------------------------------------

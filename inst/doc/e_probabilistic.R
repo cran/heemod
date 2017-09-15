@@ -132,8 +132,9 @@ pm <- run_psa(
 )
 
 ## ------------------------------------------------------------------------
-summary(pm, 
-        threshold = c(1000, 5000, 6000, 1e4))
+summary(
+  pm, 
+  threshold = c(1000, 5000, 6000, 1e4))
 
 ## ---- fig.width = 6, fig.height=4, fig.align='center'--------------------
 plot(pm, type = "ce")
@@ -159,4 +160,8 @@ plot(pm, type = "ce") +
     palette = "Set1"
   ) +
   theme_minimal()
+
+## ---- fig.height=6, fig.width=6------------------------------------------
+bcea <- run_bcea(pm, plot = TRUE, Kmax = 10000)
+summary(bcea)
 

@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-05-09" />
+<meta name="date" content="2017-09-14" />
 
 <title>Reproducing Exact Results from DMHEE</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Reproducing Exact Results from DMHEE</h1>
-<h4 class="date"><em>2017-05-09</em></h4>
+<h4 class="date"><em>2017-09-14</em></h4>
 
 
 <div id="TOC">
@@ -270,14 +270,15 @@ death_prob</code></pre></div>
     <span class="dt">rrr =</span> .<span class="dv">04</span>,
     
     <span class="co"># parameters for calculating primary revision rate</span>
-    <span class="dt">cons =</span> -<span class="fl">5.49094</span>,
-    <span class="dt">ageC =</span> -.<span class="dv">0367</span>,
+    <span class="dt">cons =</span> -<span class="fl">5.490935</span>,
+    <span class="dt">ageC =</span> -.<span class="dv">0367022</span>,
     <span class="dt">maleC =</span> .<span class="dv">768536</span>,
     <span class="dt">lambda =</span> <span class="kw">exp</span>(cons +<span class="st"> </span>ageC *<span class="st"> </span>age_init +<span class="st"> </span>maleC *<span class="st"> </span>sex),
-    <span class="dt">gamma =</span> <span class="fl">1.45367786</span>,
-    
-    <span class="dt">rrNP1 =</span> .<span class="dv">260677</span>,
-    
+    <span class="dt">lngamma =</span> <span class="fl">0.3740968</span>,
+    <span class="dt">gamma =</span> <span class="kw">exp</span>(lngamma),
+    <span class="dt">lnrrNP1 =</span> -<span class="fl">1.344474</span>,
+    <span class="dt">rrNP1 =</span> <span class="kw">exp</span>(lnrrNP1),
+   
     <span class="co"># revision probability of primary procedure</span>
     <span class="dt">standardRR =</span> <span class="dv">1</span> -<span class="st"> </span><span class="kw">exp</span>(lambda *<span class="st"> </span>((markov_cycle -<span class="st"> </span><span class="dv">1</span>) ^<span class="st"> </span>gamma -
 <span class="st">                                     </span>markov_cycle ^<span class="st"> </span>gamma)),
@@ -398,8 +399,8 @@ res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
 ## Values:
 ## 
 ##           utility     cost
-## standard 14.65282 512.4474
-## np1      14.69734 610.3152
+## standard 14.65283 512.4327
+## np1      14.69734 610.3112
 ## 
 ## Efficiency frontier:
 ## 
@@ -408,7 +409,7 @@ res_mod &lt;-<span class="st"> </span><span class="kw">run_model</span>(
 ## Differences:
 ## 
 ##     Cost Diff. Effect Diff.     ICER     Ref.
-## np1    97.8678   0.04451644 2198.464 standard</code></pre>
+## np1   97.87858   0.04451095 2198.977 standard</code></pre>
 </div>
 
 

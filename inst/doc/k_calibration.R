@@ -1,7 +1,7 @@
 ## ---- echo=FALSE, include=FALSE------------------------------------------
 library(heemod)
 
-## ---- include = FALSE----------------------------------------------------
+## ---- define, include = FALSE--------------------------------------------
 param <- define_parameters(
     age_init = 60,
     sex = 0,
@@ -130,21 +130,21 @@ res_mod <- run_model(
   method = "end"
 )
 
-## ----message=FALSE-------------------------------------------------------
+## ----get_counts, message=FALSE-------------------------------------------
 library(dplyr)
 get_counts(res_mod) %>% 
-  filter(markov_cycle == 20 & state_names == "RevisionTHR")
+  dplyr::filter(markov_cycle == 20 & state_names == "RevisionTHR")
 
-## ------------------------------------------------------------------------
+## ----extract_values------------------------------------------------------
 extract_values <- function(x) {
-  filter(
+  dplyr::filter(
     get_counts(x),
     markov_cycle == 20 & state_names == "RevisionTHR"
   )$count
 }
 extract_values(res_mod)
 
-## ------------------------------------------------------------------------
+## ----define_calib_fn-----------------------------------------------------
 calib_fn <- define_calibration_fn(
   type = "count",
   strategy_names = c("standard", "np1"),
@@ -153,7 +153,7 @@ calib_fn <- define_calibration_fn(
 )
 calib_fn(res_mod)
 
-## ------------------------------------------------------------------------
+## ----calibrate_no_init---------------------------------------------------
 res_cal <- calibrate_model(
   res_mod,
   parameter_names = c("gamma", "rrNP1"),
@@ -162,7 +162,7 @@ res_cal <- calibrate_model(
 )
 res_cal
 
-## ----eval = FALSE--------------------------------------------------------
+## ----calibrate_init, eval = FALSE----------------------------------------
 #  start <- data.frame(
 #    gamma = c(1.0, 1.5, 2.0),
 #    rrNP1 = c(0.2, 0.3, 0.4)
@@ -173,6 +173,7 @@ res_cal
 #    parameter_names = c("gamma", "rrNP1"),
 #    fn_values = extract_values,
 #    target_values = c(3, 1),
-#    initial_values = start
+#    initial_values = start,
+#    lower = c(0, 0), upper = c(2, 1)
 #  )
 
