@@ -11,14 +11,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-09-14" />
+<meta name="date" content="2019-02-07" />
 
 <title>Time-varying values</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -54,7 +54,29 @@ code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
 code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -68,7 +90,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Time-varying values</h1>
-<h4 class="date"><em>2017-09-14</em></h4>
+<h4 class="date"><em>2019-02-07</em></h4>
 
 
 <div id="TOC">
@@ -89,26 +111,26 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>These variables takes increasing values with each cycles, starting from 1. For example the age of individuals at any moment can be defined as <code>Initial age + model_time</code>. The time an individual spends in a state is equal to <code>state_time</code>.</p>
 <p>Both variables can be used in <code>define_parameters()</code>, <code>define_state()</code>, or <code>define_transition()</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">define_parameters</span>(
-  <span class="dt">mr =</span> <span class="kw">exp</span>(-<span class="st"> </span>state_time *<span class="st"> </span>lambda),
-  <span class="dt">age =</span> <span class="dv">50</span> +<span class="st"> </span>model_time
+  <span class="dt">mr =</span> <span class="kw">exp</span>(<span class="op">-</span><span class="st"> </span>state_time <span class="op">*</span><span class="st"> </span>lambda),
+  <span class="dt">age =</span> <span class="dv">50</span> <span class="op">+</span><span class="st"> </span>model_time
 )</code></pre></div>
 <pre><code>## 2 unevaluated parameters.
 ## 
 ## mr = exp(-state_time * lambda)
 ## age = 50 + model_time</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">define_state</span>(
-  <span class="dt">cost =</span> <span class="dv">100</span> -<span class="st"> </span>state_time,
+  <span class="dt">cost =</span> <span class="dv">100</span> <span class="op">-</span><span class="st"> </span>state_time,
   <span class="dt">effect =</span> <span class="dv">10</span>
 )</code></pre></div>
 <pre><code>## A state with 2 values.
 ## 
 ## cost = 100 - state_time
 ## effect = 10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f &lt;-<span class="st"> </span>function(x) <span class="kw">abs</span>(<span class="kw">sin</span>(x))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">abs</span>(<span class="kw">sin</span>(x))
 
 <span class="kw">define_transition</span>(
   C,  <span class="kw">f</span>(state_time),
-  .<span class="dv">1</span>, .<span class="dv">9</span>
+  <span class="fl">.1</span>, <span class="fl">.9</span>
 )</code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <pre><code>## A transition matrix, 2 states.
@@ -123,8 +145,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>To mitigate this drawback it is possible to limit the number of state expansion with <code>state_time_limit</code>. Because most time-varying values reach an asymptotic value quite fast, it is unnecessary to expand the states any further. The last cycle value is repeated until the end.</p>
 <p>The limit can be defined globally, per state, or per model and state. In the following example probabilities are kept constant after <em>10</em> cycles for state <strong>B</strong> and <em>20</em> cycles for state <strong>D</strong> in strategy <strong>I</strong>, and <em>15</em> cycles in state <strong>B</strong> in strategy <strong>II</strong>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">run_model</span>(
-  <span class="dt">I =</span>  strat_1,
-  <span class="dt">II =</span> strat_2,
+  <span class="dt">I =</span>  strat_<span class="dv">1</span>,
+  <span class="dt">II =</span> strat_<span class="dv">2</span>,
   <span class="dt">cycles =</span> <span class="dv">100</span>,
   <span class="dt">state_time_limit =</span> <span class="kw">list</span>(
     <span class="dt">I =</span> <span class="kw">c</span>(<span class="dt">B =</span> <span class="dv">10</span>, <span class="dt">D =</span> <span class="dv">20</span>),

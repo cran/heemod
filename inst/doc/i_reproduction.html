@@ -11,14 +11,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-09-14" />
+<meta name="date" content="2019-02-07" />
 
 <title>Reproducing Exact Results from DMHEE</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -54,7 +54,29 @@ code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
 code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -68,7 +90,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Reproducing Exact Results from DMHEE</h1>
-<h4 class="date"><em>2017-09-14</em></h4>
+<h4 class="date"><em>2019-02-07</em></h4>
 
 
 <div id="TOC">
@@ -92,22 +114,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Point 3. is reproduced by making <code>rr</code> and <code>cost_lami</code> a time changing variable like this <code>rr = ifelse(markov_cycle &lt;= 2, .509, 1.00)</code>.</p>
 <p>The last point is reproduced by writing transition probabilities as fractions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">par_mod &lt;-<span class="st"> </span><span class="kw">define_parameters</span>(
-  <span class="dt">rr =</span> <span class="kw">ifelse</span>(markov_cycle &lt;=<span class="st"> </span><span class="dv">2</span>, .<span class="dv">509</span>, <span class="dv">1</span>),
-  <span class="dt">cost_lami =</span> <span class="kw">ifelse</span>(markov_cycle &lt;=<span class="st"> </span><span class="dv">2</span>, <span class="fl">2086.5</span>, <span class="dv">0</span>),
+  <span class="dt">rr =</span> <span class="kw">ifelse</span>(markov_cycle <span class="op">&lt;=</span><span class="st"> </span><span class="dv">2</span>, <span class="fl">.509</span>, <span class="dv">1</span>),
+  <span class="dt">cost_lami =</span> <span class="kw">ifelse</span>(markov_cycle <span class="op">&lt;=</span><span class="st"> </span><span class="dv">2</span>, <span class="fl">2086.5</span>, <span class="dv">0</span>),
   <span class="dt">cost_zido =</span> <span class="dv">2278</span>
 )
 
 mat_mono &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
-  <span class="dv">1251</span>/<span class="dv">1734</span>, <span class="dv">350</span>/<span class="dv">1734</span>, <span class="dv">116</span>/<span class="dv">1734</span>,  <span class="dv">17</span>/<span class="dv">1734</span>,
-  <span class="dv">0</span>,         <span class="dv">731</span>/<span class="dv">1258</span>, <span class="dv">512</span>/<span class="dv">1258</span>,  <span class="dv">15</span>/<span class="dv">1258</span>,
-  <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">1312</span>/<span class="dv">1749</span>, <span class="dv">437</span>/<span class="dv">1749</span>,
+  <span class="dv">1251</span><span class="op">/</span><span class="dv">1734</span>, <span class="dv">350</span><span class="op">/</span><span class="dv">1734</span>, <span class="dv">116</span><span class="op">/</span><span class="dv">1734</span>,  <span class="dv">17</span><span class="op">/</span><span class="dv">1734</span>,
+  <span class="dv">0</span>,         <span class="dv">731</span><span class="op">/</span><span class="dv">1258</span>, <span class="dv">512</span><span class="op">/</span><span class="dv">1258</span>,  <span class="dv">15</span><span class="op">/</span><span class="dv">1258</span>,
+  <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">1312</span><span class="op">/</span><span class="dv">1749</span>, <span class="dv">437</span><span class="op">/</span><span class="dv">1749</span>,
   <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">0</span>,         <span class="fl">1.00</span>
 )</code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mat_comb &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
-  C, <span class="dv">350</span>/<span class="dv">1734</span>*rr, <span class="dv">116</span>/<span class="dv">1734</span>*rr, <span class="dv">17</span>/<span class="dv">1734</span>*rr,
-  <span class="dv">0</span>, C,           <span class="dv">512</span>/<span class="dv">1258</span>*rr, <span class="dv">15</span>/<span class="dv">1258</span>*rr,
-  <span class="dv">0</span>, <span class="dv">0</span>,           C,           <span class="dv">437</span>/<span class="dv">1749</span>*rr,
+  C, <span class="dv">350</span><span class="op">/</span><span class="dv">1734</span><span class="op">*</span>rr, <span class="dv">116</span><span class="op">/</span><span class="dv">1734</span><span class="op">*</span>rr, <span class="dv">17</span><span class="op">/</span><span class="dv">1734</span><span class="op">*</span>rr,
+  <span class="dv">0</span>, C,           <span class="dv">512</span><span class="op">/</span><span class="dv">1258</span><span class="op">*</span>rr, <span class="dv">15</span><span class="op">/</span><span class="dv">1258</span><span class="op">*</span>rr,
+  <span class="dv">0</span>, <span class="dv">0</span>,           C,           <span class="dv">437</span><span class="op">/</span><span class="dv">1749</span><span class="op">*</span>rr,
   <span class="dv">0</span>, <span class="dv">0</span>,           <span class="dv">0</span>,           <span class="fl">1.00</span>
 )</code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
@@ -115,57 +137,57 @@ mat_mono &lt;-<span class="st"> </span><span class="kw">define_transition</span>
   <span class="dt">cost_health =</span> <span class="dv">2756</span>,
   <span class="dt">cost_drugs =</span> cost_zido,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">1</span>
 )
 B_mono &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">cost_health =</span> <span class="dv">3052</span>,
   <span class="dt">cost_drugs =</span> cost_zido,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">1</span>
 )
 C_mono &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">cost_health =</span> <span class="dv">9007</span>,
   <span class="dt">cost_drugs =</span> cost_zido,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">1</span>
 )
 D_mono &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">cost_health =</span> <span class="dv">0</span>,
   <span class="dt">cost_drugs =</span> <span class="dv">0</span>,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">0</span>
 )
 
 A_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">cost_health =</span> <span class="dv">2756</span>,
-  <span class="dt">cost_drugs =</span> cost_zido +<span class="st"> </span>cost_lami,
+  <span class="dt">cost_drugs =</span> cost_zido <span class="op">+</span><span class="st"> </span>cost_lami,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">1</span>
 )
 B_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">cost_health =</span> <span class="dv">3052</span>,
-  <span class="dt">cost_drugs =</span> cost_zido +<span class="st"> </span>cost_lami,
+  <span class="dt">cost_drugs =</span> cost_zido <span class="op">+</span><span class="st"> </span>cost_lami,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">1</span>
 )
 C_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">cost_health =</span> <span class="dv">9007</span>,
-  <span class="dt">cost_drugs =</span> cost_zido +<span class="st"> </span>cost_lami,
+  <span class="dt">cost_drugs =</span> cost_zido <span class="op">+</span><span class="st"> </span>cost_lami,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">1</span>
 )
 D_comb &lt;-<span class="st"> </span><span class="kw">define_state</span>(
   <span class="dt">cost_health =</span> <span class="dv">0</span>,
   <span class="dt">cost_drugs =</span> <span class="dv">0</span>,
   <span class="dt">cost_total =</span> <span class="kw">discount</span>(
-    cost_health +<span class="st"> </span>cost_drugs, .<span class="dv">06</span>, <span class="dt">first =</span> T),
+    cost_health <span class="op">+</span><span class="st"> </span>cost_drugs, <span class="fl">.06</span>, <span class="dt">first =</span> T),
   <span class="dt">life_year =</span> <span class="dv">0</span>
 )
 
@@ -234,9 +256,9 @@ mod_mono &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
 <span class="co"># given age and sex</span>
 death_prob &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">age =</span> <span class="kw">rep</span>(<span class="kw">seq</span>(<span class="dv">35</span>, <span class="dv">85</span>, <span class="dv">10</span>), <span class="dt">each =</span> <span class="dv">2</span>),
-  <span class="dt">sex =</span> <span class="kw">rep</span>(<span class="dv">1</span>:<span class="dv">0</span>, <span class="dv">6</span>),
+  <span class="dt">sex =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">0</span>, <span class="dv">6</span>),
   <span class="dt">value =</span> <span class="kw">c</span>(
-    <span class="fl">1.51e-3</span>, .<span class="fl">99e-3</span>, <span class="fl">3.93e-3</span>,
+    <span class="fl">1.51e-3</span>, <span class="fl">.99e-3</span>, <span class="fl">3.93e-3</span>,
     <span class="fl">2.6e-3</span>, <span class="fl">10.9e-3</span>, <span class="fl">6.7e-3</span>,
     <span class="fl">31.6e-3</span>, <span class="fl">19.3e-3</span>, <span class="fl">80.1e-3</span>,
     <span class="fl">53.5e-3</span>, <span class="fl">187.9e-3</span>, <span class="fl">154.8e-3</span>
@@ -260,38 +282,38 @@ death_prob</code></pre></div>
     <span class="dt">age_init =</span> <span class="dv">60</span>,
     <span class="dt">sex =</span> <span class="dv">0</span>,
     <span class="co"># age increases with cycles</span>
-    <span class="dt">age =</span> age_init +<span class="st"> </span>markov_cycle,
+    <span class="dt">age =</span> age_init <span class="op">+</span><span class="st"> </span>markov_cycle,
     
     <span class="co"># operative mortality rates</span>
-    <span class="dt">omrPTHR =</span> .<span class="dv">02</span>,
-    <span class="dt">omrRTHR =</span> .<span class="dv">02</span>,
+    <span class="dt">omrPTHR =</span> <span class="fl">.02</span>,
+    <span class="dt">omrRTHR =</span> <span class="fl">.02</span>,
     
     <span class="co"># re-revision mortality rate</span>
-    <span class="dt">rrr =</span> .<span class="dv">04</span>,
+    <span class="dt">rrr =</span> <span class="fl">.04</span>,
     
     <span class="co"># parameters for calculating primary revision rate</span>
-    <span class="dt">cons =</span> -<span class="fl">5.490935</span>,
-    <span class="dt">ageC =</span> -.<span class="dv">0367022</span>,
-    <span class="dt">maleC =</span> .<span class="dv">768536</span>,
-    <span class="dt">lambda =</span> <span class="kw">exp</span>(cons +<span class="st"> </span>ageC *<span class="st"> </span>age_init +<span class="st"> </span>maleC *<span class="st"> </span>sex),
+    <span class="dt">cons =</span> <span class="fl">-5.490935</span>,
+    <span class="dt">ageC =</span> <span class="fl">-.0367022</span>,
+    <span class="dt">maleC =</span> <span class="fl">.768536</span>,
+    <span class="dt">lambda =</span> <span class="kw">exp</span>(cons <span class="op">+</span><span class="st"> </span>ageC <span class="op">*</span><span class="st"> </span>age_init <span class="op">+</span><span class="st"> </span>maleC <span class="op">*</span><span class="st"> </span>sex),
     <span class="dt">lngamma =</span> <span class="fl">0.3740968</span>,
     <span class="dt">gamma =</span> <span class="kw">exp</span>(lngamma),
-    <span class="dt">lnrrNP1 =</span> -<span class="fl">1.344474</span>,
+    <span class="dt">lnrrNP1 =</span> <span class="fl">-1.344474</span>,
     <span class="dt">rrNP1 =</span> <span class="kw">exp</span>(lnrrNP1),
    
     <span class="co"># revision probability of primary procedure</span>
-    <span class="dt">standardRR =</span> <span class="dv">1</span> -<span class="st"> </span><span class="kw">exp</span>(lambda *<span class="st"> </span>((markov_cycle -<span class="st"> </span><span class="dv">1</span>) ^<span class="st"> </span>gamma -
-<span class="st">                                     </span>markov_cycle ^<span class="st"> </span>gamma)),
-    <span class="dt">np1RR =</span> <span class="dv">1</span> -<span class="st"> </span><span class="kw">exp</span>(lambda *<span class="st"> </span>rrNP1 *<span class="st"> </span>((markov_cycle -<span class="st"> </span><span class="dv">1</span>) ^<span class="st"> </span>gamma -<span class="st"> </span>
-<span class="st">                                        </span>markov_cycle ^<span class="st"> </span>gamma)),
+    <span class="dt">standardRR =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(lambda <span class="op">*</span><span class="st"> </span>((markov_cycle <span class="op">-</span><span class="st"> </span><span class="dv">1</span>) <span class="op">^</span><span class="st"> </span>gamma <span class="op">-</span>
+<span class="st">                                     </span>markov_cycle <span class="op">^</span><span class="st"> </span>gamma)),
+    <span class="dt">np1RR =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(lambda <span class="op">*</span><span class="st"> </span>rrNP1 <span class="op">*</span><span class="st"> </span>((markov_cycle <span class="op">-</span><span class="st"> </span><span class="dv">1</span>) <span class="op">^</span><span class="st"> </span>gamma <span class="op">-</span><span class="st"> </span>
+<span class="st">                                        </span>markov_cycle <span class="op">^</span><span class="st"> </span>gamma)),
     
     <span class="co"># age-related mortality rate</span>
-    <span class="dt">sex_cat =</span> <span class="kw">ifelse</span>(sex ==<span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;FMLE&quot;</span>, <span class="st">&quot;MLE&quot;</span>),
+    <span class="dt">sex_cat =</span> <span class="kw">ifelse</span>(sex <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;FMLE&quot;</span>, <span class="st">&quot;MLE&quot;</span>),
     <span class="dt">mr =</span> <span class="kw">look_up</span>(death_prob, <span class="dt">age =</span> age, <span class="dt">sex =</span> sex, <span class="dt">bin =</span> <span class="st">&quot;age&quot;</span>),
     
-    <span class="dt">u_successP =</span> .<span class="dv">85</span>,
-    <span class="dt">u_revisionTHR =</span> .<span class="dv">30</span>,
-    <span class="dt">u_successR =</span> .<span class="dv">75</span>,
+    <span class="dt">u_successP =</span> <span class="fl">.85</span>,
+    <span class="dt">u_revisionTHR =</span> <span class="fl">.30</span>,
+    <span class="dt">u_successR =</span> <span class="fl">.75</span>,
     <span class="dt">c_revisionTHR =</span> <span class="dv">5294</span>
 )
 
@@ -305,7 +327,7 @@ mat_standard &lt;-<span class="st"> </span><span class="kw">define_transition</s
     ),
     <span class="dv">0</span>, C, <span class="dv">0</span>,          <span class="dv">0</span>, omrPTHR,
     <span class="dv">0</span>, C, standardRR, <span class="dv">0</span>, mr,
-    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          C, omrRTHR+mr,
+    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          C, omrRTHR<span class="op">+</span>mr,
     <span class="dv">0</span>, <span class="dv">0</span>, rrr,        C, mr,
     <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          <span class="dv">0</span>, <span class="dv">1</span>
 )
@@ -320,7 +342,7 @@ mat_np1 &lt;-<span class="st"> </span><span class="kw">define_transition</span>(
     ),
     <span class="dv">0</span>, C, <span class="dv">0</span>,     <span class="dv">0</span>, omrPTHR,
     <span class="dv">0</span>, C, np1RR, <span class="dv">0</span>, mr,
-    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     C, omrRTHR+mr,
+    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     C, omrRTHR<span class="op">+</span>mr,
     <span class="dv">0</span>, <span class="dv">0</span>, rrr,   C, mr,
     <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     <span class="dv">0</span>, <span class="dv">1</span>
 )
@@ -332,15 +354,15 @@ mod_standard &lt;-<span class="st"> </span><span class="kw">define_strategy</spa
     <span class="dt">cost =</span> <span class="dv">394</span>
   ),
   <span class="dt">SuccessP =</span> <span class="kw">define_state</span>(
-    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successP, .<span class="dv">015</span>),
+    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successP, <span class="fl">.015</span>),
     <span class="dt">cost =</span> <span class="dv">0</span>
   ),
   <span class="dt">RevisionTHR =</span> <span class="kw">define_state</span>(
-    <span class="dt">utility =</span> <span class="kw">discount</span>(u_revisionTHR, .<span class="dv">015</span>),
-    <span class="dt">cost =</span> <span class="kw">discount</span>(c_revisionTHR, .<span class="dv">06</span>)
+    <span class="dt">utility =</span> <span class="kw">discount</span>(u_revisionTHR, <span class="fl">.015</span>),
+    <span class="dt">cost =</span> <span class="kw">discount</span>(c_revisionTHR, <span class="fl">.06</span>)
   ),
   <span class="dt">SuccessR =</span> <span class="kw">define_state</span>(
-    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successR, .<span class="dv">015</span>),
+    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successR, <span class="fl">.015</span>),
     <span class="dt">cost =</span> <span class="dv">0</span>
   ),
   <span class="dt">Death =</span> <span class="kw">define_state</span>(
@@ -356,15 +378,15 @@ mod_np1 &lt;-<span class="st"> </span><span class="kw">define_strategy</span>(
     <span class="dt">cost =</span> <span class="dv">579</span>
   ),
   <span class="dt">SuccessP =</span> <span class="kw">define_state</span>(
-    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successP, .<span class="dv">015</span>),
+    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successP, <span class="fl">.015</span>),
     <span class="dt">cost =</span> <span class="dv">0</span>
   ),
   <span class="dt">RevisionTHR =</span> <span class="kw">define_state</span>(
-    <span class="dt">utility =</span> <span class="kw">discount</span>(u_revisionTHR, .<span class="dv">015</span>),
-    <span class="dt">cost =</span> <span class="kw">discount</span>(c_revisionTHR, .<span class="dv">06</span>)
+    <span class="dt">utility =</span> <span class="kw">discount</span>(u_revisionTHR, <span class="fl">.015</span>),
+    <span class="dt">cost =</span> <span class="kw">discount</span>(c_revisionTHR, <span class="fl">.06</span>)
   ),
   <span class="dt">SuccessR =</span> <span class="kw">define_state</span>(
-    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successR, .<span class="dv">015</span>),
+    <span class="dt">utility =</span> <span class="kw">discount</span>(u_successR, <span class="fl">.015</span>),
     <span class="dt">cost =</span> <span class="dv">0</span>
   ),
   <span class="dt">Death =</span> <span class="kw">define_state</span>(

@@ -11,14 +11,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-09-14" />
+<meta name="date" content="2019-02-07" />
 
 <title>Calibrating heemod models</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -54,7 +54,29 @@ code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
 code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -68,7 +90,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Calibrating <code>heemod</code> models</h1>
-<h4 class="date"><em>2017-09-14</em></h4>
+<h4 class="date"><em>2019-02-07</em></h4>
 
 
 
@@ -85,19 +107,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We will calibrate the parameters <code>gamma</code> (a Weibull survival parameter) and <code>rrNP1</code> (the relative risk associated with the new treatment), which originally have values of 1.45 and 0.26 respectively.</p>
 <p>The original number of patients with a THR revision after 20 cycles are found in this way:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
-<span class="kw">get_counts</span>(res_mod) %&gt;%<span class="st"> </span>
-<span class="st">  </span>dplyr::<span class="kw">filter</span>(markov_cycle ==<span class="st"> </span><span class="dv">20</span> &amp;<span class="st"> </span>state_names ==<span class="st"> &quot;RevisionTHR&quot;</span>)</code></pre></div>
+<span class="kw">get_counts</span>(res_mod) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(markov_cycle <span class="op">==</span><span class="st"> </span><span class="dv">20</span> <span class="op">&amp;</span><span class="st"> </span>state_names <span class="op">==</span><span class="st"> &quot;RevisionTHR&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 2 x 4
-##   .strategy_names markov_cycle state_names     count
-##             &lt;chr&gt;        &lt;int&gt;       &lt;chr&gt;     &lt;dbl&gt;
-## 1        standard           20 RevisionTHR 2.5964891
-## 2             np1           20 RevisionTHR 0.6902178</code></pre>
+##   .strategy_names markov_cycle state_names count
+##   &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt;       &lt;dbl&gt;
+## 1 standard                  20 RevisionTHR 2.60 
+## 2 np1                       20 RevisionTHR 0.690</code></pre>
 <p>We want to calibrate <code>gamma</code> and <code>rrNP1</code> to obtain 3 patients for the <code>standard</code> strategy and 1 patient for the <code>np1</code> strategy at time 20. We need to define a function to extract the values we want to change from the model and return them as a numeric vector:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">extract_values &lt;-<span class="st"> </span>function(x) {
-  dplyr::<span class="kw">filter</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">extract_values &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
+  dplyr<span class="op">::</span><span class="kw">filter</span>(
     <span class="kw">get_counts</span>(x),
-    markov_cycle ==<span class="st"> </span><span class="dv">20</span> &amp;<span class="st"> </span>state_names ==<span class="st"> &quot;RevisionTHR&quot;</span>
-  )$count
+    markov_cycle <span class="op">==</span><span class="st"> </span><span class="dv">20</span> <span class="op">&amp;</span><span class="st"> </span>state_names <span class="op">==</span><span class="st"> &quot;RevisionTHR&quot;</span>
+  )<span class="op">$</span>count
 }
 <span class="kw">extract_values</span>(res_mod)</code></pre></div>
 <pre><code>## [1] 2.5964891 0.6902178</code></pre>
@@ -129,7 +151,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <span class="dt">rrNP1 =</span> <span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>)
 )
 
-res_cal_2 &lt;-<span class="st"> </span><span class="kw">calibrate_model</span>(
+res_cal_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">calibrate_model</span>(
   res_mod,
   <span class="dt">parameter_names =</span> <span class="kw">c</span>(<span class="st">&quot;gamma&quot;</span>, <span class="st">&quot;rrNP1&quot;</span>),
   <span class="dt">fn_values =</span> extract_values,
