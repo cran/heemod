@@ -1,3 +1,7 @@
+## heemod 0.9.4
+
+  * Compatibility with dplyr v0.8
+
 ## heemod 0.9.3
 
 ### Backend changes
