@@ -151,11 +151,11 @@ define_part_surv_ <- function(pfs, os, state_names,
 part_survs_from_surv_inputs <- function(surv_inputs, state_names) {
   
   surv_inputs %>%
-    dplyr::group_by_(
-      ~ treatment, ~ set_name, ~ dist, ~ set_def) %>%
-    dplyr::do_(
-      part_surv = ~ make_part_surv_from_small_tibble(
-        ., state_names = state_names))
+    dplyr::group_by(
+      .data$treatment, .data$set_name, .data$dist, .data$set_def) %>%
+    dplyr::do(
+      part_surv = make_part_surv_from_small_tibble(
+        .data, state_names = state_names))
 }
 
 get_state_names.part_surv <- function(x) {
@@ -240,6 +240,7 @@ compute_counts.eval_part_surv <- function(x, init,
   res <- res[x$state_names]
   
   structure(res, class = c("cycle_counts", class(res)))
+  list(counts = res) #cannot compute count diff matrix in partitionned survival
 }
 
 guess_part_surv_state_names <- function(state_names) {
@@ -347,8 +348,8 @@ construct_part_surv_tib <-
     ## we handle directly defined distributions
     ##   (those defined with define_survival())
     ##   separately from fits
-    with_direct_dist <- dplyr::filter_(surv_def, ~ grepl("^define_survival", dist))
-    should_be_fits <- dplyr::filter_(surv_def, ~ !grepl("^define_survival", dist))
+    with_direct_dist <- dplyr::filter(surv_def, grepl("^define_survival", dist))
+    should_be_fits <- dplyr::filter(surv_def, !grepl("^define_survival", dist))
     
     should_be_fits_3 <- should_be_fits
     if (nrow(should_be_fits) > 0) {
@@ -379,14 +380,14 @@ construct_part_surv_tib <-
     ## and now we can rejoin them and continue
     surv_def_4 <-
       rbind(should_be_fits_3, direct_dist_def_3) %>%
-      dplyr::group_by_(~ .strategy, ~ .type) %>%
-      dplyr::do_(fit = ~ join_fits_across_time(.)) %>%
+      dplyr::group_by(.data$.strategy, .data$.type) %>%
+      dplyr::do(fit = join_fits_across_time(.data)) %>%
       dplyr::ungroup()
     surv_def_5 <-
       surv_def_4 %>%
-      dplyr::group_by_(~ .strategy) %>%
-      dplyr::rename_(type = ~ .type) %>%
-      dplyr::do_(part_surv = ~ make_part_surv_from_small_tibble(.,
+      dplyr::group_by(.data$.strategy) %>%
+      dplyr::rename(type = .data$.type) %>%
+      dplyr::do(part_surv = make_part_surv_from_small_tibble(.data,
                                                                 state_names = state_names))
     surv_def_5
   }
@@ -395,7 +396,7 @@ join_fits_across_time <- function(this_part){
 if(nrow(this_part) == 1) return(this_part$fit[[1]])
   if ("until" %in% names(this_part)) {
     this_part <-
-      dplyr::arrange_(this_part, ~ until)
+      dplyr::arrange(this_part, .data$until)
     
     join_(dots = this_part$fit, 
              at= this_part$until[!is.na(this_part$until)])
@@ -423,6 +424,7 @@ make_part_surv_from_small_tibble <- function(st, state_names){
 
 
 join_fits_to_def <- function(surv_def, fit_tibble) {
+  . <- NULL #avoids NOTE in CRAN Check
   surv_def_names <- c(".strategy", ".type", "dist")
   if (!all(present_names <- surv_def_names %in% names(surv_def))) {
     stop("missing required names in 'surv_def': ",
@@ -436,15 +438,15 @@ join_fits_to_def <- function(surv_def, fit_tibble) {
   }
   
     fit_tibble <-
-    dplyr::mutate_(fit_tibble, type = ~ toupper(type))
+    dplyr::mutate(fit_tibble, type = toupper(.data$type))
   
   ## reduce fit expressions to distribution names
   should_be_fits_2 <- surv_def %>%
-    dplyr::mutate_(
-      dist = ~ gsub("fit\\((.*)\\)", "\\1", dist) %>%
+    dplyr::mutate(
+      dist = gsub("fit\\((.*)\\)", "\\1", dist) %>%
         gsub("'", "", .) %>%
         gsub('"', '', .),
-      .type = ~ toupper(.type)
+      .type = toupper(.data$.type)
     )
   ok_dist_names <-
     should_be_fits_2$dist %in% c(allowed_fit_distributions, "km")

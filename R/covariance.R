@@ -5,22 +5,22 @@ compute_cov <- function(psa, diff = FALSE, k, k_default = 10, threshold) {
   
   if (diff) {
     tab_psa <- psa$psa %>%
-      dplyr::group_by_(~ .index) %>%
-      dplyr::do_(~ compute_icer(
-        ., strategy_order = order(get_effect(get_model(psa))),
+      dplyr::group_by(.data$.index) %>%
+      dplyr::do(compute_icer(.data,
+        strategy_order = order(get_effect(get_model(psa))),
         threshold = threshold)) %>%
-      dplyr::filter_(~ ! is.na(.dref)) %>% 
+      dplyr::filter(!is.na(.data$.dref)) %>% 
       dplyr::ungroup()
   } else {
     tab_psa <- psa$psa
   }
   
   max_k <- tab_psa %>% 
-    dplyr::select_(.dots = c(psa$resamp_par), ".strategy_names") %>% 
-    dplyr::group_by_(".strategy_names") %>% 
-    dplyr::summarise_all(dplyr::funs(dplyr::n_distinct)) %>% 
+    dplyr::select(psa$resamp_par, .data$.strategy_names) %>% 
+    dplyr::group_by(.data$.strategy_names) %>% 
+    dplyr::summarise_all(dplyr::n_distinct) %>% 
     dplyr::summarise_all(min) %>% 
-    dplyr::select_(~ - .strategy_names) %>% 
+    dplyr::select(-.data$.strategy_names) %>% 
     unlist()
   
   default_k <- ifelse(
@@ -71,18 +71,18 @@ compute_cov <- function(psa, diff = FALSE, k, k_default = 10, threshold) {
   }
   
   res <- tab_psa %>% 
-    dplyr::group_by_(".strategy_names") %>% 
-    dplyr::do_(
-      ~ compute_prop_var(mgcv::gam(formula = form_cost, data = .))
+    dplyr::group_by(.data$.strategy_names) %>% 
+    dplyr::do(
+      compute_prop_var(mgcv::gam(formula = form_cost, data = .data))
     ) %>% 
     dplyr::mutate(
       .result = "Cost"
     ) %>% 
     dplyr::bind_rows(
       tab_psa %>% 
-        dplyr::group_by_(".strategy_names") %>% 
-        dplyr::do_(
-          ~ compute_prop_var(mgcv::gam(formula = form_effect, data = .))
+        dplyr::group_by(.data$.strategy_names) %>% 
+        dplyr::do(
+          compute_prop_var(mgcv::gam(formula = form_effect, data = .data))
         ) %>% 
         dplyr::mutate(
           .result = "Effect"
@@ -93,9 +93,9 @@ compute_cov <- function(psa, diff = FALSE, k, k_default = 10, threshold) {
     res <- res %>% 
       dplyr::bind_rows(
         tab_psa %>% 
-          dplyr::group_by_(".strategy_names") %>% 
-          dplyr::do_(
-            ~ compute_prop_var(mgcv::gam(formula = form_nmb, data = .))
+          dplyr::group_by(.data$.strategy_names) %>% 
+          dplyr::do(
+            compute_prop_var(mgcv::gam(formula = form_nmb, data = .data))
           ) %>% 
           dplyr::mutate(
             .result = "NMB"

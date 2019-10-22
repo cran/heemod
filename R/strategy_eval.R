@@ -55,7 +55,7 @@ eval_strategy <- function(strategy, parameters, cycles,
   uneval_transition <- expanded$uneval_transition
   init <- expanded$init
   inflow <- expanded$inflow
-  starting_values <- expanded$starting_values
+  strategy_starting_values <- expanded$starting_values
   n_indiv <- expanded$n_indiv
   parameters <- expanded$parameters
   actually_expanded_something <- expanded$actually_expanded_something
@@ -65,14 +65,16 @@ eval_strategy <- function(strategy, parameters, cycles,
   transition <- eval_transition(uneval_transition,
                                 parameters)
   
-  count_table <- compute_counts(
+  count_list <- compute_counts(
     x = transition,
     init = init,
     inflow = inflow
   ) %>% 
     correct_counts(method = method)
   
-  values <- compute_values(states, count_table, starting_values)
+  values <- compute_values(states, count_list, strategy_starting_values)
+  
+  count_table <- count_list$counts
   
   if (actually_expanded_something) {
     for (st in expanded$expanded_states) {
@@ -168,19 +170,10 @@ compute_counts.eval_matrix <- function(x, init, inflow, ...) {
     ))
   }
   
-  i <- 0
-  add_and_mult <- function(x, y) {
-    i <<- i + 1
-    (x + unlist(inflow[i, ])) %*% y
-  }
-  
-  list_counts <- Reduce(
-    add_and_mult,
-    x,
-    init,
-    accumulate = TRUE
-  )
-  
+  counts_and_diff <- get_counts_diff(x, init, inflow)
+
+  list_counts <- lapply(counts_and_diff, `[[`, 1) 
+
   res <- dplyr::as.tbl(
     as.data.frame(
       matrix(
@@ -194,6 +187,8 @@ compute_counts.eval_matrix <- function(x, init, inflow, ...) {
   colnames(res) <- get_state_names(x)
   
   structure(res, class = c("cycle_counts", class(res)))
+  list(counts = res, diff = lapply(counts_and_diff[-(length(x) + 1)], `[[`, 2))
+  
 }
 
 #' Compute State Values per Cycle
@@ -210,34 +205,76 @@ compute_counts.eval_matrix <- function(x, init, inflow, ...) {
 #' @keywords internal
 ## slightly harder to read than the original version, but much faster
 ## identical results to within a little bit of numerical noise
-compute_values <- function(states, counts, starting_values) {
+compute_values <- function(states, count_list, strategy_starting_values) {
+  
+  counts <- count_list$counts
+  diff <- count_list$diff
+
+  states_values <- structure(
+    states$.dots, class = class(states)
+  )
+  states_starting <- states$starting_values
   states_names <- get_state_names(states)
   state_values_names <- get_state_value_names(states)
   num_cycles <- nrow(counts)
+  num_states <- length(states_names)
+  num_state_values <-length(state_values_names)
 
   ## combine the list of states into a single large array
   dims_array_1 <- c(
     num_cycles,
-    length(state_values_names),
-    length(states_names))
+    num_state_values,
+    num_states)
   
   dims_array_2 <- dims_array_1 + c(0, 1, 0)
   
-  state_val_array <- array(unlist(states), dim = dims_array_2)
+  state_val_array <- array(unlist(states_values), dim = dims_array_2)
+  start_val_array <- array(unlist(states_starting), dim = dims_array_2)
 
   ## get rid of markov_cycle
-  mc_col <- match("markov_cycle", names(states[[1]]))
+  mc_col <- match("markov_cycle", names(states_values[[1]]))
   state_val_array <- state_val_array[, -mc_col, , drop = FALSE]
+  start_val_array <- start_val_array[, -mc_col, , drop = FALSE]
 
   ## put counts into a similar large array
   counts_mat <- array(unlist(counts[, states_names]),
                       dim = dims_array_1[c(1, 3, 2)])
   counts_mat <- aperm(counts_mat, c(1, 3, 2))
 
-  # multiply, sum, and add markov_cycle back in
-  vals_x_counts <- (state_val_array +  array(unlist(starting_values), dim = dims_array_1) )* counts_mat 
-  wtd_sums <- rowSums(vals_x_counts, dims = 2)
-  res <- data.frame(markov_cycle = states[[1]]$markov_cycle, wtd_sums)
+  
+  
+  starting_fill_zero <- c(strategy_starting_values, 
+                          rep(0, num_state_values * (num_cycles - 1))) %>%
+    matrix(nrow = num_cycles, byrow = TRUE) %>%
+    array(dim = dims_array_1)
+  
+  if(is.null(diff) & sum(start_val_array) > 0){
+    warning("Partitioned survival models cannot take into account the starting 
+    values in define_state()")
+  }
+  
+  new_starting_states <- lapply(diff, function(x){
+    diag(x) <- 0
+    colSums(x)
+  }) %>% 
+    unlist() 
+  
+  new_starting_states <- if (length(new_starting_states)) {
+    matrix(new_starting_states, nrow = num_cycles, byrow = TRUE)
+  } else {
+    matrix(rep(0, num_states), ncol = num_states)
+  }
+  
+  start_x_counts <- lapply(seq_len(num_states), function(i){
+    new_starting_states[, i] * start_val_array[, , i]
+  }) %>% 
+    unlist() %>%
+    array(dim = dims_array_1)
+  
+  # multiply, sum, add starting values and add markov_cycle back in
+  vals_x_counts <- (state_val_array + starting_fill_zero) * counts_mat 
+  wtd_sums <- rowSums(vals_x_counts, dims = 2) + rowSums(start_x_counts, dims = 2)
+  res <- data.frame(markov_cycle = states_values[[1]]$markov_cycle, wtd_sums)
 
   names(res)[-1] <- state_values_names
   
@@ -331,7 +368,7 @@ expand_if_necessary <- function(strategy, parameters,
     }
   }
   
-  parameters <- eval_parameters(parameters,
+  parameters <- eval_parameters(old_parameters,
                                 cycles = cycles,
                                 strategy_name = strategy_name)
   
@@ -351,18 +388,19 @@ expand_if_necessary <- function(strategy, parameters,
   e_init <- unlist(eval_init(x = init, parameters[1,]))
   e_inflow <- eval_inflow(x = inflow, parameters)
   
-  e_starting_values_strat <- unlist(
+  e_starting_values <- unlist(
     eval_starting_values(
       x = strategy$starting_values,
       parameters[1, ])
   )
-  e_starting_values <- 
-    lapply(i_uneval_states, function(x){
-      unlist(eval_starting_values(
-        x = x$starting_values,
-        parameters[1, ]
-      )) + e_starting_values_strat
-    })
+  # e_starting_values <- 
+  #   list(starting_strategy = e_starting_values_strat,
+  #        starting_state = lapply(i_uneval_states, function(x){
+  #     unlist(eval_starting_values(
+  #       x = x$starting_values,
+  #       parameters[1, ]
+  #     ))
+  #   }))
 
   n_indiv <- sum(e_init, unlist(e_inflow))
   

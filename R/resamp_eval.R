@@ -42,7 +42,7 @@ run_psa <- function(model, psa, N, resample) {
           newdata = newdata
         ) %>% 
           dplyr::rowwise() %>% 
-          dplyr::do_(~ get_total_state_values(.$.mod)) %>% 
+          dplyr::do(get_total_state_values(.data$.mod)) %>% 
           dplyr::bind_cols(newdata) %>% 
           dplyr::ungroup()
       )
@@ -57,13 +57,16 @@ run_psa <- function(model, psa, N, resample) {
     list_res[[n]]$.index <- index
   }
   
+  x_tidy <- get_ce(model) %>%
+    compat_lazy_dots()
+  
   res <- 
     dplyr::bind_rows(list_res)
-  res <- dplyr::mutate_(res, .dots = get_ce(model))
+  res <- dplyr::mutate(res, !!!x_tidy)
   
   run_model <- res %>% 
-    dplyr::select_(~ - .index) %>% 
-    dplyr::group_by_(".strategy_names") %>%
+    dplyr::select(-.data$.index) %>% 
+    dplyr::group_by(.data$.strategy_names) %>%
     dplyr::summarise_all(mean) %>% 
     as.data.frame()
   
@@ -168,9 +171,10 @@ eval_resample <- function(psa, N) {
         lapply(
           m,
           function(x) as.call(list(as.name("/"), as.name(x), as.name(".denom")))),
-        m)))
-    res <- dplyr::mutate_(res, .dots = list_expr) %>% 
-      dplyr::select_(~ - .denom)
+        m))) %>%
+      compat_lazy_dots()
+    res <- dplyr::mutate(res, !!!list_expr) %>% 
+      dplyr::select(-.data$.denom)
   }
   res
 }

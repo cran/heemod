@@ -97,61 +97,61 @@ plot.dsa <- function(x, type = c("simple", "difference"),
   
   if (resolve_labels) {
     x$dsa <- x$dsa %>%
-      dplyr::mutate_(
-        .par_value = ~ .par_value_eval
+      dplyr::mutate(
+        .par_value = .data$.par_value_eval
       )
   }
   
   tab <- summary(x, center = FALSE)$res_comp %>% 
     dplyr::left_join(
       summary(model_ref, center = FALSE)$res_comp %>%
-        dplyr::select_(
-          ".strategy_names",
-          .cost_ref = ".cost",
-          .effect_ref = ".effect",
-          .dcost_ref = ".dcost",
-          .deffect_ref = ".deffect",
-          .icer_ref = ".icer"
+        dplyr::select(
+          .data$.strategy_names,
+          .cost_ref = .data$.cost,
+          .effect_ref = .data$.effect,
+          .dcost_ref = .data$.dcost,
+          .deffect_ref = .data$.deffect,
+          .icer_ref = .data$.icer
         ),
-      by = ".strategy_names"
+      by = .data$.strategy_names
     ) %>% 
-    dplyr::mutate_(
-      .col_cost = ~ ifelse(.cost > .cost_ref, ">",
-                           ifelse(.cost == .cost_ref, "=", "<")),
-      .col_effect = ~ ifelse(.effect > .effect_ref, ">",
-                             ifelse(.effect == .effect_ref, "=", "<")),
-      .col_dcost = ~ ifelse(.dcost > .dcost_ref, ">",
-                            ifelse(.dcost == .dcost_ref, "=", "<")),
-      .col_deffect = ~ ifelse(.deffect > .deffect_ref, ">",
-                              ifelse(.deffect == .deffect_ref, "=", "<")),
-      .col_icer = ~ ifelse(.icer > .icer_ref, ">",
-                           ifelse(.icer == .icer_ref, "=", "<"))
+    dplyr::mutate(
+      .col_cost = ifelse(.data$.cost > .data$.cost_ref, ">",
+                           ifelse(.data$.cost == .data$.cost_ref, "=", "<")),
+      .col_effect = ifelse(.data$.effect > .data$.effect_ref, ">",
+                             ifelse(.data$.effect == .data$.effect_ref, "=", "<")),
+      .col_dcost = ifelse(.data$.dcost > .data$.dcost_ref, ">",
+                            ifelse(.data$.dcost == .data$.dcost_ref, "=", "<")),
+      .col_deffect = ifelse(.data$.deffect > .data$.deffect_ref, ">",
+                              ifelse(.data$.deffect == .data$.deffect_ref, "=", "<")),
+      .col_icer = ifelse(.data$.icer > .data$.icer_ref, ">",
+                           ifelse(.data$.icer == .data$.icer_ref, "=", "<"))
     ) %>% 
-    dplyr::filter_(
-      substitute(.strategy_names %in% strategy,
-                 list(strategy = strategy))
-    ) %>%
-    dplyr::arrange_(
-      ".par_names", var_plot) %>%
-    dplyr::group_by_(~ .par_names, ~ .strategy_names) %>%
-    dplyr::mutate_(.hjust = ~ 1 - (row_number() - 1))
+    dplyr::filter(.data$.strategy_names %in% strategy) %>%
+    dplyr::arrange(
+      .data$.par_names, !!sym(var_plot)) %>%
+    dplyr::group_by(.data$.par_names, .data$.strategy_names) %>%
+    dplyr::mutate(.hjust = 1 - (row_number() - 1))
   
   if (remove_ns) {
     tab <- tab %>% 
-      dplyr::group_by_(".par_names") %>% 
-      dplyr::filter_(
-        substitute(! all(var_col == "="), list(var_col = as.name(var_col)))
+      dplyr::group_by(.data$.par_names) %>% 
+      dplyr::filter(
+        ! all(var_col == "=")
       )
   }
+  x_lazy <- lazyeval::as.lazy_dots(list(
+    d = substitute(
+      diff(range(xxx)),
+      list(xxx = as.name(var_plot)))))
+  
+  x_tidy <- compat_lazy_dots(x_lazy)
   
   if (widest_on_top) {
     tab$.par_names <- stats::reorder(
       tab$.par_names,
-      (tab %>% dplyr::group_by_(~ .par_names) %>% 
-         dplyr::mutate_(.dots = lazyeval::as.lazy_dots(list(
-           d = substitute(
-             diff(range(xxx)),
-             list(xxx = as.name(var_plot)))))))$d
+      (tab %>% dplyr::group_by(.data$.par_names) %>% 
+         dplyr::mutate(!!!x_tidy))$d
     )
   }
   
@@ -222,9 +222,9 @@ print.summary_dsa <- function(x, ...) {
     x$res_comp$.par_value
   )
   
-  x <- dplyr::select_(x$res_comp, ~ - .par_names,
-                      ~ - .par_value,
-                      ~ - .strategy_names)
+  x <- dplyr::select(x$res_comp, -.data$.par_names,
+                      -.data$.par_value,
+                      -.data$.strategy_names)
   x <- pretty_names(x)
   
   res <- as.matrix(x)
@@ -250,18 +250,18 @@ scale.dsa <- function(x, center = TRUE, scale = TRUE) {
   
   if (scale) {
     res <- res %>% 
-      dplyr::mutate_(
-        .cost = ~ .cost / .n_indiv,
-        .effect = ~ .effect / .n_indiv
+      dplyr::mutate(
+        .cost = .data$.cost / .data$.n_indiv,
+        .effect = .data$.effect / .data$.n_indiv
       )
   }
   
   if (center) {
     res <- res %>% 
-      dplyr::group_by_(~ .par_names, ~ .par_value) %>% 
-      dplyr::mutate_(
-        .cost = ~ .cost - sum(.cost * (.strategy_names == .bm)),
-        .effect = ~ .effect - sum(.effect * (.strategy_names == .bm))
+      dplyr::group_by(.data$.par_names, .data$.par_value) %>% 
+      dplyr::mutate(
+        .cost = .data$.cost - sum(.data$.cost * (.data$.strategy_names == .bm)),
+        .effect = .data$.effect - sum(.data$.effect * (.data$.strategy_names == .bm))
       ) %>% 
       dplyr::ungroup()
   }
@@ -272,9 +272,9 @@ scale.dsa <- function(x, center = TRUE, scale = TRUE) {
 summary.dsa <- function(object, ...) {
   res <- object %>% 
     scale(...) %>% 
-    dplyr::group_by_(~ .par_names, ~ .par_value)  %>% 
-    dplyr::do_(~ compute_icer(
-      ., strategy_order = order(get_effect(get_model(object)))
+    dplyr::group_by(.data$.par_names, .data$.par_value)  %>% 
+    dplyr::do(compute_icer(
+      .data, strategy_order = order(get_effect(get_model(object)))
     )) %>% 
     dplyr::ungroup()
   

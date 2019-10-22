@@ -11,26 +11,29 @@
 #'   
 #' @keywords internal
 eval_state_list <- function(x, parameters) {
-  
-  f <- function(x) {
-    x <- discount_hack(x$.dots)
-    
+  f <- function(x, extracted) {
+    x <- discount_hack(x[[extracted]])
     # update calls to dispatch_strategy()
     x <- dispatch_strategy_hack(x)
     
+    x_tidy <- compat_lazy_dots(x)
+    
     # bottleneck!
-    dplyr::mutate_(parameters, .dots = x)[c("markov_cycle",
+    dplyr::mutate(parameters, !!!x_tidy)[c("markov_cycle",
                                             names(x))]
   }
-
-  res <- lapply(x, f)
+  
+  res <- list(
+    .dots = lapply(x, f, ".dots"),
+    starting_values = lapply(x, f, "starting_values")
+  )
   
   structure(res,
             class = c("eval_state_list", class(res)))
 }
 
 get_state_value_names.eval_state_list <- function(x){
-  names(x[[1]])[-1]
+  names(x$.dots[[1]])[-1]
 }
 
 #' Hack to Work Around a Discounting Issue

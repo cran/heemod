@@ -38,7 +38,7 @@ run_dsa <- function(model, dsa) {
     res <- tab %>% 
       dplyr::mutate_if(
         names(tab) %in% dsa$variables,
-        dplyr::funs(to_text_dots),
+        to_text_dots,
         name = FALSE
       )
     
@@ -68,13 +68,13 @@ run_dsa <- function(model, dsa) {
     dplyr::rowwise()
   
   res <- res %>% 
-    dplyr::do_(~ get_total_state_values(.$.mod)) %>% 
-    dplyr::bind_cols(res %>% dplyr::select_(~ - .mod)) %>% 
+    dplyr::do(get_total_state_values(.data$.mod)) %>% 
+    dplyr::bind_cols(res %>% dplyr::select(-.data$.mod)) %>% 
     dplyr::ungroup() %>% 
     dplyr::mutate(
       .par_value_eval = unlist(e_newdata)) %>% 
-    dplyr::mutate_(
-      .dots = get_ce(model))
+    dplyr::mutate(
+      !!! compat_lazy_dots(get_ce(model)))
   
   structure(
     list(

@@ -7,6 +7,10 @@ has_state_time.uneval_matrix <- function(x, ...) {
   unlist(lapply(x, function(y) "state_time" %in% all.vars(y$expr)))
 }
 
+has_state_time.uneval_parameters <- function(x, ...) {
+  unlist(lapply(x, function(y) "state_time" %in% all.vars(y$expr)))
+}
+
 #' @export
 has_state_time.part_surv <- function(x, ...) {
   FALSE
@@ -101,17 +105,21 @@ expand_state.uneval_state_list <- function(x, state_name, cycles) {
   
   st <- x[[state_name]]
   x[state_name] <- NULL
+  state_values_names <- get_state_value_names(st)
+  num_state_values <-length(state_values_names)
+  revert_starting <- setNames(as.list(rep(0, num_state_values)), state_values_names) %>%
+    as.lazy_dots()
   
   id <- seq_len(cycles + 1)
   res <- lapply(
     id,
-    function(x) {
+    function(i) {
       list(
-        .dots = substitute_dots(st$.dots, list(state_time = x)),
-        starting_values <- if (x == 1) {
-          substitute_dots(st$starting_values, list(state_time = x))
+        .dots = substitute_dots(st$.dots, list(state_time = i)),
+        starting_values = if (i == 1) {
+          substitute_dots(st$starting_values, list(state_time = i))
         } else {
-          list()
+          revert_starting
         }
       )
     }

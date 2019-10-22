@@ -53,9 +53,9 @@ eval_strategy_newdata <- function(x, strategy = 1, newdata) {
       pieces <- parallel::parLapply(cl, pnewdata, function(newdata) {
         newdata %>% 
           dplyr::rowwise() %>% 
-          dplyr::do_(
-            .mod = ~ eval_newdata(
-              .,
+          dplyr::do(
+            .mod = eval_newdata(
+              .data,
               strategy = uneval_strategy,
               old_parameters = old_parameters,
               cycles = cycles,
@@ -79,9 +79,9 @@ eval_strategy_newdata <- function(x, strategy = 1, newdata) {
     suppressMessages(
       res <- newdata %>% 
         dplyr::rowwise() %>% 
-        dplyr::do_(
-          .mod = ~ eval_newdata(
-            .,
+        dplyr::do(
+          .mod = eval_newdata(
+            .data,
             strategy = uneval_strategy,
             old_parameters = old_parameters,
             cycles = cycles,

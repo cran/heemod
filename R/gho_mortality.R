@@ -74,7 +74,7 @@ get_who_mr_memo <- function(age, sex = NULL, region = NULL, country = NULL,
     )
   }
   
-  ref_data <- dplyr::data_frame(
+  ref_data <- tibble(
     AGEGROUP =  trans_age_gho(age)
   )
   
@@ -134,7 +134,7 @@ get_gho_mr <- function(sex, region, country, year) {
   
   mr_data_year <- mr_data[mr_data$YEAR == study_year, ]
   
-  if (nrow(mr_data_year) %% 44 != 0) {
+  if (nrow(mr_data_year) %% 38 != 0) {
     stop("Strange GHO mortality data.")
   }
   
@@ -166,7 +166,7 @@ pool_data <- function(mr_data, sex, region, country, year) {
   if (nrow(pop_data) == 0) {
     stop("No population structure for the selected year, cannot pool rates.")
   }
-  if (nrow(pop_data) %% 44 != 0) {
+  if (nrow(pop_data) %% 38 != 0) {
     stop("Strange population structure data.")
   }
   exists_col_country <- "COUNTRY" %in% colnames(pop_data)
@@ -174,29 +174,29 @@ pool_data <- function(mr_data, sex, region, country, year) {
 
   suppressMessages({
     pop_weight <- pop_data %>% 
-      dplyr::select_(
-        .dots = c(cols, weight = "Numeric")
+      dplyr::select(
+        c(cols, weight = "Numeric")
       ) %>% 
       dplyr::left_join(mr_data)
     
     if (exists_col_country && length(unique(pop_weight$COUNTRY)) > 1){
-      pop_weight <- dplyr::filter_(pop_weight, ~ !is.na(COUNTRY))
+      pop_weight <- dplyr::filter(pop_weight, !is.na(.data$COUNTRY))
     }
     
     
     pop_group <- if ((is.null(country) || !exists_col_country) && is.null(sex)) {
-      dplyr::group_by_(pop_weight, "AGEGROUP")
+      dplyr::group_by(pop_weight, .data$AGEGROUP)
       
     } else if (is.null(sex)){
-      dplyr::group_by_(pop_weight, "AGEGROUP", "COUNTRY")
+      dplyr::group_by(pop_weight, .data$AGEGROUP, .data$COUNTRY)
       
     } else if (is.null(country) | !exists_col_country){
-      dplyr::group_by_(pop_weight, "AGEGROUP", "SEX")
+      dplyr::group_by(pop_weight, .data$AGEGROUP, .data$SEX)
     }
     
-    dplyr::summarise_(
+    dplyr::summarise(
         pop_group,
-        Numeric = ~ sum(Numeric * weight) / sum(weight)
+        Numeric = sum(.data$Numeric * .data$weight) / sum(.data$weight)
       )
   })
 }

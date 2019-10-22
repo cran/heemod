@@ -319,19 +319,17 @@ define_calibration_fn <- function(type, strategy_names,
     seq_along(element_names),
     function(i) {
       if (type[i] == "count") {
-        lazyeval::interp(
-          ~ state_names == state & markov_cycle == cycle &
-            .strategy_names == strat,
-          state = element_names[i], cycle = cycles[i],
-          strat = strategy_names[i]
-        )
+        state <- element_names[i]
+        cycle <- cycles[i]
+        strat <- strategy_names[i]
+        quo(.data$state_names == state & .data$markov_cycle == cycle &
+              .data$.strategy_names == strat)
       } else {
-        lazyeval::interp(
-          ~ value_names == value & markov_cycle == cycle &
-            .strategy_names == strat,
-          value = element_names[i], cycle = cycles[i],
-          strat = strategy_names[i]
-        )
+        value <- element_names[i]
+        cycle <- cycles[i]
+        strat <- strategy_names[i]
+        quo(.data$value_names == value & .data$markov_cycle == cycle &
+              .data$.strategy_names == strat)
       }
     })
   
@@ -340,8 +338,8 @@ define_calibration_fn <- function(type, strategy_names,
       seq_along(ex_list),
       function(i) {
         (f_list[[i]](x) %>% 
-           dplyr::filter_(
-             .dots = ex_list[[i]]
+           dplyr::filter(
+             !! ex_list[[i]]
            ))[[type[i]]]
       })
     )

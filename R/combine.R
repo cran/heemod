@@ -34,17 +34,17 @@ combine_models <- function(newmodels, weights, oldmodel) {
     # collapse total values
     collapsed_total_values <- (newmodels[[i]]) %>% 
       dplyr::rowwise() %>% 
-      dplyr::do_(~ get_total_state_values(.$.mod)) %>% 
+      dplyr::do(get_total_state_values(.data$.mod)) %>% 
       dplyr::ungroup() %>% 
       dplyr::summarise_all(apply_weights)
     
     tab_counts <- (newmodels[[i]]) %>% 
       dplyr::rowwise() %>% 
-      dplyr::do_(.counts = ~ get_counts(.$.mod))
+      dplyr::do(.counts = get_counts(.data$.mod))
     
     tab_values <- (newmodels[[i]]) %>% 
       dplyr::rowwise() %>% 
-      dplyr::do_(.values = ~ get_values(.$.mod))
+      dplyr::do(.values = get_values(.data$.mod))
     
     collapsed_counts <- tab_counts$.counts %>% 
       mapply(
@@ -80,7 +80,7 @@ combine_models <- function(newmodels, weights, oldmodel) {
   
   res <- 
     dplyr::bind_rows(list_res) %>%
-    dplyr::mutate_(.dots = get_ce(oldmodel))
+    dplyr::mutate(!!!compat_lazy_dots(get_ce(oldmodel)))
   
   root_strategy <- get_root_strategy(res)
   noncomparable_strategy <- get_noncomparable_strategy(res)

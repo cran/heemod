@@ -1,3 +1,17 @@
+## heemod 0.11.0
+
+### Backend changes
+
+  * States are now length 2 lists: 
+    * .dots: the state values
+    * starting_values: the state values when entering the state
+    
+  * Compatibility with dplyr 0.8: replaced all underscored (SE) versions of all verbs
+  
+### Bugfixes
+  
+  * `get_who_mr()` is again able to fetch data from GHO server
+
 ## heemod 0.10.0
 
 ### New features
@@ -72,7 +86,7 @@
 Filipovic-Pierucci A, Zarca K and Durand-Zaleski I (2017).
 “Markov Models for Health Economic Evaluations: The R
 Package heemod.” _ArXiv e-prints_. R package version
-0.8.0, 1702.03252, <URL: https://pierucci.org/heemod>.
+0.8.0, 1702.03252
 
   * Model calibration with `calibrate_model()`.
   * `init` and `inflow` can refer to values from `define_parameters()`, and are thus accessible to PSA / DSA.

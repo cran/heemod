@@ -108,8 +108,8 @@ plot.psa <- function(x, type = c("ce", "ac", "cov", "evpi"),
     },
     cov = {
       tab <- compute_cov(x, diff = diff, threshold = threshold, ...) %>% 
-        dplyr::mutate_(
-          .prop = ~ .prop * 100
+        dplyr::mutate(
+          .prop = .data$.prop * 100
         )
       
       ggplot2::ggplot(
@@ -132,18 +132,18 @@ scale.psa <- function(x, center = TRUE, scale = TRUE) {
   
   if (scale) {
     res <- res %>% 
-      dplyr::mutate_(
-        .cost = ~ .cost / .n_indiv,
-        .effect = ~ .effect / .n_indiv
+      dplyr::mutate(
+        .cost = .data$.cost / .data$.n_indiv,
+        .effect = .data$.effect / .data$.n_indiv
       )
   }
   
   if (center) {
     res <- res %>% 
-      dplyr::group_by_(".index") %>% 
-      dplyr::mutate_(
-        .cost = ~ (.cost - sum(.cost * (.strategy_names == .bm))),
-        .effect = ~ (.effect - sum(.effect * (.strategy_names == .bm)))
+      dplyr::group_by(.data$.index) %>% 
+      dplyr::mutate(
+        .cost = (.data$.cost - sum(.data$.cost * (.data$.strategy_names == .bm))),
+        .effect = (.data$.effect - sum(.data$.effect * (.data$.strategy_names == .bm)))
       ) %>% 
       dplyr::ungroup()
   }
