@@ -1,7 +1,7 @@
-## ---- echo=FALSE, include=FALSE------------------------------------------
+## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
 
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 
 param <- define_parameters(
     age_init = 60,
@@ -131,7 +131,7 @@ res_mod <- run_model(
   method = "end"
 )
 
-## ----include = FALSE-----------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 N <- 100
 
 tab_indiv <- tibble::tibble(
@@ -144,24 +144,24 @@ tab_indiv_w <- tibble::tibble(
   .weights = runif(N)
 )
 
-## ---- fig.align='center', fig.height=4, fig.width=6----------------------
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
 tab_indiv
 
 library(ggplot2)
 ggplot(tab_indiv, aes(x = age)) +
   geom_histogram(binwidth = 2)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 res_h <- update(res_mod, newdata = tab_indiv)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 summary(res_h)
 
-## ---- fig.align='center', fig.height=4, fig.width=6----------------------
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
 plot(res_h, result = "effect", binwidth = 5)
 plot(res_h, result = "cost", binwidth = 50)
 
-## ---- fig.align='center', fig.height=4, fig.width=6----------------------
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
 plot(res_h, result = "icer", type = "difference",
      binwidth = 500)
 plot(res_h, result = "effect", type = "difference",
@@ -169,10 +169,10 @@ plot(res_h, result = "effect", type = "difference",
 plot(res_h, result = "cost", type = "difference",
      binwidth = 30)
 
-## ---- fig.align='center', fig.height=4, fig.width=6----------------------
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
 plot(res_h, type = "counts")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 tab_indiv_w
 res_w <- update(res_mod, newdata = tab_indiv_w)
 res_w

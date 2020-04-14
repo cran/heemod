@@ -1,4 +1,4 @@
-## ---- echo=FALSE, include=FALSE------------------------------------------
+## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
 
 param <- define_parameters(
@@ -123,7 +123,7 @@ res_mod <- run_model(
   effect = life_year
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 se <- define_dsa(
   rr, .4, .6,
   
@@ -133,34 +133,34 @@ se <- define_dsa(
   dr, .04, .08
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 res_dsa <- run_dsa(
   model = res_mod,
   dsa = se
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 res_dsa
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
+## ---- fig.width = 6, fig.align='center'---------------------------------------
 plot(res_dsa,
      strategy = "mono",
      result = "cost",
      type = "simple")
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
+## ---- fig.width = 6, fig.align='center'---------------------------------------
 plot(res_dsa,
      strategy = "comb",
      result = "cost",
      type = "simple")
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
+## ---- fig.width = 6, fig.align='center'---------------------------------------
 plot(res_dsa, 
      strategy = "comb",
      result = "effect",
      type = "simple")
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
+## ---- fig.width = 6, fig.align='center'---------------------------------------
 plot(res_dsa,
      strategy = "comb",
      result = "cost",
@@ -170,7 +170,7 @@ plot(res_dsa,
      result = "icer",
      type = "difference")
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
+## ---- fig.width = 6, fig.align='center'---------------------------------------
 plot(res_dsa,
      strategy = "comb",
      result = "icer",

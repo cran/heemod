@@ -1,8 +1,8 @@
-## ---- echo=FALSE, include=FALSE------------------------------------------
+## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
 library(ggplot2)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 param <- define_parameters(
     age_init = 60,
     sex = 0,
@@ -44,7 +44,7 @@ param <- define_parameters(
 )
 param
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 mat_standard <- define_transition(
     state_names = c(
       "PrimaryTHR",
@@ -77,10 +77,10 @@ mat_np1 <- define_transition(
 )
 mat_np1
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'--------------------
+## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
 plot(mat_standard)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 strat_standard <- define_strategy(
   transition = mat_standard,
   PrimaryTHR = define_state(
@@ -137,7 +137,7 @@ strat_np1 <- define_strategy(
 )
 strat_np1
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 res_mod <- run_model(
   standard = strat_standard,
   np1      = strat_np1,
@@ -147,10 +147,10 @@ res_mod <- run_model(
   effect = utility
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 summary(res_mod)
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'--------------------
+## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
 plot(res_mod, type = "counts", panel = "by_state", free_y = TRUE) +
   theme_bw() +
   scale_color_brewer(

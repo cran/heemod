@@ -1,7 +1,7 @@
-## ---- echo=FALSE, include=FALSE------------------------------------------
+## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
 
-## ---- define, include = FALSE--------------------------------------------
+## ---- define, include = FALSE-------------------------------------------------
 param <- define_parameters(
     age_init = 60,
     sex = 0,
@@ -130,12 +130,12 @@ res_mod <- run_model(
   method = "end"
 )
 
-## ----get_counts, message=FALSE-------------------------------------------
+## ----get_counts, message=FALSE------------------------------------------------
 library(dplyr)
 get_counts(res_mod) %>% 
   dplyr::filter(markov_cycle == 20 & state_names == "RevisionTHR")
 
-## ----extract_values------------------------------------------------------
+## ----extract_values-----------------------------------------------------------
 extract_values <- function(x) {
   dplyr::filter(
     get_counts(x),
@@ -144,7 +144,7 @@ extract_values <- function(x) {
 }
 extract_values(res_mod)
 
-## ----define_calib_fn-----------------------------------------------------
+## ----define_calib_fn----------------------------------------------------------
 calib_fn <- define_calibration_fn(
   type = "count",
   strategy_names = c("standard", "np1"),
@@ -153,7 +153,7 @@ calib_fn <- define_calibration_fn(
 )
 calib_fn(res_mod)
 
-## ----calibrate_no_init---------------------------------------------------
+## ----calibrate_no_init--------------------------------------------------------
 res_cal <- calibrate_model(
   res_mod,
   parameter_names = c("gamma", "rrNP1"),
@@ -162,7 +162,7 @@ res_cal <- calibrate_model(
 )
 res_cal
 
-## ----calibrate_init, eval = FALSE----------------------------------------
+## ----calibrate_init, eval = FALSE---------------------------------------------
 #  start <- data.frame(
 #    gamma = c(1.0, 1.5, 2.0),
 #    rrNP1 = c(0.2, 0.3, 0.4)

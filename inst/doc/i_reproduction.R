@@ -1,7 +1,7 @@
-## ---- echo=FALSE, include=FALSE------------------------------------------
+## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 par_mod <- define_parameters(
   rr = ifelse(markov_cycle <= 2, .509, 1),
   cost_lami = ifelse(markov_cycle <= 2, 2086.5, 0),
@@ -107,7 +107,7 @@ res_mod <- run_model(
 )
 summary(res_mod)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # a function to return age-related mortality rate
 # given age and sex
 death_prob <- data.frame(

@@ -75,12 +75,13 @@ test_that(
       a = 2,
       b = a * markov_cycle
     )
-    e_par1 <- heemod:::eval_parameters(
+    e_par1 <- eval_parameters(
       par1, 10
     )
     expect_output(
       str(e_par1),
-      "10 obs\\. of  5 variables"
+      paste("\\[10", cli::symbol$times, "5\\]")
+      
     )
     expect_equal(
       get_parameter_names(e_par1),

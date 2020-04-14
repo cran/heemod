@@ -1,7 +1,7 @@
-## ----setup, include=FALSE------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 library(heemod)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 surv_dist_1 <- define_survival(
   distribution = "exp",
   rate = .5
@@ -13,7 +13,7 @@ surv_dist_2 <- define_spline_survival(
   knots = c(4.077537, 5.883183, 6.458338)
 )
 
-## ----fig.width=6, fig.height=6-------------------------------------------
+## ----fig.width=6, fig.height=6------------------------------------------------
 library(flexsurv)
 
 fit_w <- flexsurvreg(
@@ -29,7 +29,7 @@ fit_spl <- flexsurvspline(
 )
 plot(fit_spl)
 
-## ----fig.width=6, fig.height=6-------------------------------------------
+## ----fig.width=6, fig.height=6------------------------------------------------
 fit_cov <- flexsurvreg(
   formula = Surv(rectime, censrec) ~ group,
   dist = "weibull",
@@ -40,7 +40,7 @@ fitcov_good   <- set_covariates(fit_cov, group = "Good")
 fitcov_medium <- set_covariates(fit_cov, group = "Medium")
 fitcov_poor   <- set_covariates(fit_cov, group = "Poor")
 
-## ----fig.width=6, fig.height=6-------------------------------------------
+## ----fig.width=6, fig.height=6------------------------------------------------
 library(survival)
 
 km_1 <- survfit(
@@ -56,11 +56,11 @@ km_good   <- set_covariates(km_cov, group = "Good")
 km_medium <- set_covariates(km_cov, group = "Medium")
 km_poor   <- set_covariates(km_cov, group = "Poor")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 km_poor_ph <- apply_hr(km_poor, hr = 0.5)
 km_medium_af <- apply_af(km_medium, af = 1.2)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 km_poor_join <- join(
   km_poor,
   fitcov_poor,
@@ -74,10 +74,10 @@ combined_risks <- add_hazards(
   fit_w, fitcov_good
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 compute_surv(surv_dist_2, time = 1:5)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 fit_cov %>% 
   set_covariates(group = "Good") %>% 
   apply_hr(hr = 2) %>% 
@@ -94,7 +94,7 @@ fit_cov %>%
   ) %>% 
   compute_surv(time = 1:5)
 
-## ----fig.width=6, fig.height=6-------------------------------------------
+## ----fig.width=6, fig.height=6------------------------------------------------
 param <- define_parameters(
   p1 = compute_surv(
     surv_dist_1,
@@ -138,10 +138,10 @@ resTM <- run_model(
   cost = cost, effect = ut
 )
 
-## ----fig.width=6, fig.height=4-------------------------------------------
+## ----fig.width=6, fig.height=4------------------------------------------------
 plot(resTM)
 
-## ----fig.width=6, fig.height=4-------------------------------------------
+## ----fig.width=6, fig.height=4------------------------------------------------
 ps <- define_part_surv(
   pfs = surv_dist_1,
   os  = km_1 %>%

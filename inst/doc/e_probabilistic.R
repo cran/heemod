@@ -1,7 +1,7 @@
-## ---- echo=FALSE, include=FALSE------------------------------------------
+## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 param <- define_parameters(
   rr = .509,
   
@@ -36,7 +36,7 @@ param <- define_parameters(
   cost_C = 9007
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 mat_trans_mono <- define_transition(
   p_AA_mono, p_AB_mono, p_AC_mono, p_AD_mono,
   0,         C,         p_BC_mono, p_BD_mono,
@@ -50,7 +50,7 @@ mat_trans_comb <- define_transition(
   0,         0,         0,         1
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 state_A <- define_state(
     cost_health = 2756,
     cost_drugs = dispatch_strategy(
@@ -85,7 +85,7 @@ state_D <- define_state(
     life_year = 0
   )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 strat_mono <- define_strategy(
   transition = mat_trans_mono,
   state_A,
@@ -111,7 +111,7 @@ res_mod <- run_model(
   effect = life_year
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 rsp <- define_psa(
   rr ~ lognormal(mean = .509, sdlog = .173),
   
@@ -124,32 +124,32 @@ rsp <- define_psa(
   p_AA_mono + p_AB_mono + p_AC_mono + p_AD_mono ~ multinomial(721, 202, 67, 10)
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 pm <- run_psa(
   model = res_mod,
   psa = rsp,
   N = 100
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 summary(
   pm, 
   threshold = c(1000, 5000, 6000, 1e4))
 
-## ---- fig.width = 6, fig.height=4, fig.align='center'--------------------
+## ---- fig.width = 6, fig.height=4, fig.align='center'-------------------------
 plot(pm, type = "ce")
 
-## ---- fig.width = 6, fig.align='center'----------------------------------
+## ---- fig.width = 6, fig.align='center'---------------------------------------
 plot(pm, type = "ac", max_wtp = 10000, log_scale = FALSE)
 plot(pm, type = "evpi", max_wtp = 10000, log_scale = FALSE)
 
-## ---- fig.width = 6, fig.height = 4, fig.align='center'------------------
+## ---- fig.width = 6, fig.height = 4, fig.align='center'-----------------------
 plot(pm, type = "cov")
 
-## ---- fig.width = 4, fig.height = 4, fig.align='center'------------------
+## ---- fig.width = 4, fig.height = 4, fig.align='center'-----------------------
 plot(pm, type = "cov", diff = TRUE, threshold = 5000)
 
-## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE-------
+## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE------------
 library(ggplot2)
 
 plot(pm, type = "ce") +
@@ -161,7 +161,7 @@ plot(pm, type = "ce") +
   ) +
   theme_minimal()
 
-## ---- fig.height=6, fig.width=6------------------------------------------
+## ---- fig.height=6, fig.width=6-----------------------------------------------
 bcea <- run_bcea(pm, plot = TRUE, Kmax = 10000)
 summary(bcea)
 
