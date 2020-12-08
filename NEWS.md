@@ -1,8 +1,14 @@
+## heemod 0.14.0
+
+### Breaking changes
+  * argument "method" for run_model was inverted. Now "beginning" overestimates costs and "end" underestimates costs (#345 @zaddyzad)
+  
 ## heemod 0.13.0
+
 Prepare for dplyr 1.0.0
 
 ### Bugfixes
-  * Fix problem with state_time
+  * Fix problem with state_time (fix #343 @Reale3)
 
 ## heemod 0.12.0
 

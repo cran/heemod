@@ -128,7 +128,7 @@ res_mod <- run_model(
   cycles = 60,
   cost = cost,
   effect = utility,
-  method = "end"
+  method = "beginning"
 )
 
 ## ----include = FALSE----------------------------------------------------------

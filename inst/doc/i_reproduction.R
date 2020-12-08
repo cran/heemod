@@ -102,7 +102,7 @@ res_mod <- run_model(
   cycles = 20,
   cost = cost_total,
   effect = life_year,
-  method = "beginning",
+  method = "end",
   init = c(1, 0, 0, 0)
 )
 summary(res_mod)
@@ -246,7 +246,7 @@ res_mod <- run_model(
   cycles = 60,
   cost = cost,
   effect = utility,
-  method = "end",
+  method = "beginning",
   init = c(1, 0, 0, 0, 0)
 )
 summary(res_mod)

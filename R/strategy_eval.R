@@ -209,7 +209,9 @@ compute_values <- function(states, count_list, strategy_starting_values) {
   
   counts <- count_list$counts
   diff <- count_list$diff
-
+  
+  method <- attr(count_list, "method")
+  
   states_values <- structure(
     states$.dots, class = class(states)
   )
@@ -259,8 +261,15 @@ compute_values <- function(states, count_list, strategy_starting_values) {
   }) %>% 
     unlist() 
   
+  
   new_starting_states <- if (length(new_starting_states)) {
-    matrix(new_starting_states, nrow = num_cycles, byrow = TRUE)
+    m <- matrix(new_starting_states, nrow = num_cycles, byrow = TRUE)
+    if (method == "beginning"){
+      m <- rbind(as.numeric(counts[1,]), m[seq_len(num_cycles -1), ])
+    } else {
+      m[1,] <- as.numeric(counts[1,])
+    }
+    m
   } else {
     matrix(rep(0, num_states), ncol = num_states)
   }

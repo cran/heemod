@@ -11,17 +11,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2020-05-11" />
+<meta name="date" content="2020-12-08" />
 
 <title>Time-varying values</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -31,14 +95,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -47,9 +113,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -299,7 +365,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <h1 class="title toc-ignore">Time-varying values</h1>
-<h4 class="date">2020-05-11</h4>
+<h4 class="date">2020-12-08</h4>
 
 
 <div id="TOC">
@@ -319,28 +385,28 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h2>How to specifiy time-dependency</h2>
 <p>These variables takes increasing values with each cycles, starting from 1. For example the age of individuals at any moment can be defined as <code>Initial age + model_time</code>. The time an individual spends in a state is equal to <code>state_time</code>.</p>
 <p>Both variables can be used in <code>define_parameters()</code>, <code>define_state()</code>, or <code>define_transition()</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">define_parameters</span>(</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="dt">mr =</span> <span class="kw">exp</span>(<span class="op">-</span><span class="st"> </span>state_time <span class="op">*</span><span class="st"> </span>lambda),</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="dt">age =</span> <span class="dv">50</span> <span class="op">+</span><span class="st"> </span>model_time</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">define_parameters</span>(</span>
+<span id="cb1-2"><a href="#cb1-2"></a>  <span class="dt">mr =</span> <span class="kw">exp</span>(<span class="op">-</span><span class="st"> </span>state_time <span class="op">*</span><span class="st"> </span>lambda),</span>
+<span id="cb1-3"><a href="#cb1-3"></a>  <span class="dt">age =</span> <span class="dv">50</span> <span class="op">+</span><span class="st"> </span>model_time</span>
+<span id="cb1-4"><a href="#cb1-4"></a>)</span></code></pre></div>
 <pre><code>## 2 unevaluated parameters.
 ## 
 ## mr = exp(-state_time * lambda)
 ## age = 50 + model_time</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">define_state</span>(</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">  <span class="dt">cost =</span> <span class="dv">100</span> <span class="op">-</span><span class="st"> </span>state_time,</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="dt">effect =</span> <span class="dv">10</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">define_state</span>(</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  <span class="dt">cost =</span> <span class="dv">100</span> <span class="op">-</span><span class="st"> </span>state_time,</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="dt">effect =</span> <span class="dv">10</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>)</span></code></pre></div>
 <pre><code>## A state with 2 values.
 ## 
 ## cost = 100 - state_time
 ## effect = 10</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">f &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">abs</span>(<span class="kw">sin</span>(x))</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw">define_transition</span>(</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">  C,  <span class="kw">f</span>(state_time),</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">  <span class="fl">.1</span>, <span class="fl">.9</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>f &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">abs</span>(<span class="kw">sin</span>(x))</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">define_transition</span>(</span>
+<span id="cb5-4"><a href="#cb5-4"></a>  C,  <span class="kw">f</span>(state_time),</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="fl">.1</span>, <span class="fl">.9</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>)</span></code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
 <pre><code>## A transition matrix, 2 states.
 ## 
@@ -353,20 +419,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>Using <code>model_time</code> in a model does not change the execution speed of the analysis. On the other hand adding <code>state_time</code> may slow down the analysis, especially if the model is run for many cycles <strong>and</strong> a transition probability depends on <code>state_time</code>.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p>To mitigate this drawback it is possible to limit the number of state expansion with <code>state_time_limit</code>. Because most time-varying values reach an asymptotic value quite fast, it is unnecessary to expand the states any further. The last cycle value is repeated until the end.</p>
 <p>The limit can be defined globally, per state, or per model and state. In the following example probabilities are kept constant after <em>10</em> cycles for state <strong>B</strong> and <em>20</em> cycles for state <strong>D</strong> in strategy <strong>I</strong>, and <em>15</em> cycles in state <strong>B</strong> in strategy <strong>II</strong>.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">run_model</span>(</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="dt">I =</span>  strat_<span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">  <span class="dt">II =</span> strat_<span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="dt">cycles =</span> <span class="dv">100</span>,</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">  <span class="dt">state_time_limit =</span> <span class="kw">list</span>(</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6">    <span class="dt">I =</span> <span class="kw">c</span>(<span class="dt">B =</span> <span class="dv">10</span>, <span class="dt">D =</span> <span class="dv">20</span>),</a>
-<a class="sourceLine" id="cb8-7" data-line-number="7">    <span class="dt">II =</span> <span class="kw">c</span>(<span class="dt">B =</span> <span class="dv">15</span>)</a>
-<a class="sourceLine" id="cb8-8" data-line-number="8">  )</a>
-<a class="sourceLine" id="cb8-9" data-line-number="9">)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">run_model</span>(</span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="dt">I =</span>  strat_<span class="dv">1</span>,</span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">II =</span> strat_<span class="dv">2</span>,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">cycles =</span> <span class="dv">100</span>,</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="dt">state_time_limit =</span> <span class="kw">list</span>(</span>
+<span id="cb8-6"><a href="#cb8-6"></a>    <span class="dt">I =</span> <span class="kw">c</span>(<span class="dt">B =</span> <span class="dv">10</span>, <span class="dt">D =</span> <span class="dv">20</span>),</span>
+<span id="cb8-7"><a href="#cb8-7"></a>    <span class="dt">II =</span> <span class="kw">c</span>(<span class="dt">B =</span> <span class="dv">15</span>)</span>
+<span id="cb8-8"><a href="#cb8-8"></a>  )</span>
+<span id="cb8-9"><a href="#cb8-9"></a>)</span></code></pre></div>
 </div>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>In this situation the complexity is proportional to the square of the number of cycles.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>In this situation the complexity is proportional to the square of the number of cycles.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 

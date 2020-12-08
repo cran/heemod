@@ -23,7 +23,7 @@ run_model_tabular(
 
 \item{run_psa}{Run PSA?.}
 
-\item{run_demo}{Run demgraphic analysis?}
+\item{run_demo}{Run demographic analysis?}
 
 \item{save}{Should the outputs be saved?}
 
@@ -40,8 +40,7 @@ demographic groups).
 This function runs a model from tabular input.
 }
 \details{
-The reference file should have two columns, \code{data}
-and \code{file}. An optional \code{absolute_path} column
+The reference file should have two columns. \code{data}
 can be added, having value \code{TRUE} where an absolute
 file path is provided. \code{data} values must include
 \code{state}, \code{tm}, and \code{parameters}, and can

@@ -127,7 +127,7 @@ res_mod <- run_model(
   cycles = 60,
   cost = cost,
   effect = utility,
-  method = "end"
+  method = "beginning"
 )
 
 ## ----get_counts, message=FALSE------------------------------------------------
