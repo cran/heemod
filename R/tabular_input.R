@@ -1231,11 +1231,15 @@ save_graph <- function(plot, path, file_name) {
   grDevices::png(filename = paste(full_file, "png", sep = "."))
   print(plot)
   grDevices::dev.off()
-  
-  grDevices::cairo_pdf(
+  pdf <- if(capabilities("cairo")){
+    grDevices::cairo_pdf
+  } else {
+    grDevices::pdf
+  }
+  pdf(
     filename = paste(full_file, "pdf", sep = ".")
   )
-  print(plot)
+  # print(plot)
   grDevices::dev.off()
 }
 
