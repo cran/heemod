@@ -172,8 +172,8 @@ plot(res_h, result = "cost", type = "difference",
 ## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
 plot(res_h, type = "counts")
 
-## -----------------------------------------------------------------------------
-tab_indiv_w
-res_w <- update(res_mod, newdata = tab_indiv_w)
-res_w
+## ---- eval=FALSE--------------------------------------------------------------
+#  tab_indiv_w
+#  res_w <- update(res_mod, newdata = tab_indiv_w)
+#  res_w
 

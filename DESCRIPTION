@@ -1,6 +1,6 @@
 Package: heemod
 Title: Markov Models for Health Economic Evaluations
-Version: 0.14.1
+Version: 0.14.2
 Authors@R: c(
     person("Kevin", "Zarca", email = "kevin.zarca@gmail.com", role = c("aut", "cre")),
     person("Antoine", "Filipovic-Pierucci", role = "aut"),
@@ -31,7 +31,7 @@ Suggests: BCEA, diagram, flexsurv, knitr, logitnorm, lpSolve, mgcv,
         testthat, triangle, magrittr, cli
 BugReports: https://github.com/pierucci/heemod/issues
 NeedsCompilation: no
-Packaged: 2021-01-18 13:27:32 UTC; kevin
+Packaged: 2021-01-22 11:59:21 UTC; kevin
 Author: Kevin Zarca [aut, cre],
   Antoine Filipovic-Pierucci [aut],
   Matthew Wiener [ctb],
@@ -42,4 +42,4 @@ Author: Kevin Zarca [aut, cre],
   Vince Daniels [ctb]
 Maintainer: Kevin Zarca <kevin.zarca@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-01-18 13:50:02 UTC
+Date/Publication: 2021-01-22 13:00:02 UTC
