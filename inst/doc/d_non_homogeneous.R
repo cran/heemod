@@ -2,6 +2,12 @@
 library(heemod)
 library(ggplot2)
 
+## ---- echo = FALSE------------------------------------------------------------
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  screenshot.force = FALSE
+)
+
 ## -----------------------------------------------------------------------------
 param <- define_parameters(
     age_init = 60,

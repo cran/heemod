@@ -5,15 +5,15 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Calibrating heemod models}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Calibrating `heemod` models}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
   \usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo=FALSE, include=FALSE}
 library(heemod)
 ```
- 
+
 ```{r, define, include = FALSE}
 param <- define_parameters(
     age_init = 60,
