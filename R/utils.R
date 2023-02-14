@@ -30,7 +30,7 @@ get_mat_total <- function(x, init) {
 get_counts_diff <- function(x, init, inflow) {
   lapply(seq(1, length(x) + 1), function(i){
     if (i == length(x) + 1) return(list(init, NULL))
-    init <- init + unlist(inflow[i, ])
+    init <- init + unlist(inflow[i, ], use.names = FALSE)
     mat <- get_mat_total(x[[i]], init)
     res <- list(init, mat)
     init <<- colSums(mat) + init
@@ -75,8 +75,19 @@ discount <- function(x, r, first = FALSE, period = 1) {
     r <= 1,
     period > 0
   )
-  
   dr <- trunc((seq_along(x) - (1 - isTRUE(first))) / period)
+  x / (1 + r) ^ dr
+}
+
+#' @rdname discount
+#' @export
+discount2 <- function(x, r, first = FALSE, period = 1, time) {
+  if (length(r) > 1) r <- r[1]
+  stopifnot(
+    r >= 0,
+    r <= 1
+  )
+  dr <- trunc((time - as.numeric(!isTRUE(first)))/period)
   x / (1 + r) ^ dr
 }
 
@@ -579,4 +590,23 @@ reshape_wide <- function(data, key_col, value_col, fill = NA) {
       )
     )
   )
+}
+
+matrix_expand_grid <- function(...){
+    nargs <- length(args <- list(...))
+    iArgs <- seq_len(nargs)
+    rep.fac <- 1L
+    d <- lengths(args)
+    orep <- prod(d)
+    cargs <- matrix(ncol = nargs, nrow = orep)
+    for (i in iArgs) {
+      x <- args[[i]]
+      nx <- length(x)
+      orep <- orep/nx
+      x <- x[rep.int(rep.int(seq_len(nx), rep.int(rep.fac, 
+                                                  nx)), orep)]
+      cargs[, i] <- x
+      rep.fac <- rep.fac * nx
+    }
+    cargs
 }

@@ -1,12 +1,10 @@
 ## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
-library(ggplot2)
 
-## -----------------------------------------------------------------------------
+## ---- define, include = FALSE-------------------------------------------------
 param <- define_parameters(
     age_init = 60,
     sex = 0,
-    
     # age increases with cycles
     age = age_init + markov_cycle,
     
@@ -34,7 +32,8 @@ param <- define_parameters(
     
     # age-related mortality rate
     sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
-    mr = get_who_mr(age, sex_cat, country = "GBR", local = TRUE),
+    mr = get_who_mr(age, sex_cat,
+                    country = "GBR", local = TRUE),
     
     # state values
     u_SuccessP = .85,
@@ -42,9 +41,7 @@ param <- define_parameters(
     u_SuccessR = .75,
     c_RevisionTHR = 5294
 )
-param
 
-## -----------------------------------------------------------------------------
 mat_standard <- define_transition(
     state_names = c(
       "PrimaryTHR",
@@ -59,7 +56,6 @@ mat_standard <- define_transition(
     0, 0, rrr,        C, mr,
     0, 0, 0,          0, 1
 )
-mat_standard
 
 mat_np1 <- define_transition(
     state_names = c(
@@ -75,17 +71,12 @@ mat_np1 <- define_transition(
     0, 0, rrr,        C, mr,
     0, 0, 0,          0, 1
 )
-mat_np1
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
-plot(mat_standard)
-
-## -----------------------------------------------------------------------------
-strat_standard <- define_strategy(
+mod_standard <- define_strategy(
   transition = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 0
+    cost = 394
   ),
   SuccessP = define_state(
     utility = discount(u_SuccessP, .015),
@@ -102,18 +93,14 @@ strat_standard <- define_strategy(
   Death = define_state(
     utility = 0,
     cost = 0
-  ),
-  starting_values = define_starting_values(
-    cost = 394
   )
 )
-strat_standard
 
-strat_np1 <- define_strategy(
+mod_np1 <- define_strategy(
   transition = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 0
+    cost = 579
   ),
   SuccessP = define_state(
     utility = discount(u_SuccessP, .015),
@@ -130,31 +117,63 @@ strat_np1 <- define_strategy(
   Death = define_state(
     utility = 0,
     cost = 0
-  ),
-  starting_values = define_starting_values(
-    cost = 579
   )
 )
-strat_np1
 
-## -----------------------------------------------------------------------------
 res_mod <- run_model(
-  standard = strat_standard,
-  np1      = strat_np1,
+  standard = mod_standard,
+  np1 = mod_np1,
   parameters = param,
   cycles = 60,
   cost = cost,
-  effect = utility
+  effect = utility,
+  method = "beginning"
 )
 
-## -----------------------------------------------------------------------------
-summary(res_mod)
+## ----get_counts, message=FALSE------------------------------------------------
+library(dplyr)
+get_counts(res_mod) %>% 
+  dplyr::filter(markov_cycle == 20 & state_names == "RevisionTHR")
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
-plot(res_mod, type = "counts", panel = "by_state", free_y = TRUE) +
-  theme_bw() +
-  scale_color_brewer(
-    name = "Strategy",
-    palette = "Set1"
-  )
+## ----extract_values-----------------------------------------------------------
+extract_values <- function(x) {
+  dplyr::filter(
+    get_counts(x),
+    markov_cycle == 20 & state_names == "RevisionTHR"
+  )$count
+}
+extract_values(res_mod)
+
+## ----define_calib_fn----------------------------------------------------------
+calib_fn <- define_calibration_fn(
+  type = "count",
+  strategy_names = c("standard", "np1"),
+  element_names = c("RevisionTHR", "RevisionTHR"),
+  cycles = c(20, 20)
+)
+calib_fn(res_mod)
+
+## ----calibrate_no_init--------------------------------------------------------
+res_cal <- calibrate_model(
+  res_mod,
+  parameter_names = c("gamma", "rrNP1"),
+  fn_values = extract_values,
+  target_values = c(2.5, 0.8)
+)
+res_cal
+
+## ----calibrate_init, eval = FALSE---------------------------------------------
+#  start <- data.frame(
+#    gamma = c(1.0, 1.5, 2.0),
+#    rrNP1 = c(0.2, 0.3, 0.4)
+#  )
+#  
+#  res_cal_2 <- calibrate_model(
+#    res_mod,
+#    parameter_names = c("gamma", "rrNP1"),
+#    fn_values = extract_values,
+#    target_values = c(3, 1),
+#    initial_values = start,
+#    lower = c(0, 0), upper = c(2, 1)
+#  )
 

@@ -1,12 +1,17 @@
 ## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(heemod)
-library(ggplot2)
 
-## -----------------------------------------------------------------------------
+## ---- echo = FALSE------------------------------------------------------------
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  screenshot.force = FALSE
+)
+
+## ---- include = FALSE---------------------------------------------------------
+
 param <- define_parameters(
     age_init = 60,
     sex = 0,
-    
     # age increases with cycles
     age = age_init + markov_cycle,
     
@@ -34,7 +39,8 @@ param <- define_parameters(
     
     # age-related mortality rate
     sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
-    mr = get_who_mr(age, sex_cat, country = "GBR", local = TRUE),
+    mr = get_who_mr(age, sex_cat,
+                    country = "GBR", local = TRUE),
     
     # state values
     u_SuccessP = .85,
@@ -42,9 +48,7 @@ param <- define_parameters(
     u_SuccessR = .75,
     c_RevisionTHR = 5294
 )
-param
 
-## -----------------------------------------------------------------------------
 mat_standard <- define_transition(
     state_names = c(
       "PrimaryTHR",
@@ -59,7 +63,6 @@ mat_standard <- define_transition(
     0, 0, rrr,        C, mr,
     0, 0, 0,          0, 1
 )
-mat_standard
 
 mat_np1 <- define_transition(
     state_names = c(
@@ -75,17 +78,12 @@ mat_np1 <- define_transition(
     0, 0, rrr,        C, mr,
     0, 0, 0,          0, 1
 )
-mat_np1
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
-plot(mat_standard)
-
-## -----------------------------------------------------------------------------
-strat_standard <- define_strategy(
+mod_standard <- define_strategy(
   transition = mat_standard,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 0
+    cost = 394
   ),
   SuccessP = define_state(
     utility = discount(u_SuccessP, .015),
@@ -102,18 +100,14 @@ strat_standard <- define_strategy(
   Death = define_state(
     utility = 0,
     cost = 0
-  ),
-  starting_values = define_starting_values(
-    cost = 394
   )
 )
-strat_standard
 
-strat_np1 <- define_strategy(
+mod_np1 <- define_strategy(
   transition = mat_np1,
   PrimaryTHR = define_state(
     utility = 0,
-    cost = 0
+    cost = 579
   ),
   SuccessP = define_state(
     utility = discount(u_SuccessP, .015),
@@ -130,31 +124,62 @@ strat_np1 <- define_strategy(
   Death = define_state(
     utility = 0,
     cost = 0
-  ),
-  starting_values = define_starting_values(
-    cost = 579
   )
 )
-strat_np1
 
-## -----------------------------------------------------------------------------
 res_mod <- run_model(
-  standard = strat_standard,
-  np1      = strat_np1,
+  standard = mod_standard,
+  np1 = mod_np1,
   parameters = param,
   cycles = 60,
   cost = cost,
-  effect = utility
+  effect = utility,
+  method = "beginning"
 )
 
-## -----------------------------------------------------------------------------
-summary(res_mod)
+## ----include = FALSE----------------------------------------------------------
+N <- 100
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
-plot(res_mod, type = "counts", panel = "by_state", free_y = TRUE) +
-  theme_bw() +
-  scale_color_brewer(
-    name = "Strategy",
-    palette = "Set1"
-  )
+tab_indiv <- tibble::tibble(
+  age = round(rnorm(N, mean = 60, sd = 10)),
+  sex = sample(0:1, N, TRUE)
+)
+tab_indiv_w <- tibble::tibble(
+  age = round(rnorm(N, mean = 60, sd = 10)),
+  sex = sample(0:1, N, TRUE),
+  .weights = runif(N)
+)
+
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
+tab_indiv
+
+library(ggplot2)
+ggplot(tab_indiv, aes(x = age)) +
+  geom_histogram(binwidth = 2)
+
+## -----------------------------------------------------------------------------
+res_h <- update(res_mod, newdata = tab_indiv)
+
+## -----------------------------------------------------------------------------
+summary(res_h)
+
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
+plot(res_h, result = "effect", binwidth = 5)
+plot(res_h, result = "cost", binwidth = 50)
+
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
+plot(res_h, result = "icer", type = "difference",
+     binwidth = 500)
+plot(res_h, result = "effect", type = "difference",
+     binwidth = .1)
+plot(res_h, result = "cost", type = "difference",
+     binwidth = 30)
+
+## ---- fig.align='center', fig.height=4, fig.width=6---------------------------
+plot(res_h, type = "counts")
+
+## -----------------------------------------------------------------------------
+tab_indiv_w
+res_w <- update(res_mod, newdata = tab_indiv_w)
+res_w
 

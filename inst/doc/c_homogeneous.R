@@ -2,12 +2,6 @@
 library(heemod)
 library(ggplot2)
 
-## ---- echo = FALSE------------------------------------------------------------
-NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
-knitr::opts_chunk$set(
-  screenshot.force = FALSE
-)
-
 ## -----------------------------------------------------------------------------
 mat_mono <- define_transition(
     .721, .202, .067, .010,

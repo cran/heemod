@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2021-10-06" />
+<meta name="date" content="2023-02-14" />
 
 <title>Probabilistic Uncertainty Analysis</title>
 
@@ -25,6 +25,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -108,13 +109,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -139,7 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <h1 class="title toc-ignore">Probabilistic Uncertainty Analysis</h1>
-<h4 class="date">2021-10-06</h4>
+<h4 class="date">2023-02-14</h4>
 
 
 <div id="TOC">
@@ -346,7 +354,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="interface-with-bcea-and-savi" class="section level2">
 <h2>Interface with BCEA and SAVI</h2>
-<p>To compute EVPPI the results can also be exported with <code>export_savi()</code> in a format compatible with the <a href="http://savi.shef.ac.uk/SAVI/">SAVI</a> software (Sheffield Accelerated Value of Information).</p>
+<p>To compute EVPPI the results can also be exported with <code>export_savi()</code> in a format compatible with the <a href="https://savi.shef.ac.uk/SAVI/">SAVI</a> software (Sheffield Accelerated Value of Information).</p>
 <p>The results can be post-processed by the <code>BCEA</code> package with the <code>run_bcea()</code> function.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>bcea <span class="ot">&lt;-</span> <span class="fu">run_bcea</span>(pm, <span class="at">plot =</span> <span class="cn">TRUE</span>, <span class="at">Kmax =</span> <span class="dv">10000</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bcea)</span></code></pre></div>
