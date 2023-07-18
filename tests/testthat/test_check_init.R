@@ -1,5 +1,3 @@
-context("Init checking")
-
 test_that(
   "check_init() works", {
     init1 <- define_init(a = 1, b = 0, c = 0)
@@ -11,8 +9,8 @@ test_that(
     ref <- letters[1:3]
     
     expect_identical(
-      to_text_dots(check_init(init1, ref)),
-      to_text_dots(check_init(init2, ref))
+      to_text_dots(check_init.quosures(init1, ref)),
+      to_text_dots(check_init.default(init2, ref))
     )
     
     expect_identical(

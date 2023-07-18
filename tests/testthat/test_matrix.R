@@ -1,6 +1,3 @@
-context("Matrix objects")
-
-
 test_that(
   "Matrix definition", {
     mat1 <- define_transition(
@@ -11,8 +8,7 @@ test_that(
     expect_output(
       str(mat1),
       'List of 4
- $ cell_1_1:List of 2
-  ..$ expr: num 0.3',
+ $ cell_1_1: language ~0.3',
       fixed = TRUE
     )
     expect_error(
@@ -52,8 +48,7 @@ test_that(
         )
       ),
       'List of 4
- $ cell_1_1:List of 2
-  ..$ expr: num 0.4',
+ $ cell_1_1: language ~0.4',
       fixed = TRUE
     )
     expect_output(
@@ -135,7 +130,7 @@ test_that(
   "Matrix evaluation", {
     par1 <- define_parameters(
       a = .1,
-      b = 1 / (markov_cycle + 1)
+      b = 1 / (model_time + 1)
     )
     mat1 <- define_transition(
       state_names = c("X1", "X2"),

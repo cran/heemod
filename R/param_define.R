@@ -2,14 +2,14 @@
 #' 
 #' Define parameters called to compute the transition matrix
 #' or state values for a Markov model. Parameters can be 
-#' time dependent by using the `markov_cycle` 
+#' time dependent by using the `model_time` 
 #' parameter.
 #' 
 #' Parameters are defined sequentially, parameters defined 
 #' earlier can be called in later expressions.
 #' 
 #' Vector length should not be explicitly set, but should 
-#' instead be stated relatively to `markov_cycle` 
+#' instead be stated relatively to `model_time` 
 #' (whose length depends on the number of simulation 
 #' cycles). Alternatively, `dplyr` functions such as 
 #' [dplyr::n()] can be used.
@@ -35,14 +35,15 @@
 #' @param .dots Used to work around non-standard evaluation.
 #'   
 #' @return An object of class `uneval_parameters` 
-#'   (actually a named list of `lazy` expressions).
+#'   (actually a named list of quosures).
 #' @export
 #' 
 #' @importFrom dplyr n row_number
 #' @example inst/examples/example_define_parameters.R
 #'   
 define_parameters <- function(...) {
-  .dots <- lazyeval::lazy_dots(...)
+  .dots <- quos(...)
+  deprecated_x_cycle(.dots)
   define_parameters_(.dots)
 }
 
@@ -69,20 +70,21 @@ define_parameters_ <- function(.dots) {
 get_parameter_names <- function(x) {
   UseMethod("get_parameter_names")
 }
-
+#' @export
 get_parameter_names.updated_model <- function(x) {
   get_parameter_names(get_model(x))
 }
 
+#' @export
 get_parameter_names.uneval_parameters <- function(x) {
   names(x)[! names(x) %in% c("markov_cycle", "strategy",
                              "model_time")]
 }
-
+#' @export
 get_parameter_names.eval_parameters <- function(x) {
   get_parameter_names.uneval_parameters(x)
 }
-
+#' @export
 get_parameter_names.run_model <- function(x) {
   get_parameter_names(get_parameters(x))
 }
@@ -105,18 +107,19 @@ modify <- function(.OBJECT, ...) {
   UseMethod("modify")
 }
 
-modify_ <- function(.OBJECT, .dots, ...) {
+modify_ <- function(.OBJECT, .dots) {
   UseMethod("modify_")
 }
 
 #' @export
 #' @rdname define_parameters
 modify.uneval_parameters <- function(.OBJECT, ...) {
-  .dots <- lazyeval::lazy_dots(...)
+  .dots <- quos(...)
   
   modify_(.OBJECT = .OBJECT, .dots = .dots)
 }
 
+#' @export
 modify_.uneval_parameters <- function(.OBJECT, .dots) {
   if (length(.dots)) {
     check_names(names(.dots))
@@ -136,7 +139,7 @@ modify_.uneval_parameters <- function(.OBJECT, .dots) {
 #'   [define_parameters()].
 #' @export
 define_inflow <- function(...) {
-  .dots <- lazyeval::lazy_dots(...)
+  .dots <- quos(...)
   define_inflow_(.dots)
 }
 
@@ -158,7 +161,7 @@ define_inflow_ <- function(.dots) {
 #'   [define_parameters()].
 #' @export
 define_init <- function(...) {
-  .dots <- lazyeval::lazy_dots(...)
+  .dots <- quos(...)
   define_init_(.dots)
 }
 
@@ -191,7 +194,7 @@ define_init_ <- function(.dots) {
 #'   [define_parameters()].
 #' @export
 define_starting_values <- function(...) {
-  .dots <- lazyeval::lazy_dots(...)
+  .dots <- quos(...)
   define_starting_values_(.dots)
 }
 
@@ -209,7 +212,7 @@ check_init <- function(x, ref) {
   UseMethod("check_init")
 }
 
-check_init.lazy_dots <- function(x, ref) {
+check_init.quosures <- function(x, ref) {
   original_class <- class(x)
   
   if (length(x)) {
@@ -227,7 +230,7 @@ check_init.lazy_dots <- function(x, ref) {
   }
   
   res <- stats::setNames(
-    object = lazyeval::as.lazy_dots(
+    object = as_quosures(
       lapply(ref, function(x) 0),
       env = globalenv()),
     nm = ref)
@@ -253,7 +256,7 @@ check_init.default <- function(x, ref) {
     stop("Some ", to_check, " names are incorrect.")
   }
   
-  define_init_(lazyeval::as.lazy_dots(
+  define_init_(as_quosures(
     lapply(x[ref], function(x) x),
     env = globalenv()))
 }

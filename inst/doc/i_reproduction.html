@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2023-03-21" />
+<meta name="date" content="2023-07-18" />
 
 <title>Reproducing Exact Results from DMHEE</title>
 
@@ -30,23 +30,23 @@ document.addEventListener('DOMContentLoaded', function(e) {
 </script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -64,55 +64,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -339,13 +338,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <h1 class="title toc-ignore">Reproducing Exact Results from DMHEE</h1>
-<h4 class="date">2023-03-21</h4>
+<h4 class="date">2023-07-18</h4>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#hiv-model">HIV model</a></li>
-<li><a href="#thr-model">THR model</a></li>
+<li><a href="#hiv-model" id="toc-hiv-model">HIV model</a></li>
+<li><a href="#thr-model" id="toc-thr-model">THR model</a></li>
 </ul>
 </div>
 
@@ -374,114 +373,114 @@ transition occur 1 year after the beginning, costs should be discounted
 from the first cycle with the argument first = TRUE in discount(). Point
 3. is reproduced by making <code>rr</code> and <code>cost_lami</code> a
 time changing variable like this
-<code>rr = ifelse(markov_cycle &lt;= 2, .509, 1.00)</code>.</p>
+<code>rr = ifelse(model_time &lt;= 2, .509, 1.00)</code>.</p>
 <p>The last point is reproduced by writing transition probabilities as
 fractions.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>par_mod <span class="ot">&lt;-</span> <span class="fu">define_parameters</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">rr =</span> <span class="fu">ifelse</span>(markov_cycle <span class="sc">&lt;=</span> <span class="dv">2</span>, .<span class="dv">509</span>, <span class="dv">1</span>),</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_lami =</span> <span class="fu">ifelse</span>(markov_cycle <span class="sc">&lt;=</span> <span class="dv">2</span>, <span class="fl">2086.5</span>, <span class="dv">0</span>),</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_zido =</span> <span class="dv">2278</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>mat_mono <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1251</span><span class="sc">/</span><span class="dv">1734</span>, <span class="dv">350</span><span class="sc">/</span><span class="dv">1734</span>, <span class="dv">116</span><span class="sc">/</span><span class="dv">1734</span>,  <span class="dv">17</span><span class="sc">/</span><span class="dv">1734</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>,         <span class="dv">731</span><span class="sc">/</span><span class="dv">1258</span>, <span class="dv">512</span><span class="sc">/</span><span class="dv">1258</span>,  <span class="dv">15</span><span class="sc">/</span><span class="dv">1258</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">1312</span><span class="sc">/</span><span class="dv">1749</span>, <span class="dv">437</span><span class="sc">/</span><span class="dv">1749</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">0</span>,         <span class="fl">1.00</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>par_mod <span class="ot">&lt;-</span> <span class="fu">define_parameters</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="at">rr =</span> <span class="fu">ifelse</span>(model_time <span class="sc">&lt;=</span> <span class="dv">2</span>, .<span class="dv">509</span>, <span class="dv">1</span>),</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">cost_lami =</span> <span class="fu">ifelse</span>(model_time <span class="sc">&lt;=</span> <span class="dv">2</span>, <span class="fl">2086.5</span>, <span class="dv">0</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">cost_zido =</span> <span class="dv">2278</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>mat_mono <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="dv">1251</span><span class="sc">/</span><span class="dv">1734</span>, <span class="dv">350</span><span class="sc">/</span><span class="dv">1734</span>, <span class="dv">116</span><span class="sc">/</span><span class="dv">1734</span>,  <span class="dv">17</span><span class="sc">/</span><span class="dv">1734</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="dv">0</span>,         <span class="dv">731</span><span class="sc">/</span><span class="dv">1258</span>, <span class="dv">512</span><span class="sc">/</span><span class="dv">1258</span>,  <span class="dv">15</span><span class="sc">/</span><span class="dv">1258</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">1312</span><span class="sc">/</span><span class="dv">1749</span>, <span class="dv">437</span><span class="sc">/</span><span class="dv">1749</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="dv">0</span>,         <span class="dv">0</span>,        <span class="dv">0</span>,         <span class="fl">1.00</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mat_comb <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  C, <span class="dv">350</span><span class="sc">/</span><span class="dv">1734</span><span class="sc">*</span>rr, <span class="dv">116</span><span class="sc">/</span><span class="dv">1734</span><span class="sc">*</span>rr, <span class="dv">17</span><span class="sc">/</span><span class="dv">1734</span><span class="sc">*</span>rr,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>, C,           <span class="dv">512</span><span class="sc">/</span><span class="dv">1258</span><span class="sc">*</span>rr, <span class="dv">15</span><span class="sc">/</span><span class="dv">1258</span><span class="sc">*</span>rr,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>, <span class="dv">0</span>,           C,           <span class="dv">437</span><span class="sc">/</span><span class="dv">1749</span><span class="sc">*</span>rr,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span>, <span class="dv">0</span>,           <span class="dv">0</span>,           <span class="fl">1.00</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>mat_comb <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  C, <span class="dv">350</span><span class="sc">/</span><span class="dv">1734</span><span class="sc">*</span>rr, <span class="dv">116</span><span class="sc">/</span><span class="dv">1734</span><span class="sc">*</span>rr, <span class="dv">17</span><span class="sc">/</span><span class="dv">1734</span><span class="sc">*</span>rr,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="dv">0</span>, C,           <span class="dv">512</span><span class="sc">/</span><span class="dv">1258</span><span class="sc">*</span>rr, <span class="dv">15</span><span class="sc">/</span><span class="dv">1258</span><span class="sc">*</span>rr,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="dv">0</span>, <span class="dv">0</span>,           C,           <span class="dv">437</span><span class="sc">/</span><span class="dv">1749</span><span class="sc">*</span>rr,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="dv">0</span>, <span class="dv">0</span>,           <span class="dv">0</span>,           <span class="fl">1.00</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>A_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">2756</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>B_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">3052</span>,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>C_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">9007</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>D_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">0</span>,</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> <span class="dv">0</span>,</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">0</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>A_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">2756</span>,</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido <span class="sc">+</span> cost_lami,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>B_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">3052</span>,</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido <span class="sc">+</span> cost_lami,</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>C_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">9007</span>,</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido <span class="sc">+</span> cost_lami,</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>D_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">0</span>,</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_drugs =</span> <span class="dv">0</span>,</span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">0</span></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>mod_mono <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">transition =</span> mat_mono,</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  A_mono,</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>  B_mono,</span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>  C_mono,</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>  D_mono</span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>A_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">2756</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>B_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">3052</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido,</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>C_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">9007</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido,</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>)</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>D_mono <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">0</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>  <span class="at">cost_drugs =</span> <span class="dv">0</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">0</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>)</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a>A_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">2756</span>,</span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido <span class="sc">+</span> cost_lami,</span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a>)</span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a>B_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">3052</span>,</span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido <span class="sc">+</span> cost_lami,</span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
+<span id="cb5-43"><a href="#cb5-43" tabindex="-1"></a>)</span>
+<span id="cb5-44"><a href="#cb5-44" tabindex="-1"></a>C_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-45"><a href="#cb5-45" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">9007</span>,</span>
+<span id="cb5-46"><a href="#cb5-46" tabindex="-1"></a>  <span class="at">cost_drugs =</span> cost_zido <span class="sc">+</span> cost_lami,</span>
+<span id="cb5-47"><a href="#cb5-47" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-48"><a href="#cb5-48" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-49"><a href="#cb5-49" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">1</span></span>
+<span id="cb5-50"><a href="#cb5-50" tabindex="-1"></a>)</span>
+<span id="cb5-51"><a href="#cb5-51" tabindex="-1"></a>D_comb <span class="ot">&lt;-</span> <span class="fu">define_state</span>(</span>
+<span id="cb5-52"><a href="#cb5-52" tabindex="-1"></a>  <span class="at">cost_health =</span> <span class="dv">0</span>,</span>
+<span id="cb5-53"><a href="#cb5-53" tabindex="-1"></a>  <span class="at">cost_drugs =</span> <span class="dv">0</span>,</span>
+<span id="cb5-54"><a href="#cb5-54" tabindex="-1"></a>  <span class="at">cost_total =</span> <span class="fu">discount</span>(</span>
+<span id="cb5-55"><a href="#cb5-55" tabindex="-1"></a>    cost_health <span class="sc">+</span> cost_drugs, .<span class="dv">06</span>, <span class="at">first =</span> T),</span>
+<span id="cb5-56"><a href="#cb5-56" tabindex="-1"></a>  <span class="at">life_year =</span> <span class="dv">0</span></span>
+<span id="cb5-57"><a href="#cb5-57" tabindex="-1"></a>)</span>
+<span id="cb5-58"><a href="#cb5-58" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" tabindex="-1"></a>mod_mono <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
+<span id="cb5-60"><a href="#cb5-60" tabindex="-1"></a>  <span class="at">transition =</span> mat_mono,</span>
+<span id="cb5-61"><a href="#cb5-61" tabindex="-1"></a>  A_mono,</span>
+<span id="cb5-62"><a href="#cb5-62" tabindex="-1"></a>  B_mono,</span>
+<span id="cb5-63"><a href="#cb5-63" tabindex="-1"></a>  C_mono,</span>
+<span id="cb5-64"><a href="#cb5-64" tabindex="-1"></a>  D_mono</span>
+<span id="cb5-65"><a href="#cb5-65" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mod_comb <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">transition =</span> mat_comb,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  A_comb,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  B_comb,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  C_comb,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  D_comb</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>mod_comb <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">transition =</span> mat_comb,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  A_comb,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  B_comb,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  C_comb,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  D_comb</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## No named state -&gt; generating names.</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>res_mod <span class="ot">&lt;-</span> <span class="fu">run_model</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">mono =</span> mod_mono,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">comb =</span> mod_comb,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">parameters =</span> par_mod,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">cycles =</span> <span class="dv">20</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> cost_total,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">effect =</span> life_year,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;end&quot;</span>,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">init =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res_mod)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>res_mod <span class="ot">&lt;-</span> <span class="fu">run_model</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">mono =</span> mod_mono,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">comb =</span> mod_comb,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">parameters =</span> par_mod,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">cycles =</span> <span class="dv">20</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="at">cost =</span> cost_total,</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="at">effect =</span> life_year,</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;end&quot;</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="at">init =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>)</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="fu">summary</span>(res_mod)</span></code></pre></div>
 <pre><code>## 2 strategies run for 20 cycles.
 ## 
 ## Initial state counts:
@@ -516,20 +515,20 @@ fractions.</p>
 </ol>
 <p>This can be corrected by using a user-specified mortality table and
 then fetch the values with:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">look_up</span>(death_prob, <span class="at">age =</span> age, <span class="at">sex =</span> sex, <span class="at">bin =</span> <span class="st">&quot;age&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a function to return age-related mortality rate</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># given age and sex</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>death_prob <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">35</span>, <span class="dv">85</span>, <span class="dv">10</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">0</span>, <span class="dv">6</span>),</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1.51e-3</span>, .<span class="fl">99e-3</span>, <span class="fl">3.93e-3</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="fl">2.6e-3</span>, <span class="fl">10.9e-3</span>, <span class="fl">6.7e-3</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="fl">31.6e-3</span>, <span class="fl">19.3e-3</span>, <span class="fl">80.1e-3</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="fl">53.5e-3</span>, <span class="fl">187.9e-3</span>, <span class="fl">154.8e-3</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>death_prob</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">look_up</span>(death_prob, <span class="at">age =</span> age, <span class="at">sex =</span> sex, <span class="at">bin =</span> <span class="st">&quot;age&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># a function to return age-related mortality rate</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co"># given age and sex</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>death_prob <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">35</span>, <span class="dv">85</span>, <span class="dv">10</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">0</span>, <span class="dv">6</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>    <span class="fl">1.51e-3</span>, .<span class="fl">99e-3</span>, <span class="fl">3.93e-3</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    <span class="fl">2.6e-3</span>, <span class="fl">10.9e-3</span>, <span class="fl">6.7e-3</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>    <span class="fl">31.6e-3</span>, <span class="fl">19.3e-3</span>, <span class="fl">80.1e-3</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    <span class="fl">53.5e-3</span>, <span class="fl">187.9e-3</span>, <span class="fl">154.8e-3</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>  )</span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>)</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>death_prob</span></code></pre></div>
 <pre><code>##    age sex   value
 ## 1   35   1 0.00151
 ## 2   35   0 0.00099
@@ -543,134 +542,134 @@ then fetch the values with:</p>
 ## 10  75   0 0.05350
 ## 11  85   1 0.18790
 ## 12  85   0 0.15480</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">define_parameters</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">age_init =</span> <span class="dv">60</span>,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex =</span> <span class="dv">0</span>,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># age increases with cycles</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> age_init <span class="sc">+</span> markov_cycle,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># operative mortality rates</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">omrPTHR =</span> .<span class="dv">02</span>,</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">omrRTHR =</span> .<span class="dv">02</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># re-revision mortality rate</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">rrr =</span> .<span class="dv">04</span>,</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># parameters for calculating primary revision rate</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">cons =</span> <span class="sc">-</span><span class="fl">5.490935</span>,</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">ageC =</span> <span class="sc">-</span>.<span class="dv">0367022</span>,</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">maleC =</span> .<span class="dv">768536</span>,</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">lambda =</span> <span class="fu">exp</span>(cons <span class="sc">+</span> ageC <span class="sc">*</span> age_init <span class="sc">+</span> maleC <span class="sc">*</span> sex),</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">lngamma =</span> <span class="fl">0.3740968</span>,</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma =</span> <span class="fu">exp</span>(lngamma),</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">lnrrNP1 =</span> <span class="sc">-</span><span class="fl">1.344474</span>,</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">rrNP1 =</span> <span class="fu">exp</span>(lnrrNP1),</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>   </span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># revision probability of primary procedure</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">standardRR =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(lambda <span class="sc">*</span> ((markov_cycle <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> gamma <span class="sc">-</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>                                     markov_cycle <span class="sc">^</span> gamma)),</span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">np1RR =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(lambda <span class="sc">*</span> rrNP1 <span class="sc">*</span> ((markov_cycle <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> gamma <span class="sc">-</span> </span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>                                        markov_cycle <span class="sc">^</span> gamma)),</span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># age-related mortality rate</span></span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex_cat =</span> <span class="fu">ifelse</span>(sex <span class="sc">==</span> <span class="dv">0</span>, <span class="st">&quot;FMLE&quot;</span>, <span class="st">&quot;MLE&quot;</span>),</span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">mr =</span> <span class="fu">look_up</span>(death_prob, <span class="at">age =</span> age, <span class="at">sex =</span> sex, <span class="at">bin =</span> <span class="st">&quot;age&quot;</span>),</span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">u_successP =</span> .<span class="dv">85</span>,</span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">u_revisionTHR =</span> .<span class="dv">30</span>,</span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">u_successR =</span> .<span class="dv">75</span>,</span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">c_revisionTHR =</span> <span class="dv">5294</span></span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>mat_standard <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">state_names =</span> <span class="fu">c</span>(</span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;PrimaryTHR&quot;</span>,</span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;SuccessP&quot;</span>,</span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;RevisionTHR&quot;</span>,</span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;SuccessR&quot;</span>,</span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Death&quot;</span></span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, C, <span class="dv">0</span>,          <span class="dv">0</span>, omrPTHR,</span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, C, standardRR, <span class="dv">0</span>, mr,</span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          C, omrRTHR<span class="sc">+</span>mr,</span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, rrr,        C, mr,</span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          <span class="dv">0</span>, <span class="dv">1</span></span>
-<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>mat_np1 <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
-<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">state_names =</span> <span class="fu">c</span>(</span>
-<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;PrimaryTHR&quot;</span>,</span>
-<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;SuccessP&quot;</span>,</span>
-<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;RevisionTHR&quot;</span>,</span>
-<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;SuccessR&quot;</span>,</span>
-<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Death&quot;</span></span>
-<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, C, <span class="dv">0</span>,     <span class="dv">0</span>, omrPTHR,</span>
-<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, C, np1RR, <span class="dv">0</span>, mr,</span>
-<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     C, omrRTHR<span class="sc">+</span>mr,</span>
-<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, rrr,   C, mr,</span>
-<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     <span class="dv">0</span>, <span class="dv">1</span></span>
-<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>mod_standard <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
-<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">transition =</span> mat_standard,</span>
-<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">PrimaryTHR =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
-<span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">394</span></span>
-<span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">SuccessP =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successP, .<span class="dv">015</span>),</span>
-<span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
-<span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">RevisionTHR =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_revisionTHR, .<span class="dv">015</span>),</span>
-<span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="fu">discount</span>(c_revisionTHR, .<span class="dv">06</span>)</span>
-<span id="cb14-83"><a href="#cb14-83" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-84"><a href="#cb14-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">SuccessR =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successR, .<span class="dv">015</span>),</span>
-<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
-<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a>  <span class="at">Death =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
-<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
-<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a>mod_np1 <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
-<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">transition =</span> mat_np1,</span>
-<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">PrimaryTHR =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-97"><a href="#cb14-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
-<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">579</span></span>
-<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-100"><a href="#cb14-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">SuccessP =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-101"><a href="#cb14-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successP, .<span class="dv">015</span>),</span>
-<span id="cb14-102"><a href="#cb14-102" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
-<span id="cb14-103"><a href="#cb14-103" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-104"><a href="#cb14-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">RevisionTHR =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-105"><a href="#cb14-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_revisionTHR, .<span class="dv">015</span>),</span>
-<span id="cb14-106"><a href="#cb14-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="fu">discount</span>(c_revisionTHR, .<span class="dv">06</span>)</span>
-<span id="cb14-107"><a href="#cb14-107" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-108"><a href="#cb14-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">SuccessR =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-109"><a href="#cb14-109" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successR, .<span class="dv">015</span>),</span>
-<span id="cb14-110"><a href="#cb14-110" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
-<span id="cb14-111"><a href="#cb14-111" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb14-112"><a href="#cb14-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">Death =</span> <span class="fu">define_state</span>(</span>
-<span id="cb14-113"><a href="#cb14-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
-<span id="cb14-114"><a href="#cb14-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
-<span id="cb14-115"><a href="#cb14-115" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb14-116"><a href="#cb14-116" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-117"><a href="#cb14-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-118"><a href="#cb14-118" aria-hidden="true" tabindex="-1"></a>res_mod <span class="ot">&lt;-</span> <span class="fu">run_model</span>(</span>
-<span id="cb14-119"><a href="#cb14-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">standard =</span> mod_standard,</span>
-<span id="cb14-120"><a href="#cb14-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">np1 =</span> mod_np1,</span>
-<span id="cb14-121"><a href="#cb14-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
-<span id="cb14-122"><a href="#cb14-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">cycles =</span> <span class="dv">60</span>,</span>
-<span id="cb14-123"><a href="#cb14-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> cost,</span>
-<span id="cb14-124"><a href="#cb14-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">effect =</span> utility,</span>
-<span id="cb14-125"><a href="#cb14-125" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;beginning&quot;</span>,</span>
-<span id="cb14-126"><a href="#cb14-126" aria-hidden="true" tabindex="-1"></a>  <span class="at">init =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
-<span id="cb14-127"><a href="#cb14-127" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-128"><a href="#cb14-128" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res_mod)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">define_parameters</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>    <span class="at">age_init =</span> <span class="dv">60</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    <span class="at">sex =</span> <span class="dv">0</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>    <span class="co"># age increases with cycles</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>    <span class="at">age =</span> age_init <span class="sc">+</span> model_time,</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>    </span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>    <span class="co"># operative mortality rates</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>    <span class="at">omrPTHR =</span> .<span class="dv">02</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>    <span class="at">omrRTHR =</span> .<span class="dv">02</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>    </span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>    <span class="co"># re-revision mortality rate</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>    <span class="at">rrr =</span> .<span class="dv">04</span>,</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>    </span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>    <span class="co"># parameters for calculating primary revision rate</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>    <span class="at">cons =</span> <span class="sc">-</span><span class="fl">5.490935</span>,</span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>    <span class="at">ageC =</span> <span class="sc">-</span>.<span class="dv">0367022</span>,</span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a>    <span class="at">maleC =</span> .<span class="dv">768536</span>,</span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a>    <span class="at">lambda =</span> <span class="fu">exp</span>(cons <span class="sc">+</span> ageC <span class="sc">*</span> age_init <span class="sc">+</span> maleC <span class="sc">*</span> sex),</span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>    <span class="at">lngamma =</span> <span class="fl">0.3740968</span>,</span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>    <span class="at">gamma =</span> <span class="fu">exp</span>(lngamma),</span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a>    <span class="at">lnrrNP1 =</span> <span class="sc">-</span><span class="fl">1.344474</span>,</span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a>    <span class="at">rrNP1 =</span> <span class="fu">exp</span>(lnrrNP1),</span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a>   </span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a>    <span class="co"># revision probability of primary procedure</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a>    <span class="at">standardRR =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(lambda <span class="sc">*</span> ((model_time <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> gamma <span class="sc">-</span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a>                                     model_time <span class="sc">^</span> gamma)),</span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a>    <span class="at">np1RR =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(lambda <span class="sc">*</span> rrNP1 <span class="sc">*</span> ((model_time <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> gamma <span class="sc">-</span> </span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a>                                        model_time <span class="sc">^</span> gamma)),</span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a>    </span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a>    <span class="co"># age-related mortality rate</span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a>    <span class="at">sex_cat =</span> <span class="fu">ifelse</span>(sex <span class="sc">==</span> <span class="dv">0</span>, <span class="st">&quot;FMLE&quot;</span>, <span class="st">&quot;MLE&quot;</span>),</span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a>    <span class="at">mr =</span> <span class="fu">look_up</span>(death_prob, <span class="at">age =</span> age, <span class="at">sex =</span> sex, <span class="at">bin =</span> <span class="st">&quot;age&quot;</span>),</span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a>    </span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a>    <span class="at">u_successP =</span> .<span class="dv">85</span>,</span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a>    <span class="at">u_revisionTHR =</span> .<span class="dv">30</span>,</span>
+<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a>    <span class="at">u_successR =</span> .<span class="dv">75</span>,</span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a>    <span class="at">c_revisionTHR =</span> <span class="dv">5294</span></span>
+<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a>)</span>
+<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a></span>
+<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a>mat_standard <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
+<span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a>    <span class="at">state_names =</span> <span class="fu">c</span>(</span>
+<span id="cb14-42"><a href="#cb14-42" tabindex="-1"></a>      <span class="st">&quot;PrimaryTHR&quot;</span>,</span>
+<span id="cb14-43"><a href="#cb14-43" tabindex="-1"></a>      <span class="st">&quot;SuccessP&quot;</span>,</span>
+<span id="cb14-44"><a href="#cb14-44" tabindex="-1"></a>      <span class="st">&quot;RevisionTHR&quot;</span>,</span>
+<span id="cb14-45"><a href="#cb14-45" tabindex="-1"></a>      <span class="st">&quot;SuccessR&quot;</span>,</span>
+<span id="cb14-46"><a href="#cb14-46" tabindex="-1"></a>      <span class="st">&quot;Death&quot;</span></span>
+<span id="cb14-47"><a href="#cb14-47" tabindex="-1"></a>    ),</span>
+<span id="cb14-48"><a href="#cb14-48" tabindex="-1"></a>    <span class="dv">0</span>, C, <span class="dv">0</span>,          <span class="dv">0</span>, omrPTHR,</span>
+<span id="cb14-49"><a href="#cb14-49" tabindex="-1"></a>    <span class="dv">0</span>, C, standardRR, <span class="dv">0</span>, mr,</span>
+<span id="cb14-50"><a href="#cb14-50" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          C, omrRTHR<span class="sc">+</span>mr,</span>
+<span id="cb14-51"><a href="#cb14-51" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, rrr,        C, mr,</span>
+<span id="cb14-52"><a href="#cb14-52" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,          <span class="dv">0</span>, <span class="dv">1</span></span>
+<span id="cb14-53"><a href="#cb14-53" tabindex="-1"></a>)</span>
+<span id="cb14-54"><a href="#cb14-54" tabindex="-1"></a></span>
+<span id="cb14-55"><a href="#cb14-55" tabindex="-1"></a>mat_np1 <span class="ot">&lt;-</span> <span class="fu">define_transition</span>(</span>
+<span id="cb14-56"><a href="#cb14-56" tabindex="-1"></a>    <span class="at">state_names =</span> <span class="fu">c</span>(</span>
+<span id="cb14-57"><a href="#cb14-57" tabindex="-1"></a>      <span class="st">&quot;PrimaryTHR&quot;</span>,</span>
+<span id="cb14-58"><a href="#cb14-58" tabindex="-1"></a>      <span class="st">&quot;SuccessP&quot;</span>,</span>
+<span id="cb14-59"><a href="#cb14-59" tabindex="-1"></a>      <span class="st">&quot;RevisionTHR&quot;</span>,</span>
+<span id="cb14-60"><a href="#cb14-60" tabindex="-1"></a>      <span class="st">&quot;SuccessR&quot;</span>,</span>
+<span id="cb14-61"><a href="#cb14-61" tabindex="-1"></a>      <span class="st">&quot;Death&quot;</span></span>
+<span id="cb14-62"><a href="#cb14-62" tabindex="-1"></a>    ),</span>
+<span id="cb14-63"><a href="#cb14-63" tabindex="-1"></a>    <span class="dv">0</span>, C, <span class="dv">0</span>,     <span class="dv">0</span>, omrPTHR,</span>
+<span id="cb14-64"><a href="#cb14-64" tabindex="-1"></a>    <span class="dv">0</span>, C, np1RR, <span class="dv">0</span>, mr,</span>
+<span id="cb14-65"><a href="#cb14-65" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     C, omrRTHR<span class="sc">+</span>mr,</span>
+<span id="cb14-66"><a href="#cb14-66" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, rrr,   C, mr,</span>
+<span id="cb14-67"><a href="#cb14-67" tabindex="-1"></a>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,     <span class="dv">0</span>, <span class="dv">1</span></span>
+<span id="cb14-68"><a href="#cb14-68" tabindex="-1"></a>)</span>
+<span id="cb14-69"><a href="#cb14-69" tabindex="-1"></a></span>
+<span id="cb14-70"><a href="#cb14-70" tabindex="-1"></a>mod_standard <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
+<span id="cb14-71"><a href="#cb14-71" tabindex="-1"></a>  <span class="at">transition =</span> mat_standard,</span>
+<span id="cb14-72"><a href="#cb14-72" tabindex="-1"></a>  <span class="at">PrimaryTHR =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-73"><a href="#cb14-73" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
+<span id="cb14-74"><a href="#cb14-74" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">394</span></span>
+<span id="cb14-75"><a href="#cb14-75" tabindex="-1"></a>  ),</span>
+<span id="cb14-76"><a href="#cb14-76" tabindex="-1"></a>  <span class="at">SuccessP =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-77"><a href="#cb14-77" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successP, .<span class="dv">015</span>),</span>
+<span id="cb14-78"><a href="#cb14-78" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
+<span id="cb14-79"><a href="#cb14-79" tabindex="-1"></a>  ),</span>
+<span id="cb14-80"><a href="#cb14-80" tabindex="-1"></a>  <span class="at">RevisionTHR =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-81"><a href="#cb14-81" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_revisionTHR, .<span class="dv">015</span>),</span>
+<span id="cb14-82"><a href="#cb14-82" tabindex="-1"></a>    <span class="at">cost =</span> <span class="fu">discount</span>(c_revisionTHR, .<span class="dv">06</span>)</span>
+<span id="cb14-83"><a href="#cb14-83" tabindex="-1"></a>  ),</span>
+<span id="cb14-84"><a href="#cb14-84" tabindex="-1"></a>  <span class="at">SuccessR =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-85"><a href="#cb14-85" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successR, .<span class="dv">015</span>),</span>
+<span id="cb14-86"><a href="#cb14-86" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
+<span id="cb14-87"><a href="#cb14-87" tabindex="-1"></a>  ),</span>
+<span id="cb14-88"><a href="#cb14-88" tabindex="-1"></a>  <span class="at">Death =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-89"><a href="#cb14-89" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
+<span id="cb14-90"><a href="#cb14-90" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
+<span id="cb14-91"><a href="#cb14-91" tabindex="-1"></a>  )</span>
+<span id="cb14-92"><a href="#cb14-92" tabindex="-1"></a>)</span>
+<span id="cb14-93"><a href="#cb14-93" tabindex="-1"></a></span>
+<span id="cb14-94"><a href="#cb14-94" tabindex="-1"></a>mod_np1 <span class="ot">&lt;-</span> <span class="fu">define_strategy</span>(</span>
+<span id="cb14-95"><a href="#cb14-95" tabindex="-1"></a>  <span class="at">transition =</span> mat_np1,</span>
+<span id="cb14-96"><a href="#cb14-96" tabindex="-1"></a>  <span class="at">PrimaryTHR =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-97"><a href="#cb14-97" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
+<span id="cb14-98"><a href="#cb14-98" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">579</span></span>
+<span id="cb14-99"><a href="#cb14-99" tabindex="-1"></a>  ),</span>
+<span id="cb14-100"><a href="#cb14-100" tabindex="-1"></a>  <span class="at">SuccessP =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-101"><a href="#cb14-101" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successP, .<span class="dv">015</span>),</span>
+<span id="cb14-102"><a href="#cb14-102" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
+<span id="cb14-103"><a href="#cb14-103" tabindex="-1"></a>  ),</span>
+<span id="cb14-104"><a href="#cb14-104" tabindex="-1"></a>  <span class="at">RevisionTHR =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-105"><a href="#cb14-105" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_revisionTHR, .<span class="dv">015</span>),</span>
+<span id="cb14-106"><a href="#cb14-106" tabindex="-1"></a>    <span class="at">cost =</span> <span class="fu">discount</span>(c_revisionTHR, .<span class="dv">06</span>)</span>
+<span id="cb14-107"><a href="#cb14-107" tabindex="-1"></a>  ),</span>
+<span id="cb14-108"><a href="#cb14-108" tabindex="-1"></a>  <span class="at">SuccessR =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-109"><a href="#cb14-109" tabindex="-1"></a>    <span class="at">utility =</span> <span class="fu">discount</span>(u_successR, .<span class="dv">015</span>),</span>
+<span id="cb14-110"><a href="#cb14-110" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
+<span id="cb14-111"><a href="#cb14-111" tabindex="-1"></a>  ),</span>
+<span id="cb14-112"><a href="#cb14-112" tabindex="-1"></a>  <span class="at">Death =</span> <span class="fu">define_state</span>(</span>
+<span id="cb14-113"><a href="#cb14-113" tabindex="-1"></a>    <span class="at">utility =</span> <span class="dv">0</span>,</span>
+<span id="cb14-114"><a href="#cb14-114" tabindex="-1"></a>    <span class="at">cost =</span> <span class="dv">0</span></span>
+<span id="cb14-115"><a href="#cb14-115" tabindex="-1"></a>  )</span>
+<span id="cb14-116"><a href="#cb14-116" tabindex="-1"></a>)</span>
+<span id="cb14-117"><a href="#cb14-117" tabindex="-1"></a></span>
+<span id="cb14-118"><a href="#cb14-118" tabindex="-1"></a>res_mod <span class="ot">&lt;-</span> <span class="fu">run_model</span>(</span>
+<span id="cb14-119"><a href="#cb14-119" tabindex="-1"></a>  <span class="at">standard =</span> mod_standard,</span>
+<span id="cb14-120"><a href="#cb14-120" tabindex="-1"></a>  <span class="at">np1 =</span> mod_np1,</span>
+<span id="cb14-121"><a href="#cb14-121" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
+<span id="cb14-122"><a href="#cb14-122" tabindex="-1"></a>  <span class="at">cycles =</span> <span class="dv">60</span>,</span>
+<span id="cb14-123"><a href="#cb14-123" tabindex="-1"></a>  <span class="at">cost =</span> cost,</span>
+<span id="cb14-124"><a href="#cb14-124" tabindex="-1"></a>  <span class="at">effect =</span> utility,</span>
+<span id="cb14-125"><a href="#cb14-125" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;beginning&quot;</span>,</span>
+<span id="cb14-126"><a href="#cb14-126" tabindex="-1"></a>  <span class="at">init =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb14-127"><a href="#cb14-127" tabindex="-1"></a>)</span>
+<span id="cb14-128"><a href="#cb14-128" tabindex="-1"></a><span class="fu">summary</span>(res_mod)</span></code></pre></div>
 <pre><code>## 2 strategies run for 60 cycles.
 ## 
 ## Initial state counts:

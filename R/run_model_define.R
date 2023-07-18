@@ -74,8 +74,8 @@ run_model <- function(...,
     init = init,
     cycles = cycles,
     method = method,
-    cost = lazyeval::lazy_(substitute(cost), env = parent.frame()),
-    effect = lazyeval::lazy_(substitute(effect), env = parent.frame()),
+    cost = new_quosure(substitute(cost), env = parent.frame()),
+    effect = new_quosure(substitute(effect), env = parent.frame()),
     state_time_limit = state_time_limit,
     central_strategy = central_strategy,
     inflow = inflow
@@ -116,17 +116,17 @@ run_model_ <- function(uneval_strategy_list,
     ))
   }
   
-  list_ce <- list(
+  ce <- list(
     .cost = cost,
     .effect = effect
   )
   
-  ce <- compat_lazy_dots(list_ce)
   
   strategy_names <- names(uneval_strategy_list)
   
   if (is.null(strategy_names)) {
-    message("No named model -> generating names.")
+    if (!identical(Sys.getenv("TESTTHAT"), "true"))
+      message("No named model -> generating names.")
     strategy_names <- as.character(utils::as.roman(seq_along(uneval_strategy_list)))
     names(uneval_strategy_list) <- strategy_names
   }
@@ -175,9 +175,18 @@ run_model_ <- function(uneval_strategy_list,
     list_res[[n]]$.strategy_names <- n
   }
   
-  res <- 
-    dplyr::bind_rows(list_res) %>%
-      dplyr::mutate(!!!ce)
+  p <- dplyr::bind_rows(list_res) 
+  nr <- nrow(p)
+  
+  tab_res <- lapply(ce, function(x){
+    res <- rlang::eval_tidy(x, data = p)
+    if (length(res) == 1){
+      return(rep(res, nr))
+    }
+    res
+  }) 
+
+    res <- dplyr::bind_cols(p, tab_res)
   
   root_strategy <- get_root_strategy(res)
   noncomparable_strategy <- get_noncomparable_strategy(res)
@@ -331,7 +340,7 @@ get_values.run_model <- function(x, ...) {
     key_col = "value_names",
     value_col = "value",
     gather_cols = names(res)[! names(res) %in% 
-                               c("markov_cycle",
+                               c("model_time",
                                  ".strategy_names")]
   )
 }
@@ -374,7 +383,7 @@ get_counts.run_model <- function(x, ...) {
         get_counts(x$eval_strategy_list[[.n]]) %>% 
           dplyr::mutate(
             .strategy_names = .n,
-            markov_cycle = row_number())
+            model_time = row_number())
       }
     )
   )
@@ -384,7 +393,7 @@ get_counts.run_model <- function(x, ...) {
     key_col = "state_names",
     value_col = "count",
     gather_cols = names(res)[! names(res) %in% 
-                               c("markov_cycle",
+                               c("model_time",
                                  ".strategy_names")]
   )
 }
@@ -469,9 +478,10 @@ get_parameter_values.updated_model <- function(x, ...) {
   get_parameter_values(get_model(x), ...)
 }
 
+#' @export
 get_parameter_values.run_model <- function(x, parameter_names,
                                            cycles = rep(1, length(parameter_names)),
-                                           strategy = 1) {
+                                           strategy = 1, ...) {
   strategy <- check_strategy_index(x, strategy)
   
   stopifnot(

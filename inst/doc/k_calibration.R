@@ -6,7 +6,7 @@ param <- define_parameters(
     age_init = 60,
     sex = 0,
     # age increases with cycles
-    age = age_init + markov_cycle,
+    age = age_init + model_time,
     
     # operative mortality rates
     omrPTHR = .02,
@@ -25,15 +25,14 @@ param <- define_parameters(
     rrNP1 = .260677,
     
     # revision probability of primary procedure
-    standardRR = 1 - exp(lambda * ((markov_cycle - 1) ^ gamma -
-                                     markov_cycle ^ gamma)),
-    np1RR = 1 - exp(lambda * rrNP1 * ((markov_cycle - 1) ^ gamma - 
-                                        markov_cycle ^ gamma)),
+    standardRR = 1 - exp(lambda * ((model_time - 1) ^ gamma -
+                                     model_time ^ gamma)),
+    np1RR = 1 - exp(lambda * rrNP1 * ((model_time - 1) ^ gamma - 
+                                        model_time ^ gamma)),
     
     # age-related mortality rate
     sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
-    mr = get_who_mr(age, sex_cat,
-                    country = "GBR", local = TRUE),
+    mr = get_who_mr(age, sex_cat, local = TRUE),
     
     # state values
     u_SuccessP = .85,
@@ -133,13 +132,13 @@ res_mod <- run_model(
 ## ----get_counts, message=FALSE------------------------------------------------
 library(dplyr)
 get_counts(res_mod) %>% 
-  dplyr::filter(markov_cycle == 20 & state_names == "RevisionTHR")
+  dplyr::filter(model_time == 20 & state_names == "RevisionTHR")
 
 ## ----extract_values-----------------------------------------------------------
 extract_values <- function(x) {
   dplyr::filter(
     get_counts(x),
-    markov_cycle == 20 & state_names == "RevisionTHR"
+    model_time == 20 & state_names == "RevisionTHR"
   )$count
 }
 extract_values(res_mod)

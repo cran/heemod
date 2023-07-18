@@ -1,5 +1,3 @@
-context("State testing")
-
 test_that(
   "State definition", {
     s1 <- define_state(
@@ -15,8 +13,7 @@ test_that(
     expect_output(
       str(s1$.dots),
       'List of 2
- $ x:List of 2
-  ..$ expr: num 234',
+ $ x: language ~234',
       fixed = TRUE
     )
     expect_output(
@@ -38,8 +35,7 @@ y = 123',
         )
       ),
       "List of 2
- $ x:List of 2
-  ..$ expr: num 111",
+ $ x: language ~111",
       fixed = TRUE
     )
     expect_error(
@@ -50,13 +46,13 @@ y = 123',
     )
     expect_error(
       define_state(
-        markov_cycle = 876
+        model_time = 876
       )
     )
     expect_error(
       modify(
         s1,
-        markov_cycle = 678
+        model_time = 678
       )
     )
     expect_equal(
@@ -100,8 +96,7 @@ test_that(
       "List of 2
  $ X1:List of 2
   ..$ .dots          :List of 2
-  .. ..$ x:List of 2
-  .. .. ..$ expr: num 234",
+  .. ..$ x: language ~234",
       fixed = TRUE
     )
     expect_output(
@@ -123,8 +118,7 @@ y"
       "List of 2
  $ A:List of 2
   ..$ .dots          :List of 2
-  .. ..$ x:List of 2
-  .. .. ..$ expr: num 234",
+  .. ..$ x: language ~234",
       fixed = TRUE
     )
     expect_output(
@@ -137,8 +131,7 @@ y"
       "List of 2
  $ X1:List of 2
   ..$ .dots          :List of 2
-  .. ..$ x:List of 2
-  .. .. ..$ expr: num 987",
+  .. ..$ x: language ~987",
       fixed = TRUE
     )
     
@@ -152,8 +145,7 @@ y"
       "List of 3
  $ X1:List of 2
   ..$ .dots          :List of 2
-  .. ..$ x:List of 2
-  .. .. ..$ expr: num 234",
+  .. ..$ x: language ~234",
       fixed = TRUE
     )
     expect_error(
@@ -204,7 +196,7 @@ test_that(
   "State evaluation", {
     par1 <- define_parameters(
       a = 12,
-      b = a + 4 * markov_cycle
+      b = a + 4 * model_time
     )
     sl <- define_state_list(
       X1 = define_state(A = a),
@@ -222,8 +214,8 @@ test_that(
     expect_equal(names(e_st), c(".dots", "starting_values"))
     expect_output(
       str(e_st$.dots),
-      "..$ markov_cycle: int [1:10] 1 2 3 4 5 6 7 8 9 10
-  ..$ A           :",
+      "..$ model_time: int [1:10] 1 2 3 4 5 6 7 8 9 10
+  ..$ A         :",
       fixed = TRUE
     )
     expect_equal(
@@ -245,7 +237,7 @@ test_that(
     
     par1 <- define_parameters(
       a = .1,
-      b = 1 / (markov_cycle + 1),
+      b = 1 / (model_time + 1),
       cte1 = 234,
       cte2 = 123,
       cte3 = 987,
@@ -296,7 +288,9 @@ test_that(
       run_model(
         mod1, mod2,
         parameters = par1, cost = x, effect = y
-      )
-    )
+      ),
+      "version"
+    ) %>% 
+      suppressWarnings()
   }
 )

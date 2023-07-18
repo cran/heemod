@@ -36,7 +36,7 @@ eval_strategy_newdata <- function(x, strategy = 1, newdata) {
     cl <- get_cluster()
     
     num_cores <- length(cl)
-    
+    if (!identical(Sys.getenv("TESTTHAT"), "true"))
     message(paste("Using a cluster with", num_cores, "cores."))
     
     split_vec <- rep(1:num_cores, each = nrow(newdata) %/% num_cores)
@@ -106,15 +106,15 @@ eval_newdata <- function(new_parameters, strategy, old_parameters,
                          strategy_name, expand_limit) {
   
   new_parameters <- Filter(
-    function(x) all(! is.na(x)),
+    function(x) all(rlang::is_call(x) || ! is.na(x)),
     new_parameters
   )
   
-  lazy_new_param <- to_dots(new_parameters)
+  tidy_new_param <- to_dots(new_parameters)
   
   parameters <- utils::modifyList(
     old_parameters,
-    lazy_new_param
+    tidy_new_param
   )
   
   eval_strategy(

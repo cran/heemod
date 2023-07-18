@@ -20,13 +20,14 @@
 #' @param x Used to work around non-standard evaluation.
 #'   
 #' @return An object of class `state` (actually a named
-#'   list of `lazy` expressions).
+#'   list of quosures).
 #' @export
 #' 
 #' @example inst/examples/example_define_state.R
 #'   
 define_state <- function(..., starting_values = define_starting_values()) {
-  .dots <- lazyeval::lazy_dots(...)
+  .dots <- quos(...)
+  deprecated_x_cycle(.dots)
   define_state_(list(.dots = .dots, starting_values = starting_values))
 }
 
@@ -42,26 +43,24 @@ define_state_ <- function(x) {
   structure(list(
             .dots = .dots, 
             starting_values = starting_values),
-            class = c("state", class(.dots)))
+            class = c("state", "list"))
 }
 
 #' @export
 #' @rdname define_state
 modify.state <- function(.OBJECT, ...) {
-  .dots <- lazyeval::lazy_dots(...)
+  .dots <- quos(...)
   
   modify_(.OBJECT = .OBJECT, .dots = .dots)
 }
 
+#' @export
 modify_.state <- function(.OBJECT, .dots) {
   check_names(names(.dots))
-  # !mod!
-  # message d'erreur informatif quand valeurs pas dans
-  # bon ordre
   
   if ("starting_values" %in% names(.dots)) {
     starting_values <- check_starting_values(
-      x = lazyeval::lazy_eval(.dots$starting_values),
+      x = eval_tidy(.dots$starting_values),
       ref = names(.OBJECT$.dots)
     )
     .OBJECT <- utils::modifyList(.OBJECT, list(starting_values = starting_values))
@@ -143,7 +142,8 @@ define_state_list_ <- function(.dots) {
   state_names <- names(states)
   
   if (is.null(state_names)) {
-    message("No named state -> generating names.")
+    if (!identical(Sys.getenv("TESTTHAT"), "true"))
+      message("No named state -> generating names.")
     state_names <- LETTERS[seq_along(states)]
     names(states) <- state_names
   }
@@ -180,12 +180,14 @@ define_state_list_ <- function(.dots) {
 }
 
 #' @rdname define_state_list
+#' @export
 modify.uneval_state_list <- function(.OBJECT, ...) {
   .dots <- list(...)
   
   modify_(.OBJECT = .OBJECT, .dots = .dots)
 }
 
+#' @export
 modify_.uneval_state_list <- function(.OBJECT, .dots) {
   res <- utils::modifyList(.OBJECT, .dots)
   check_states(res)
@@ -267,10 +269,12 @@ get_state_names <- function(x, ...){
   UseMethod("get_state_names")
 }
 
+#' @export
 get_state_names.eval_state_list <- function(x, ...){
   names(x$.dots)
 }
 
+#' @export
 get_state_names.default <- function(x, ...){
   names(x)
 }

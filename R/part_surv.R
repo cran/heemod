@@ -49,7 +49,8 @@ define_part_surv <- function(pfs, os, state_names,
                              cycle_length = 1) {
   
   if (missing(state_names)) {
-    message("No named state -> generating names.")
+    if (!identical(Sys.getenv("TESTTHAT"), "true"))
+      message("No named state -> generating names.")
     
     if (terminal_state) {
       state_names <- LETTERS[seq_len(4)]
@@ -78,8 +79,8 @@ define_part_surv <- function(pfs, os, state_names,
   }
   
   define_part_surv_(
-    pfs = lazyeval::lazy_(substitute(pfs), env = parent.frame()),
-    os = lazyeval::lazy_(substitute(os), env = parent.frame()),
+    pfs = new_quosure(substitute(pfs), env = parent.frame()),
+    os = new_quosure(substitute(os), env = parent.frame()),
     state_names = state_names,
     cycle_length = cycle_length)
   }
@@ -97,8 +98,8 @@ define_part_surv_ <- function(pfs, os, state_names,
   }
   
   stopifnot(
-    inherits(pfs, "lazy"),
-    inherits(os, "lazy"),
+    inherits(pfs, "quosure"),
+    inherits(os, "quosure"),
     
     length(state_names) %in% 3:4,
     ! is.null(names(state_names)),
@@ -158,15 +159,17 @@ part_survs_from_surv_inputs <- function(surv_inputs, state_names) {
         .data, state_names = state_names))
 }
 
-get_state_names.part_surv <- function(x) {
+#' @export
+get_state_names.part_surv <- function(x, ...) {
   x$state_names
 }
 
+#' @export
 eval_transition.part_surv <- function(x, parameters) {
   
-  time_ <- c(0, parameters$markov_cycle)
+  time_ <- c(0, parameters$model_time)
   
-  pfs_dist <- lazyeval::lazy_eval(
+  pfs_dist <- eval_tidy(
     x$pfs, 
     data = dplyr::slice(parameters, 1)
   )
@@ -178,7 +181,7 @@ eval_transition.part_surv <- function(x, parameters) {
     type = "surv"
   )
   
-  os_dist <- lazyeval::lazy_eval(
+  os_dist <- eval_tidy(
     x$os, 
     data = dplyr::slice(parameters, 1)
   )
@@ -199,8 +202,9 @@ eval_transition.part_surv <- function(x, parameters) {
     class = "eval_part_surv")
 }
 
+#' @export
 compute_counts.eval_part_surv <- function(x, init,
-                                          inflow) {
+                                          inflow, ...) {
   
   stopifnot(
     length(x$state_names) %in% 3:4,
@@ -220,6 +224,13 @@ compute_counts.eval_part_surv <- function(x, init,
     progression      = x$os_surv - x$pfs_surv, 
     death            = 1 - x$os_surv
   )
+  
+  if (any(res$progression < 0) & !any(res$death < 0) & !any(res$progression_free < 0)){
+    neg_cycles <- which(res$progression < 0)
+    warning(glue::glue("Progression probability was < 0 at cycle(s) {neg_cycles}, 
+                       which means that OS was below the PFS. Forced the probability to be 0"))
+    res$progression[neg_cycles] <- 0
+  }
   
   if (length(x$state_names) == 4) {
     res$terminal <- diff(c(0, res$death))

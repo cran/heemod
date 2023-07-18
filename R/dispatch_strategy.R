@@ -53,7 +53,7 @@ vswitch.default <- function(x, ...) {
 #'   x = dispatch_strategy(
 #'     strat_1 = 1234,
 #'     strat_2 = 9876,
-#'     strat_3 = val * 2 + markov_cycle
+#'     strat_3 = val * 2 + model_time
 #'   )
 #' )
 dispatch_strategy <- function(.strategy, ...) {
@@ -81,9 +81,9 @@ dispatch_strategy <- function(.strategy, ...) {
 #' `dispatch_strategy(.strategy = strategy, ...)` if
 #' `.strategy_name` is not already defined.
 #' 
-#' @param .dots A `lazy_dots` object.
+#' @param .dots A `quosures` object.
 #'   
-#' @return A modified `lazy_dots` object.
+#' @return A modified `quosures` object.
 #'   
 #' @keywords internal
 dispatch_strategy_hack <- function(.dots) {
@@ -92,7 +92,7 @@ dispatch_strategy_hack <- function(.dots) {
       x
     } else if (is.call(x)) {
       if (dispatch_strategy_check(x[[1]], env)) {
-        x <- pryr::standardise_call(x)
+        x <- call_match(x, rlang::eval_bare(rlang::node_car(x)))
         if (is.null(x$.strategy)) {
           x$.strategy <- substitute(strategy)
         }
@@ -113,8 +113,7 @@ dispatch_strategy_hack <- function(.dots) {
       .Data = lapply(
         .dots,
         function(x) {
-          x$expr <- f(x$expr, env = x$env)
-          x
+          set_expr(x, f(get_expr(x), env = get_env(x)))
         }
       )),
       attributes(.dots)

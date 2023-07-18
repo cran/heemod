@@ -1,4 +1,4 @@
-".strategy_names","markov_cycle","state_names","count"
+".strategy_names","model_time","state_names","count"
 "standard",1,"PrimaryTHR",1000
 "standard",2,"PrimaryTHR",0
 "standard",3,"PrimaryTHR",0

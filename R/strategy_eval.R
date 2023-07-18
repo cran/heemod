@@ -105,6 +105,7 @@ get_eval_init <- function(x) {
   UseMethod("get_eval_init")
 }
 
+#' @export
 get_eval_init.eval_strategy <- function(x) {
   x$e_init
 }
@@ -233,8 +234,8 @@ compute_values <- function(states, count_list, strategy_starting_values) {
   state_val_array <- array(unlist(states_values), dim = dims_array_2)
   start_val_array <- array(unlist(states_starting), dim = dims_array_2)
 
-  ## get rid of markov_cycle
-  mc_col <- match("markov_cycle", names(states_values[[1]]))
+  ## get rid of model_time
+  mc_col <- match("model_time", names(states_values[[1]]))
   state_val_array <- state_val_array[, -mc_col, , drop = FALSE]
   start_val_array <- start_val_array[, -mc_col, , drop = FALSE]
 
@@ -280,10 +281,10 @@ compute_values <- function(states, count_list, strategy_starting_values) {
     unlist() %>%
     array(dim = dims_array_1)
   
-  # multiply, sum, add starting values and add markov_cycle back in
+  # multiply, sum, add starting values and add model_time back in
   vals_x_counts <- (state_val_array + starting_fill_zero) * counts_mat 
   wtd_sums <- rowSums(vals_x_counts, dims = 2) + rowSums(start_x_counts, dims = 2)
-  res <- data.frame(markov_cycle = states_values[[1]]$markov_cycle, wtd_sums)
+  res <- data.frame(model_time = states_values[[1]]$model_time, wtd_sums)
 
   names(res)[-1] <- state_values_names
   
@@ -348,7 +349,6 @@ expand_if_necessary <- function(strategy, parameters,
       get_state_names(uneval_transition)[td_tm],
       get_state_names(uneval_states)[td_st]
     )))
-    
     message(
       sprintf(
         "%s: detected use of 'state_time', expanding state%s: %s.",
@@ -384,7 +384,7 @@ expand_if_necessary <- function(strategy, parameters,
   # to retain values in case of expansion
   if (expand) {
     complete_parameters <- eval_parameters(structure(
-      c(lazyeval::lazy_dots(state_time = 1),
+      c(quos(state_time = 1),
         old_parameters),
       class = class(old_parameters)
     ),
@@ -400,7 +400,7 @@ expand_if_necessary <- function(strategy, parameters,
   e_starting_values <- unlist(
     eval_starting_values(
       x = strategy$starting_values,
-      parameters[1, ])
+      complete_parameters[1, ])
   )
   # e_starting_values <- 
   #   list(starting_strategy = e_starting_values_strat,

@@ -19,7 +19,8 @@ acceptability_curve <- function(x, wtp_thresholds) {
         .ceac = wtp_thresholds,
         .key = 1
       ),
-      by = ".key"
+      by = ".key",
+      relationship = "many-to-many"
     ) %>% 
     dplyr::group_by(.data$.index, .data$.ceac) %>% 
     dplyr::mutate(
@@ -53,4 +54,4 @@ generate_wtp <- function(max_wtp,
 
 globalVariables(c(     ".ceac", ".cost", ".dcost", ".deffect", ".denom", ".dref", ".effect", ".evpi", ".hjust", ".icer",
                        ".index", ".mod", ".n_indiv", ".p", ".par_names", ".par_value", ".prop", ".strategy_names",
-                       ".type", ".weights", "Model", "Value", "count", "markov_cycle", "res", "value"))
+                       ".type", ".weights", "Model", "Value", "count", "model_time", "res", "value", "maxtime", "selector"))

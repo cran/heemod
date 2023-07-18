@@ -61,8 +61,8 @@ update.run_model <- function(object, newdata, ...) {
     weights <- rep(1, nrow(newdata))
   }
   
-  ce <- get_ce(object) %>%
-    compat_lazy_dots()
+  ce <- get_ce(object) 
+  
   list_res <- list()
   
   for (n in get_strategy_names(object)) {
@@ -109,7 +109,7 @@ update.run_model <- function(object, newdata, ...) {
     oldmodel = object
   )
   
-  structure(
+  full <- structure(
     list(
       updated_model = res_total,
       newdata = newdata,
@@ -118,13 +118,15 @@ update.run_model <- function(object, newdata, ...) {
       has_weights = has_weights,
       weights = weights
     ),
-    class = c("updated_model", class(res))
+    class = c("updated_model")
   )
+  full$summary <- summary(full)
+  full
 }
 
 #' @export
 print.updated_model <- function(x, ...) {
-  print(summary(x), ...)
+  print(x$summary)
 }
 
 #' @export
@@ -190,7 +192,7 @@ plot.updated_model <- function(x, type = c("simple", "difference",
       x_lab <- "ICER"
     }
   )
-  summary(x)$scaled_results %>% 
+  x$summary$scaled_results %>% 
     dplyr::filter(
       .data$.strategy_names %in% strategy
     ) %>% 
@@ -200,7 +202,9 @@ plot.updated_model <- function(x, type = c("simple", "difference",
     ggplot2::facet_grid(.strategy_names ~ .)
 }
 
-scale.updated_model <- function(x, scale = TRUE, center = TRUE) {
+
+#' @export
+scale.updated_model <- function(x, center = TRUE, scale = TRUE) {
   .bm <- get_root_strategy(get_model(x))
   
   res <- x$updated_model
@@ -232,7 +236,7 @@ get_model.updated_model <- function(x) {
 
 #' @export
 summary.updated_model <- function(object, ...) {
-  
+  if (!is.null(object$summary)) return(object$summary)
   strategy_names <- get_strategy_names(
     get_model(object)
   )[ord_eff <- order(get_effect(get_model(object)))]

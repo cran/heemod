@@ -141,6 +141,7 @@ calibrate_model <- function(x, parameter_names,
       seq_len(nrow(initial_values)),
       function(i) {
         if (nrow(initial_values) > 1) {
+          if (!identical(Sys.getenv("TESTTHAT"), "true")) 
           message(sprintf(
             "Running calibration with initial values #%i.", i
           ))
@@ -160,7 +161,7 @@ calibrate_model <- function(x, parameter_names,
         
         if (optim_output$convcode != 0 &&
             ! is.null(m <- unlist(attr(optim_output, "details")[, "message"]))) {
-          message(sprintf("Message: %s.", m))
+            message(sprintf("Message: %s.", m))
         }
         
         optim_output[c(parameter_names, "value", "convcode")]
@@ -174,9 +175,10 @@ calibrate_model <- function(x, parameter_names,
       seq_len(nrow(initial_values)),
       function(i) {
         if (nrow(initial_values) > 1) {
-          message(sprintf(
-            "Running calibration with initial values #%i.", i
-          ))
+          if (!identical(Sys.getenv("TESTTHAT"), "true")) 
+            message(sprintf(
+              "Running calibration with initial values #%i.", i
+            ))
         }
         
         optim_output <- stats::optimise(
@@ -217,8 +219,9 @@ fn_calibrate <- function(x, ...) {
   UseMethod("fn_calibrate")
 }
 
+#' @export
 fn_calibrate.run_model <- function(x, parameter_names,
-                                   target_values, par, fn_values) {
+                                   target_values, par, fn_values, ...) {
   names(par) <- parameter_names
   parameters <- modify_(
     get_parameters(x),
@@ -243,8 +246,9 @@ fn_calibrate.run_model <- function(x, parameter_names,
   sum((values - target_values) ^ 2)
 }
 
+#' @export
 fn_calibrate.updated_model <- function(x, parameter_names,
-                                       target_values, par, fn_values) {
+                                       target_values, par, fn_values, ...) {
   updated_mod <- x
   x <- get_model(x)
   
@@ -322,13 +326,13 @@ define_calibration_fn <- function(type, strategy_names,
         state <- element_names[i]
         cycle <- cycles[i]
         strat <- strategy_names[i]
-        quo(.data$state_names == state & .data$markov_cycle == cycle &
+        quo(.data$state_names == state & .data$model_time == cycle &
               .data$.strategy_names == strat)
       } else {
         value <- element_names[i]
         cycle <- cycles[i]
         strat <- strategy_names[i]
-        quo(.data$value_names == value & .data$markov_cycle == cycle &
+        quo(.data$value_names == value & .data$model_time == cycle &
               .data$.strategy_names == strat)
       }
     })

@@ -1,5 +1,3 @@
-context("Heterogeneity & Demographic")
-
 test_that(
   "Demographic analysis", {
     mod1 <- define_strategy(
@@ -36,7 +34,7 @@ test_that(
       mod1, mod2,
       parameters = define_parameters(
         age_init = 60,
-        age = age_init + markov_cycle
+        age = age_init + model_time
       ),
       init = 1:0,
       cycles = 10,
@@ -114,7 +112,7 @@ test_that(
       mod1, mod2,
       parameters = define_parameters(
         age_init = 60,
-        age = age_init + markov_cycle
+        age = age_init + model_time
       ),
       init = 1:0,
       cycles = 10,

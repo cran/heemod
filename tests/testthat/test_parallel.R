@@ -1,5 +1,3 @@
-context("Multiple cores")
-
 test_that(
   "Same results using 1 core or 2.", {
     
@@ -19,16 +17,17 @@ test_that(
     ## 
     ##  parameters from the discrete sensitivity analysis
     expect_identical(
-      sapply(result_1core$dsa$dsa$.par_value, lazyeval::lazy_eval),
-      sapply(result_2core$dsa$dsa$.par_value, lazyeval::lazy_eval)
+      sapply(result_1core$dsa$dsa$.par_value, eval_tidy),
+      sapply(result_2core$dsa$dsa$.par_value, eval_tidy)
     )
     ##  counts from all models from the discrete sensitivity analysis
     expect_identical(
       get_counts(get_model(result_1core$dsa)),
       get_counts(get_model(result_2core$dsa)))
     ## demographic analysis
-    expect_equivalent(
+    expect_equal(
       result_1core$demographics$updated_model[-3],
-      result_2core$demographics$updated_model[-3])
+      result_2core$demographics$updated_model[-3],
+      ignore_attr = TRUE)
   }
 )

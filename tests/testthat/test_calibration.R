@@ -1,6 +1,3 @@
-context("calibration functions")
-
-
 test_that("one-dimensional calibration",
           {          
 param <- define_parameters(p = 0.8)
@@ -35,7 +32,7 @@ res_mod <- run_model(
 f <- function(x) {
   dplyr::filter(
     get_counts(x),
-    .strategy_names == "I" & state_names == "A" & markov_cycle == 10
+    .strategy_names == "I" & state_names == "A" & model_time == 10
   )$count
 }
 f(res_mod)
@@ -146,7 +143,7 @@ test_that("multi-dimensional calibration",
     age_init = 60,
     sex = 0,
     # age increases with cycles
-    age = age_init + markov_cycle,
+    age = age_init + model_time,
     
     # operative mortality rates
     omrPTHR = .02,
@@ -165,15 +162,14 @@ test_that("multi-dimensional calibration",
     rrNP1 = .260677,
     
     # revision probability of primary procedure
-    standardRR = 1 - exp(lambda * ((markov_cycle - 1) ^ gamma -
-                                     markov_cycle ^ gamma)),
-    np1RR = 1 - exp(lambda * rrNP1 * ((markov_cycle - 1) ^ gamma - 
-                                        markov_cycle ^ gamma)),
+    standardRR = 1 - exp(lambda * ((model_time - 1) ^ gamma -
+                                     model_time ^ gamma)),
+    np1RR = 1 - exp(lambda * rrNP1 * ((model_time - 1) ^ gamma - 
+                                        model_time ^ gamma)),
     
     # age-related mortality rate
     sex_cat = ifelse(sex == 0, "FMLE", "MLE"),
-    mr = get_who_mr(age, sex_cat,
-                    country = "GBR", local = TRUE),
+    mr = get_who_mr_memo(age, sex_cat, local = TRUE),
     
     # state values
     u_SuccessP = .85,
@@ -259,23 +255,26 @@ test_that("multi-dimensional calibration",
       cost = 0
     )
   )
-  
-  res_mod <- run_model(
-    standard = mod_standard,
-    np1 = mod_np1,
-    parameters = param,
-    cycles = 60,
-    cost = cost,
-    effect = utility,
-    method = "beginning"
+  suppressMessages(
+    res_mod <- run_model(
+      standard = mod_standard,
+      np1 = mod_np1,
+      parameters = param,
+      cycles = 60,
+      cost = cost,
+      effect = utility,
+      method = "beginning"
+    )
   )
+  
   extract_values <- function(x) {
     dplyr::filter(
       get_counts(x),
-      markov_cycle == 20 & state_names == "RevisionTHR"
+      model_time == 20 & state_names == "RevisionTHR"
     )$count
   }
   expect_warning(
+    suppressMessages(
     res_cal <- calibrate_model(
       res_mod,
       parameter_names = c("gamma", "rrNP1"),
@@ -283,14 +282,15 @@ test_that("multi-dimensional calibration",
       target_values = c(2.5, 0.8),
       method = "L-BFGS-B",
       itnmax = 4, lower = c(0, 0), upper = c(2,1)
-    ),
+    )),
     "Not all optimizations converged")
 
-  expect_equivalent(res_cal,
-                   data.frame(gamma = 1.442250332, 
-                     rrNP1 = 0.3144441542,
-                     value = 1.710576e-10,
-                     convcode = 1)
+  expect_equal(res_cal,
+                    data.frame(gamma = 1.431920048, 
+                               rrNP1 = 0.3146195445,
+                               value = 3.843890141e-10,
+                     convcode = 1),
+               ignore_attr = TRUE
   )
 }
 )

@@ -1,5 +1,3 @@
-context("Parameters definition")
-
 test_that(
   "Parameter definition and update", {
     par1 <- define_parameters(
@@ -9,8 +7,7 @@ test_that(
     expect_output(
       str(par1),
       'List of 2
- $ a:List of 2
-  ..$ expr: num 1234',
+ $ a: language ~1234',
       fixed = TRUE
     )
     expect_output(
@@ -23,7 +20,7 @@ b = a + 543',
     )
     expect_error(
       define_parameters(
-        markov_cycle = 432
+        model_time = 432
       )
     )
     expect_output(
@@ -34,8 +31,7 @@ b = a + 543',
         )
       ),
       'List of 2
- $ a:List of 2
-  ..$ expr: num 4321',
+ $ a: language ~4321',
       fixed = TRUE
     )
     expect_identical(
@@ -49,7 +45,7 @@ b = a + 543',
     expect_error(
       modify(
         par1,
-        markov_cycle = 474
+        model_time = 474
       )
     )
     expect_equal(
@@ -73,7 +69,7 @@ test_that(
   "Parameter evaluation", {
     par1 <- define_parameters(
       a = 2,
-      b = a * markov_cycle
+      b = a * model_time
     )
     e_par1 <- eval_parameters(
       par1, 10
@@ -105,7 +101,7 @@ test_that(
       heemod:::check_names(c("a", ""))
     )
     expect_error(
-      heemod:::check_names(c("a", "markov_cycle"))
+      heemod:::check_names(c("a", "model_time"))
     )
     expect_error(
       heemod:::check_names(c("a", "C"))
@@ -120,7 +116,7 @@ test_that(
   "we catch infinite parameters", {
     par1 <- define_parameters(
       a = 2,
-      b = 1 / (markov_cycle - 3)
+      b = 1 / (model_time - 3)
     )
     options(heemod.inf_parameter = "ignore")
     e_par1 <- heemod:::eval_parameters(
