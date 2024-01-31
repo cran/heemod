@@ -26,7 +26,7 @@
 #' name. Cell naming follows the `cell_x_y` convention, with
 #' `x` being the row number and `y` the column number.
 #' 
-#' @param ... Name-value pairs of expressions definig matrix
+#' @param ... Name-value pairs of expressions defining matrix
 #'   cells. Can refer to parameters defined with 
 #'   [define_parameters()]. For `plot`, additional arguments
 #'   passed to [diagram::plotmat()].
@@ -90,6 +90,7 @@ define_transition_ <- function(.dots, state_names) {
             state_names = as.vector(state_names))
 }
 
+#' @export
 get_state_names.uneval_matrix <- function(x, ...){
   attr(x, "state_names")
 }
@@ -110,6 +111,7 @@ get_matrix_order <- function(x){
   UseMethod("get_matrix_order")
 }
 
+#' @export
 get_matrix_order.uneval_matrix <- function(x){
   sqrt(length(x))
 }

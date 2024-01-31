@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2023-07-18" />
+<meta name="date" content="2024-01-31" />
 
 <title>Deterministic Sensitivity Analysis</title>
 
@@ -338,7 +338,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <h1 class="title toc-ignore">Deterministic Sensitivity Analysis</h1>
-<h4 class="date">2023-07-18</h4>
+<h4 class="date">2024-01-31</h4>
 
 
 <div id="TOC">
@@ -378,7 +378,7 @@ treatment.</li>
 costs.</li>
 <li><code>dr</code>, the discount rate.</li>
 </ul>
-<p>Upper and lower values for the paramters are given to
+<p>Upper and lower values for the parameters are given to
 <code>define_dsa()</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">define_dsa</span>(</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  rr, .<span class="dv">4</span>, .<span class="dv">6</span>,</span>
@@ -466,7 +466,7 @@ input.</p>
 <p>Two distinct plot types are available. The basic plot
 (<code>type = &quot;simple&quot;</code>) displays cost variations for each model,
 around the base cost.</p>
-<p>As expected <code>mono</code> model costs are not senstive to
+<p>As expected <code>mono</code> model costs are not sensitive to
 <code>cost_lami</code>, since this drug was not given to this group.
 Similarly it is not sensitive to <code>rr</code>, because this
 parameters only modifies transition probabilities in the other

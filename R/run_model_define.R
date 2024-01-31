@@ -67,7 +67,7 @@ run_model <- function(...,
   
   init <- check_init(init, get_state_names(uneval_strategy_list[[1]]))
   inflow <- check_inflow(inflow, get_state_names(uneval_strategy_list[[1]]))
-
+  
   run_model_(
     uneval_strategy_list = uneval_strategy_list,
     parameters = parameters,
@@ -156,6 +156,8 @@ run_model_ <- function(uneval_strategy_list,
   
   eval_strategy_list <- list()
   
+  copy_param_env(parameters)
+  
   for (n in names(uneval_strategy_list)) {
     eval_strategy_list[[n]] <- eval_strategy(
       strategy = uneval_strategy_list[[n]], 
@@ -230,6 +232,7 @@ get_strategy_count <- function(x) {
   nrow(get_model_results(x))
 }
 
+#' @export
 get_state_value_names.run_model <- function(x) {
   get_state_value_names(x$uneval_strategy_list[[1]])
 }
@@ -251,6 +254,7 @@ get_root_strategy <- function(x, ...) {
   UseMethod("get_root_strategy")
 }
 
+#' @export
 get_root_strategy.default <- function(x, ...) {
   if (! all(c(".cost", ".effect") %in% names(x))) {
     warning("No cost and/or effect defined, cannot find root strategy.")
@@ -260,6 +264,7 @@ get_root_strategy.default <- function(x, ...) {
       dplyr::arrange(.data$.cost, desc(.data$.effect)))$.strategy_names[1]
 }
 
+#' @export
 get_root_strategy.run_model <- function(x, ...) {
   x$root_strategy
 }
@@ -268,6 +273,7 @@ get_noncomparable_strategy <- function(x, ...) {
   UseMethod("get_noncomparable_strategy")
 }
 
+#' @export
 get_noncomparable_strategy.default <- function(x, ...) {
   if (! ".effect" %in% names(x)) {
     warning("No effect defined, cannot find noncomparable strategy.")
@@ -278,6 +284,7 @@ get_noncomparable_strategy.default <- function(x, ...) {
       dplyr::slice(1))$.strategy_names
 }
 
+#' @export
 get_noncomparable_strategy.run_model <- function(x, ...) {
   x$noncomparable_strategy
 }
@@ -286,10 +293,12 @@ get_central_strategy <- function(x, ...) {
   UseMethod("get_central_strategy")
 }
 
+#' @export
 get_central_strategy.default <- function(x, ...) {
   get_root_strategy(x)
 }
 
+#' @export
 get_central_strategy.run_model <- function(x, ...) {
   x$central_strategy
 }
@@ -298,10 +307,12 @@ get_effect <- function(x) {
   get_model_results(x)$.effect
 }
 
+#' @export
 get_n_indiv.default <- function(x) {
   get_model_results(x)$.n_indiv
 }
 
+#' @export
 get_n_indiv.combined_model <- function(x) {
   get_n_indiv.default(x)
 }
@@ -414,6 +425,7 @@ get_uneval_init <- function(x) {
   UseMethod("get_uneval_init")
 }
 
+#' @export
 get_uneval_init.default <- function(x) {
   x$init
 }
@@ -422,6 +434,7 @@ get_uneval_inflow <- function(x) {
   UseMethod("get_uneval_inflow")
 }
 
+#' @export
 get_uneval_inflow.default <- function(x) {
   x$inflow
 }
@@ -446,6 +459,7 @@ get_cycles <- function(x) {
   UseMethod("get_cycles")
 }
 
+#' @export
 get_cycles.run_model <- function(x) {
   x$cycles
 }
@@ -453,10 +467,13 @@ get_cycles.run_model <- function(x) {
 get_method <- function(x) {
   UseMethod("get_method")
 }
+
+#' @export
 get_method.run_model <- function(x) {
   x$method
 }
 
+#' @export
 get_state_names.run_model <- function(x, ...) {
   get_state_names(get_states(x$uneval_strategy_list[[1]]))
 }
@@ -474,6 +491,7 @@ get_parameter_values <- function(x, ...) {
   UseMethod("get_parameter_values")
 }
 
+#' @export
 get_parameter_values.updated_model <- function(x, ...) {
   get_parameter_values(get_model(x), ...)
 }

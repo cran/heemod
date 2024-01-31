@@ -7,28 +7,28 @@ format_na <- function(x, char = " ") {
 }
 
 ## ----echo = FALSE-------------------------------------------------------------
-heemod:::read_file(system.file("tabular/thr/REFERENCE.csv", package = "heemod")) %>% 
-  format_na %>% 
+heemod:::read_file(system.file("tabular/thr/REFERENCE.csv", package = "heemod")) |> 
+  format_na() |> 
   knitr::kable()
 
 ## ----echo = FALSE-------------------------------------------------------------
-heemod:::read_file(system.file("tabular/thr/THR_states.csv", package = "heemod")) %>% 
-  format_na %>% 
+heemod:::read_file(system.file("tabular/thr/THR_states.csv", package = "heemod")) |> 
+  format_na() |> 
   knitr::kable()
 
 ## ----echo = FALSE-------------------------------------------------------------
-heemod:::read_file(system.file("tabular/thr/THR_transition_probs.csv", package = "heemod")) %>% 
-  format_na %>% 
+heemod:::read_file(system.file("tabular/thr/THR_transition_probs.csv", package = "heemod")) |> 
+  format_na() |> 
   knitr::kable()
 
 ## ----echo = FALSE-------------------------------------------------------------
-heemod:::read_file(system.file("tabular/thr/THR_parameters.csv", package = "heemod")) %>% 
-  format_na %>% 
+heemod:::read_file(system.file("tabular/thr/THR_parameters.csv", package = "heemod")) |> 
+  format_na() |> 
   knitr::kable()
 
 ## ----echo = FALSE-------------------------------------------------------------
-heemod:::read_file(system.file("tabular/thr/THR_options.csv", package = "heemod")) %>% 
-  format_na %>% 
+heemod:::read_file(system.file("tabular/thr/THR_options.csv", package = "heemod")) |> 
+  format_na() |> 
   knitr::kable(row.names = FALSE)
 
 ## -----------------------------------------------------------------------------

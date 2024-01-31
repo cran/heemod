@@ -42,7 +42,15 @@
 #' @example inst/examples/example_define_parameters.R
 #'   
 define_parameters <- function(...) {
-  .dots <- quos(...)
+  .dots <- exprs(...)
+  lapply(.dots, function(x){
+    if (is.symbol(x)) return(TRUE)
+    if(identical(x[[1]], quote(`<-`))) {
+      cli::cli_abort("use of assignment symbol (`<-`) for variable {.var {x[[2]]}}. 
+                     Replace with `=` symbol.")
+    }
+  })
+  .dots <- as_quosures(.dots, getOption("heemod.env"))
   deprecated_x_cycle(.dots)
   define_parameters_(.dots)
 }
@@ -212,6 +220,7 @@ check_init <- function(x, ref) {
   UseMethod("check_init")
 }
 
+#' @export
 check_init.quosures <- function(x, ref) {
   original_class <- class(x)
   
@@ -229,12 +238,13 @@ check_init.quosures <- function(x, ref) {
     }
   }
   
-  res <- stats::setNames(
-    object = as_quosures(
-      lapply(ref, function(x) 0),
-      env = globalenv()),
-    nm = ref)
+  # res <- stats::setNames(
+  #   object = as_quosures(
+  #     lapply(ref, function(x) 0),
+  #     env = globalenv()),
+  #   nm = ref)
   
+  res <- setNames(rep(quos(0), length(ref)), nm = ref)
   res <- utils::modifyList(
     res, x
   )
@@ -242,6 +252,7 @@ check_init.quosures <- function(x, ref) {
   structure(res, class = original_class)
 }
 
+#' @export
 check_init.default <- function(x, ref) {
   
   if (! length(x) == length(ref)) {

@@ -7,7 +7,7 @@
 compute_surv(x, time, cycle_length = 1, type = c("prob", "survival"), ...)
 }
 \arguments{
-\item{x}{A survival distribution object}
+\item{x}{A survival object}
 
 \item{time}{The \code{model_time} or \code{state_time} for which
 to predict.}
@@ -21,7 +21,7 @@ or \code{surv}, for survival.}
 \item{...}{arguments passed to methods.}
 }
 \value{
-Returns either the survival probalities or
+Returns either the survival probabilities or
 conditional probabilities of event for each cycle.
 }
 \description{

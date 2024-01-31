@@ -2,12 +2,12 @@
 library(heemod)
 
 ## -----------------------------------------------------------------------------
-surv_dist_1 <- define_survival(
+surv_dist_1 <- define_surv_dist(
   distribution = "exp",
   rate = .5
 )
 
-surv_dist_2 <- define_spline_survival(
+surv_dist_2 <- define_surv_spline(
   scale = "odds",
   gamma = c(-11.643, 1.843, 0.208),
   knots = c(4.077537, 5.883183, 6.458338)
@@ -19,14 +19,18 @@ library(flexsurv)
 fit_w <- flexsurvreg(
   formula = Surv(futime, fustat) ~ 1,
   data = ovarian, dist = "weibull"
-)
+) |> 
+  define_surv_fit()
+
 plot(fit_w)
 fit_spl <- flexsurvspline(
   formula = Surv(futime, fustat) ~ 1,
   data = ovarian,
   scale = "odds",
   k=1
-)
+) |> 
+  define_surv_fit()
+
 plot(fit_spl)
 
 ## ----fig.width=6, fig.height=6------------------------------------------------
@@ -34,7 +38,8 @@ fit_cov <- flexsurvreg(
   formula = Surv(rectime, censrec) ~ group,
   dist = "weibull",
   data = bc
-)
+)|> 
+  define_surv_fit()
 plot(fit_cov)
 fitcov_good   <- set_covariates(fit_cov, group = "Good")
 fitcov_medium <- set_covariates(fit_cov, group = "Medium")
@@ -46,11 +51,13 @@ library(survival)
 km_1 <- survfit(
   formula = Surv(futime, fustat) ~ 1,
   data = ovarian
-)
+) |> 
+      define_surv_fit()
 km_cov <- survfit(
   formula = Surv(rectime, censrec) ~ group,
   data = bc
-)
+) |> 
+      define_surv_fit()
 plot(km_cov)
 km_good   <- set_covariates(km_cov, group = "Good")
 km_medium <- set_covariates(km_cov, group = "Medium")
@@ -78,20 +85,20 @@ combined_risks <- add_hazards(
 compute_surv(surv_dist_2, time = 1:5)
 
 ## -----------------------------------------------------------------------------
-fit_cov %>% 
-  set_covariates(group = "Good") %>% 
-  apply_hr(hr = 2) %>% 
+fit_cov |> 
+  set_covariates(group = "Good") |> 
+  apply_hr(hr = 2) |> 
   join(
     fitcov_poor,
     at = 3
-  ) %>%
+  ) |>
   mix(
     fitcov_medium,
     weights = c(0.25, 0.75)
-  ) %>%
+  ) |>
   add_hazards(
     fit_w
-  ) %>% 
+  ) |> 
   compute_surv(time = 1:5)
 
 ## ----fig.width=6, fig.height=6------------------------------------------------
@@ -100,8 +107,8 @@ param <- define_parameters(
     surv_dist_1,
     time = model_time # can also be state_time
   ),
-  p2 = km_1 %>%
-    join(fit_w, at = 730) %>%
+  p2 = km_1 |>
+    join(fit_w, at = 730) |>
     compute_surv(
       time = model_time,
       cycle_length = 365  # time is in days in km_medium, in years in model_time
@@ -144,7 +151,7 @@ plot(resTM)
 ## ----fig.width=6, fig.height=4------------------------------------------------
 ps <- define_part_surv(
   pfs = surv_dist_1,
-  os  = km_1 %>%
+  os  = km_1 |>
     join(fit_w, at = 730),
   cycle_length = c(1, 365) # 1 for pfs, 365 for os
 )

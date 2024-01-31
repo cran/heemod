@@ -131,7 +131,7 @@ res_mod <- run_model(
 
 ## ----get_counts, message=FALSE------------------------------------------------
 library(dplyr)
-get_counts(res_mod) %>% 
+get_counts(res_mod) |> 
   dplyr::filter(model_time == 20 & state_names == "RevisionTHR")
 
 ## ----extract_values-----------------------------------------------------------

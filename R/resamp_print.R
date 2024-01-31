@@ -16,7 +16,7 @@
 #' @param log_scale Show willingness to pay on a log scale?
 #' @param diff Logical, perform covariance analysis on
 #'   strategy differences?
-#' @param threshold When `diff = TRUE`, threshlod value
+#' @param threshold When `diff = TRUE`, threshold value
 #'   for net monetary benefit computation.
 #' @param bw Black & white plot for publications?
 #' @param ... Additional arguments, depends on `type`.
@@ -166,6 +166,7 @@ print.psa <- function(x, ...) {
   print(summary(x), ...)
 }
 
+#' @export
 get_frontier.psa <- function(x) {
   get_frontier(get_model_results(x))
 }

@@ -8,7 +8,7 @@
 #' function use [define_distribution()].
 #' 
 #' [use_distribution()] uses gaussian kernel 
-#' smoothing with a bandwith parameter calculated 
+#' smoothing with a bandwidth parameter calculated 
 #' by [stats::density()]. Values for unobserved
 #' quantiles are calculated by linear
 #' interpolation.
@@ -75,6 +75,7 @@ r_lognormal <- function(meanlog, sdlog) {
 gamma <- function(mean, sd) {
   list(r_gamma(mean^2/sd^2, sd^2/mean))
 }
+
 r_gamma <- function(shape, scale) {
   function(x) stats::qgamma(p = x, shape = shape, scale = scale)
 }
@@ -83,6 +84,7 @@ r_gamma <- function(shape, scale) {
 binomial <- function(prob, size) {
   list(r_binomial(prob, size))
 }
+
 r_binomial <- function(prob, size) {
   function(x) stats::qbinom(p = x, size = size, prob = prob) / size
 }
@@ -96,6 +98,7 @@ multinomial <- function(...) {
     class = "multinom_param"
   )
 }
+
 r_multinomial <- function(n) {
   function(x) stats::qgamma(x, shape = n, scale = 1)
 }
@@ -105,9 +108,9 @@ logitnormal <- function(mu, sigma) {
   if (! requireNamespace("logitnorm")) {
     stop("'logitnorm' package required for logitnormal distributions.")
   }
-  
   list(r_logitnormal(mu, sigma))
 }
+
 r_logitnormal <- function(mu, sigma) {
   function(x) logitnorm::qlogitnorm(p = x, mu = mu, sigma = sigma)
 }
@@ -116,6 +119,7 @@ r_logitnormal <- function(mu, sigma) {
 beta <- function(shape1, shape2){
   list(r_beta(shape1, shape2))
 }
+
 r_beta <- function(shape1, shape2){
   function(x){stats::qbeta(p = x, shape1 = shape1, shape2 = shape2)}
 }
@@ -128,7 +132,7 @@ triangle <- function(lower, upper, peak = (lower + upper)/2) {
   stopifnot(peak >= lower,
             upper >= peak,
             upper > lower
-            )
+  )
   list(r_triangle(lower, upper, peak))
 }
 r_triangle <- function(lower, upper, peak) {
@@ -195,4 +199,119 @@ use_distribution <- function(distribution, smooth = TRUE) {
         y = distribution)(x) + noise
     }
   )
+}
+
+#' Resample survival distribution
+#' 
+#' 
+#' @param x a `surv_object`
+#' @param n the number of observations to generate if dist is specified or x is a `surv_dist`
+#' object
+#' 
+#' The lower n is, the higher is the variability
+#' @export
+resample_surv <- function(n){
+  if (missing(n)) return(
+    structure(expr(resample_surv_boot()),
+              class = c("surv_psa"))
+  ) 
+  structure(expr(resample_surv_dist(!!n)),
+            class = c("surv_psa"))
+}
+
+
+#' @rdname resample_surv
+#' @keywords internal
+resample_surv_boot <- function(x){
+  structure(list(r_boot_survfit(x)),
+            class = c("surv_psa"))
+}
+
+
+#' @rdname resample_surv
+#' @keywords internal
+resample_surv_dist <- function(x, n){
+  if (inherits(x, "surv_fit")){
+    cli::cli_warn("{.fn resample_surv} should not contain the {.arg n} argument \
+                  for {.cls surv_fit} object",
+                  .frequency = "regularly",
+                  .frequency_id = "resample_surv_dist")
+    return(resample_surv_boot(x))
+  }
+  if (! requireNamespace("flexsurv")) {
+    stop("'flexsurv' package required.")
+  }
+  pf <- get(paste0("r", x$distribution),
+            envir = asNamespace("flexsurv"))
+  
+  args <- x[- match("distribution", names(x))]
+  ret <- do.call(pf, c(n, args))
+  structure(list(r_resample_surv_dist(ret, x$distribution, args)),
+            class = c("surv_psa"))
+}
+
+#' @rdname resample_surv
+#' @keywords internal
+r_resample_surv_dist <- function(distribution, type, args){
+  if (!missing(args)){
+    y <- ecdf(distribution)(distribution)
+    df <- list(x = distribution, y = y)
+    args2 <- setNames(syms(names(args)), names(args))
+    rhs <- rlang::call2(paste0("p", type), quote(x), !!!args2)
+    formula <- rlang::new_formula(quote(y), rhs, env = asNamespace("flexsurv"))
+    fit <- try(nls(
+      formula, 
+      data = df, start = args
+    ), silent = TRUE)
+    if (inherits(fit, "try-error")){
+      fit <- nls(
+        formula, 
+        data = df, start = args,
+        algorithm = "port",
+        lower = 1E-1
+      )
+    }
+    return(do.call(define_surv_dist, c(type, as.list(coef(fit)))))
+  }
+}
+
+#' @rdname resample_surv
+#' @keywords internal
+r_boot_survfit <- function(x){
+  init_surv_object <- x
+  data <- rlang::call_args(x) %>% 
+    `[[`("data") 
+  e_data <- data %>% 
+    eval_tidy()
+  if (is.null(attr(x, "strata"))){
+    new_data <- e_data[sample.int(nrow(e_data), 
+                                replace = TRUE),]
+  } else {
+    strata <- 
+      names(attr(x, "strata")) %>% strsplit(., ", ") %>% 
+      unlist(use.names = F) %>% 
+      gsub("=.*", "", .) %>%
+      unique()
+    new_data <-  e_data %>%
+      split(.[[strata]]) %>% 
+      lapply(function(x){
+        x[sample.int(nrow(x), replace = TRUE),]
+      }) %>% 
+      bind_rows()
+  }
+ # assign(deparse(data), new_data, envir = getOption("heemod.env"))
+  
+   new_env <- rlang::env()
+   assign(deparse(data), new_data, envir = new_env)
+  # res <- rlang::call_modify(x, data = quote(new_data))
+  # res <- new_quosure(res, new_env)
+  
+  res <- new_quosure(data, env = new_env)
+  
+  # if (is.list(init_surv_object) && "dist" %in% names(init_surv_object)){
+  #   structure(c(list(dist = res),
+  #               init_surv_object[setdiff(names(init_surv_object), "dist")]),
+  #             class = class(init_surv_object))
+  # } else res
+  res
 }

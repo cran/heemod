@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2023-07-18" />
+<meta name="date" content="2024-01-31" />
 
 <title>Calibrating heemod models</title>
 
@@ -338,7 +338,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <h1 class="title toc-ignore">Calibrating <code>heemod</code> models</h1>
-<h4 class="date">2023-07-18</h4>
+<h4 class="date">2024-01-31</h4>
 
 
 
@@ -374,7 +374,7 @@ respectively.</p>
 <p>The original number of patients with a THR revision after 20 cycles
 are found in this way:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">get_counts</span>(res_mod) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">get_counts</span>(res_mod) <span class="sc">|&gt;</span> </span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(model_time <span class="sc">==</span> <span class="dv">20</span> <span class="sc">&amp;</span> state_names <span class="sc">==</span> <span class="st">&quot;RevisionTHR&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 4
 ##   .strategy_names model_time state_names count

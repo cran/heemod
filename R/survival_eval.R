@@ -113,11 +113,10 @@ extract_params <- function(obj, data = NULL) {
 #' Extract Product-Limit Table for a Stratum
 #' 
 #' Extracts the product-limit table from a survfit object 
-#' for a given stratum. Only [survival::survfit()] and
-#' unstratified [survival::survfit.coxph()] objects are
+#' for a given stratum. Only [survival::survfit()] objects are
 #' supported.
 #' 
-#' @param sf A survit object.
+#' @param sf A survfit object.
 #' @param index The index number of the strata to extract.
 #'   
 #' @return A data frame of the product-limit table for the 
@@ -161,7 +160,7 @@ extract_stratum <- function(sf, index) {
     )
   )
   
-  return(do.call(tibble, arg_list))
+  return(do.call(data.frame, arg_list))
 }
 
 #' Extract Product-Limit Tables
@@ -170,7 +169,7 @@ extract_stratum <- function(sf, index) {
 #' for all strata. Only `survfit` and unstratified
 #' `survfit.coxph` objects are supported.
 #' 
-#' @param sf A survit object.
+#' @param sf A survfit object.
 #'   
 #' @return A tidy data.frame of the product-limit tables for
 #'   all strata.
@@ -181,10 +180,11 @@ extract_strata <- function(sf) {
   if (is.null(sf$strata)) {
     extract_stratum(sf, 1)
   } else {
-    purrr::map_dfr(
+    lapply(
       seq_len(length(sf$strata)),
       function(i) extract_stratum(sf, i)
-    )
+    ) %>% 
+      bind_rows()
   }
 }
 
@@ -224,29 +224,7 @@ eval_surv <- function(x, time, ...) {
   UseMethod("eval_surv")
 }
 
-#' @inherit compute_surv
-#' @name eval_surv
-#' @keywords internal
-compute_surv_ <- function(x, time, 
-                          cycle_length = 1, 
-                          type = c("prob", "survival"), ...){
-  type <- match.arg(type)
-  
-  if (type == "prob") {
-    time_ = c(time[1] - 1, time)
-  } else {
-    time_ = time
-  }
-  
-  check_cycle_inputs(time_, cycle_length)
-  
-  ret <- eval_surv(x, cycle_length * time_, ...)
-  if (type == "prob") {
-    # Calculate per-cycle failure prob
-    ret <- calc_prob_from_surv(ret)
-  }
-  ret
-}
+
 
 #' Evaluate Survival Distributions
 #' 
@@ -257,7 +235,7 @@ compute_surv_ <- function(x, time,
 #' `options("heemod.memotime")` (default: 1 hour) to 
 #' increase resampling performance.
 #' 
-#' @param x A survival distribution object
+#' @param x A survival object
 #' @param time The `model_time` or `state_time` for which
 #'   to predict.
 #' @param cycle_length The value of a Markov cycle in 
@@ -266,13 +244,62 @@ compute_surv_ <- function(x, time,
 #'   or `surv`, for survival.
 #' @param ... arguments passed to methods.
 #'   
-#' @return Returns either the survival probalities or
+#' @return Returns either the survival probabilities or
 #'   conditional probabilities of event for each cycle.
 #' @export
-compute_surv <- memoise::memoise(
-  compute_surv_,
-  ~ memoise::timeout(options()$heemod.memotime)
-)
+compute_surv <- function(x, time, 
+                          cycle_length = 1, 
+                          type = c("prob", "survival"), ...){
+  
+  if (inherits(x, c("survfit", "flexsurvreg", "flexsurvspline"))){
+    if (!identical(Sys.getenv("TESTTHAT"), "true")){
+      cli::cli_warn("{.var x} must be encapsulated within define_surv_fit(); errors may occur")
+    }
+  } else{
+    stopifnot("x must be a surv_object, a quosure or a character" = inherits(x, c("surv_object", "quosure", "character")))
+  }
+  type <- match.arg(type)
+  
+  if (type == "prob") {
+    time_ = c(time[1] - 1, time)
+  } else {
+    time_ = time
+  }
+  check_cycle_inputs(time_, cycle_length)
+  ret <- eval_surv(x, cycle_length * time_, ...)
+  if (type == "prob") {
+    # Calculate per-cycle failure prob
+    ret <- calc_prob_from_surv(ret)
+  }
+  ret
+}
+
+#' @rdname eval_surv
+#' @export
+compute_surv_ <- compute_surv
+
+#' @rdname eval_surv
+#' @export
+eval_surv.surv_fit <- function(x, time, ...){
+  .dots <- list(...)
+  env <- .dots$env %||% getOption("heemod.env")
+  eval_surv(eval_tidy(x, env = env), time, ...)
+}
+
+
+#' @rdname eval_surv
+#' @export
+eval_surv.default <- function(x, ...){
+  ret <- 1-sort(x)
+  # if(any(ret == 0, na.rm = TRUE) & length(x) > 2){
+  #   for (i in seq_along(ret)){
+  #     x <- ret[[i]]
+  #    ret[[i]] <- ifelse(x == 0, ((ret[[i-1]])^2)/ret[[i-2]], x)
+  #   }
+  # }
+  ret
+}
+
 
 #' @rdname eval_surv
 #' @export
@@ -297,7 +324,7 @@ eval_surv.survfit <- function(x, time,  ...) {
   surv_df <- pl_table %>%
     split(pl_table[terms]) %>% 
     lapply(function(x){
-      c(as.list(x[terms][1, ]),
+      c(as.list(x[terms][1, , drop=FALSE]),
         list(
           maxtime = max(x$time),
           value = stats::stepfun(x$time[-1], x$surv)( time ),
@@ -309,18 +336,22 @@ eval_surv.survfit <- function(x, time,  ...) {
     bind_rows() 
   value <- ifelse(surv_df$selector, as.numeric(NA), surv_df$value)
   surv_df$value <- value
-  surv_df <- surv_df %>%   
-    dplyr::select(-maxtime, -selector)
+  # surv_df <- surv_df %>%   
+  #   dplyr::select(-maxtime, -selector)
   
   if (is.null(dots$covar)) {
     if (length(terms) > 0) {
       message("No covariates provided, returning aggregate survival across all subjects.")
     }
     # If covariates are not provided, do weighted average for each time.
+    # agg_df <- surv_df %>%
+    #   dplyr::group_by(t) %>%
+    #   dplyr::summarize(value = sum(.data$value * n) / sum(n))
+    
     agg_df <- surv_df %>%
-      tibble::as_tibble() %>% 
-      dplyr::group_by(t) %>%
-      dplyr::summarize(value = sum(.data$value * n) / sum(n))
+      split(.$t) %>%
+      lapply(function(x) value = sum(x$value * x$n) / sum(x$n)) %>%
+      data.frame(value = unlist(., use.names = FALSE))
   } else {
     
     # If covariates are provided, join the predictions to them and then
@@ -328,8 +359,11 @@ eval_surv.survfit <- function(x, time,  ...) {
     
     agg_df <- clean_factors(dots$covar) %>% 
       dplyr::left_join(surv_df, by = terms, relationship = "many-to-many") %>%
-      dplyr::group_by(t) %>%
-      dplyr::summarize(value = mean(.data$value))
+      split(.$t) %>%
+      lapply(function(x) value = mean(x$value)) %>%
+      data.frame(value = unlist(., use.names = FALSE))
+      # dplyr::group_by(t) %>%
+      # dplyr::summarize(value = mean(.data$value))
   }
   
   # Get the vector of predictions
@@ -424,13 +458,12 @@ eval_surv.surv_model <- function(x, time,  ...) {
 #' @export
 eval_surv.surv_projection <- function(x, time, ...) {
   ret <- numeric(length(time))
-  
-  surv1 <- eval_surv(
+  .surv1 <- eval_surv(
     x$dist1,
     time = time,
     ...
   )
-  surv2 <- eval_surv(
+  .surv2 <- eval_surv(
     x$dist2,
     time = time,
     ...
@@ -450,8 +483,8 @@ eval_surv.surv_projection <- function(x, time, ...) {
     ...,
     .internal = TRUE)
   
-  ret[ind_s1] <- surv1[ind_s1]
-  ret[ind_s2] <- (surv2 * surv1_p_at / surv2_p_at)[ind_s2]
+  ret[ind_s1] <- .surv1[ind_s1]
+  ret[ind_s2] <- (.surv2 * surv1_p_at / surv2_p_at)[ind_s2]
   
   ret
 }
@@ -486,12 +519,12 @@ eval_surv.surv_pooled <- function(x, time, ...) {
 #' @rdname eval_surv
 #' @export
 eval_surv.surv_ph <- function(x, time, ...) {
-  
+  he <- getOption("heemod.env")
   ret <- eval_surv(
     x$dist,
     time = time,
     ...
-  ) ^ x$hr
+  ) ^ eval_tidy(x$hr, data = he$start_tibble[1, ], he)
   
   ret
 }
@@ -499,9 +532,9 @@ eval_surv.surv_ph <- function(x, time, ...) {
 #' @rdname eval_surv
 #' @export
 eval_surv.surv_shift <- function(x, time, ...) {
-  
+  he <- getOption("heemod.env")
   time_ <- time
-  time_ <- time_ - x$shift
+  time_ <- time_ - eval_tidy(x$shift, he$start_tibble[1, ], he)
   ret <- rep(1, length(time_))
   keep_me <- time_ >= 0
   if(any(keep_me)){
@@ -521,10 +554,10 @@ eval_surv.surv_shift <- function(x, time, ...) {
 #' @rdname eval_surv
 #' @export
 eval_surv.surv_aft <- function(x, time, ...) {
-  
+  he <- getOption("heemod.env")
   ret <- eval_surv(
     x$dist,
-    time = time/x$af 
+    time = time/eval_tidy(x$af, he$start_tibble[1, ], he)
   )
   
   ret
@@ -533,7 +566,7 @@ eval_surv.surv_aft <- function(x, time, ...) {
 #' @rdname eval_surv
 #' @export
 eval_surv.surv_po <- function(x, time, ...) {
-  
+  he <- getOption("heemod.env")
   dots <- list(...)
   
   p <- eval_surv(
@@ -542,7 +575,7 @@ eval_surv.surv_po <- function(x, time, ...) {
     ...
   )
   
-  ret <- 1 / ((((1 - p) / p) * x$or) + 1)
+  ret <- 1 / ((((1 - p) / p) * eval_tidy(x$or, he$start_tibble[1, ], he)) + 1)
   
   ret
 }
@@ -596,14 +629,36 @@ eval_surv.surv_table <- function(x, time, ...){
   look_up(data = x, time = time, bin = "time", value = "survival")
 }
 
+#' @export
 eval_surv.quosure <- function(x, ...){
-  dots <- list(...)
-  use_data <- list()
-  if("extra_env" %in% names(dots))
-    use_data <- as.list.environment(dots$extra_env)
-  eval_surv(eval_tidy(x, data = use_data), ...)
+  .dots <- list(...)
+  env <- .dots$env %||% getOption("heemod.env")
+  # dots <- list(...)
+  # use_data <- list()
+  # if("extra_env" %in% names(dots))
+  #   use_data <- as.list.environment(dots$extra_env)
+  #eval_surv(eval_tidy(x, data = use_data), ...)
+  eval_surv(eval_tidy(x, env = env), ...)
 }
 
+#' @export
+eval_surv.name <- function(x, ...){
+  .dots <- list(...)
+  env <- .dots$env %||% getOption("heemod.env")
+  copy_param_env(x, overwrite = FALSE, env = env)
+  
+  # dots <- list(...)
+  # use_data <- list()
+  # if("extra_env" %in% names(dots))
+  #   use_data <- as.list.environment(dots$extra_env)
+  #eval_surv(eval_tidy(x, data = use_data), ...)
+  eval_surv(eval_tidy(x, env=env), ...)
+}
+
+#' @export
+eval_surv.call <- eval_surv.name
+
+#' @export
 eval_surv.character <- function(x, ...){
   eval_surv(eval(parse(text = x)), ...)
 }

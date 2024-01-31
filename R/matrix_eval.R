@@ -1,6 +1,6 @@
 #' Check Markov Model Transition Matrix
 #' 
-#' Check whether a matrix fullfills the conditions to be a 
+#' Check whether a matrix fulfills the conditions to be a 
 #' transition matrix.
 #' 
 #' This function is called by [eval_transition()]
@@ -92,7 +92,7 @@ eval_transition.uneval_matrix <- function(x, parameters) {
   nr <- nrow(p2)
   
   tab_res <- lapply(x_tidy, function(x){
-    res <- rlang::eval_tidy(x, data = p2)
+    res <- rlang::eval_tidy(x, data = p2, env = getOption("heemod.env"))
     if (length(res) == 1){
       return(rep(res, nr))
     }
@@ -150,13 +150,17 @@ replace_C <- function(x) {
   x
 }
 
+#' @export
 get_state_names.eval_matrix <- function(x, ...){
   attr(x, "state_names")
 }
+
+#' @export
 get_state_names.array <- function(x, ...){
   attr(x, "state_names")
 }
 
+#' @export
 get_matrix_order.eval_matrix <- function(x){
   ncol(x[[1]])
 }

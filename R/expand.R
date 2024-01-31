@@ -6,6 +6,7 @@ has_state_time <- function(x, ...) {
 has_state_time.uneval_matrix <- function(x, ...) {
   unlist(lapply(x, function(y) "state_time" %in% all.vars(get_expr(y))))}
 
+#' @export
 has_state_time.uneval_parameters <- function(x, ...) {
   unlist(lapply(x, function(y) "state_time" %in% all.vars(y$expr)))
 }
@@ -26,22 +27,23 @@ has_state_time.state <- function(x, ...) {
 }
 
 substitute_dots <- function(.dots, .values) {
-  as_quosures(
-    lapply(.dots, interp, .values = .values)
+  structure(
+    lapply(.dots, interp, .values = .values),
+    class = c("quosures", "list")
   )
 }
 
-#' Expand Time-Dependant States into Tunnel States
+#' Expand Time-Dependent States into Tunnel States
 #' 
 #' This function for transition matrices and state values 
-#' expands states relying on `state_time` in a serie
+#' expands states relying on `state_time` in a series
 #' of tunnels states.
 #' 
 #' @param x A transition matrix or a state list.
 #' @param state_pos Position of the state to expand.
 #' @param state_name Original name of the sate to expand.
 #' @param cycles Number of cycle of the model.
-#' @param n Postition in the expansion process.
+#' @param n Position in the expansion process.
 #' @param ... Addition parameters passed to methods.
 #'   
 #' @return The same object type as the input.
@@ -213,24 +215,29 @@ interpolate.default <- function(x, more = NULL, ...) {
   for (i in seq_along(x)) {
     to_interp <- x[[i]]
     for_interp <- c(more, as_expr_list(res))
-    funs <- all_funs(get_expr(to_interp))
-   
-    if (any(pb <- funs %in% names(for_interp))) {
-      stop(sprintf(
-        "Some parameters are named like a function, this is incompatible with the use of 'state_time': %s.",
-        paste(funs[pb], collapse = ", ")
-      ))
+    expr_to_interp <- get_expr(to_interp)
+    if (is.numeric(expr_to_interp)){
+      new <- setNames(list(to_interp), names(x)[i])
+    } else {
+      funs <- all_funs(expr_to_interp)
+     
+      if (any(pb <- funs %in% names(for_interp))) {
+        stop(sprintf(
+          "Some parameters are named like a function, this is incompatible with the use of 'state_time': %s.",
+          paste(funs[pb], collapse = ", ")
+        ))
+      }
+      
+      new <- setNames(list(interp(
+        to_interp,
+        .values = for_interp
+      )
+      ), names(x)[i])
     }
-    
-    new <- setNames(list(interp(
-      to_interp,
-      .values = for_interp
-    )
-    ), names(x)[i])
     res <- c(res, new)
     
   }
-  as_quosures(res)
+  res
 }
 
 
@@ -247,7 +254,7 @@ interpolate.state <- function(x, ...) {
   res <- structure(
     list(
     .dots = interpolate.default(x$.dots, ...),
-    starting_values = x$starting_values
+    starting_values = interpolate.default(x$starting_values, ...)
     )
   )
   define_state_(res)

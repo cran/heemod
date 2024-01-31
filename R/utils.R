@@ -28,6 +28,7 @@ get_mat_total <- function(x, init) {
 #'   
 #' @keywords internal
 get_counts_diff <- function(x, init, inflow) {
+  inflow <- as.matrix(inflow)
   lapply(seq(1, length(x) + 1), function(i){
     if (i == length(x) + 1) return(list(init, NULL))
     init <- init + unlist(inflow[i, ], use.names = FALSE)
@@ -38,7 +39,7 @@ get_counts_diff <- function(x, init, inflow) {
   })
 }
 
-#' Check Wholenumbers
+#' Check whole Numbers
 #' 
 #' @param x numeric.
 #' @param tol the smallest positive floating-point number x 
@@ -227,7 +228,7 @@ check_strategy_index <- function(x, i, allow_multiple = FALSE) {
 #' 
 #' Compute a weighted summary of a numeric vector.
 #' 
-#' If `weights` is `NULL` an unweighted summar is
+#' If `weights` is `NULL` an unweighted summary is
 #' returned.
 #' 
 #' @param x A numeric vector.
@@ -441,12 +442,14 @@ to_dots <- function(x) {
   UseMethod("to_dots")
 }
 
+#' @export
 to_dots.default <- function(x) {
   as_quosures(lapply(
     x, function(x) x
   ))
 }
 
+#' @export
 to_dots.list <- function(x) {
   f <- function(x) {
     if (inherits(x, "character") || inherits(x, "factor")) {
@@ -611,8 +614,12 @@ matrix_expand_grid <- function(...){
 
 
 interp <-  function (x, ..., .values) {
-  .dots <- enexprs(...)
-  values <- all_values(.values, .dots)
+  .dots <- rlang::exprs(...)
+  values <- if (length(.dots)){
+    all_values(.values, .dots)
+  } else {
+    .values
+  }
   expr <- substitute_(get_expr(x), values)
   x <- set_expr(x, expr)
   x
@@ -651,4 +658,104 @@ deprecated_x_cycle <- function(.dots){
   if(any(grepl("state_dcyle", deparse(.dots)))){
     lifecycle::deprecate_warn("0.16.0", I("state_cycle"), I("state_time"), user_env = caller_env(3))
   }
+}
+
+detect_dplyr_pipe <- function(x){
+  predicate <- function(y) identical(get_expr(y), quote(.))
+  if (is.list(x)) {
+    purrr::modify_if(x, predicate, alert_pipe)
+  } else {
+    if (predicate(x)) alert_pipe() else x
+  }
+}
+
+alert_pipe <- function(...){
+  cli::cli_abort(c(x = "dplyr's pipe %>% is not supported for chaining survival operations. ",
+       "Please use the new pipe |> instead."), call=NULL)
+}
+
+copy_surv_env <- function(){
+  new_env <- getOption("heemod.env")
+  n <- 0
+  repeat({
+    n <- n + 1
+    env <- rlang::caller_env(n)
+    purrr::walk(ls(env, all.names = TRUE), function(y){
+      if (!inherits(try(env[[y]], silent = TRUE), "try-error") && 
+          inherits(env[[y]], "surv_object")) {
+        assign(y, get(y, env), new_env)
+      }
+    })
+    if(identical(env, globalenv())) return(new_env)
+  })
+}
+
+copy_param_env <- function(param, ...){
+  UseMethod("copy_param_env")
+}
+
+# copy_param_env.name <- function(param){
+#   copy_param_env.default(param)
+# }
+
+#' @export
+copy_param_env.name <- function(param, ...){
+  copy_param_env.default(all.vars(param), ...)
+}
+
+#' @export
+copy_param_env.call <- function(param, ...){
+  copy_param_env.default(all.vars(param), ...)
+}
+
+#' @export
+copy_param_env.uneval_parameters <- function(param, ...){
+  list_vars <- map(param, all.vars) 
+  to_find <- unlist(list_vars, use.names = F)
+  not_found <- setdiff(to_find, 
+                       c(names(list_vars), 
+                         "model_time", 
+                         "state_time"
+                         ))
+  copy_param_env.default(not_found, ...)
+}
+
+#' @export
+copy_param_env.default <- function(param, ...){
+  .dots <- list(...)
+  overwrite <- ifelse(is.null(.dots$overwrite), TRUE, .dots$overwrite)
+  env <- .dots$env %||% getOption("heemod.env")
+  
+  if(!overwrite) {
+    param <- setdiff(param, ls(env))
+  }
+  new_env <- env
+
+  for (x in param){
+    n <- 0
+  repeat({
+    n <- n + 1
+    env <- rlang::caller_env(n)
+    if (exists(x, envir = env, inherits = FALSE)) {
+      tmp <- get(x, env)
+      # if (inherits(tmp, "surv_object")){
+      #   unlist(tmp) %>% 
+      #     Filter(function(x) !is.numeric(x), .) %>% 
+      #     copy_param_env()
+      # }
+      assign(x, tmp, new_env)
+      break
+    }
+    if (identical(env, globalenv())) break
+  }) 
+  }
+}
+
+#' @export
+c.uneval_parameters <- function(...){
+  .dots <- list(...)
+  stopifnot("all elements must be specified with define_parameters" = all(lapply(.dots, function(x){
+    inherits(x, "uneval_parameters")
+  }) %>% as.logical()))
+  structure(.Data = vctrs::vec_c(...), class = class(.dots[[1]]))
 }

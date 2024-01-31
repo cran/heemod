@@ -1,7 +1,7 @@
 #' Convenience Functions to Compute Probabilities
 #' 
-#' These convienience functions make it easier to compute 
-#' transition probabilities from indidence rates, OR, RR, or
+#' These convenience functions make it easier to compute 
+#' transition probabilities from incidence rates, OR, RR, or
 #' probabilities estimated on a different timeframe.
 #' 
 #' @name probability
@@ -60,7 +60,8 @@ or_to_prob <- function(or, p) {
     p >= 0,
     p <= 1
   )
-  res <- 1 / (1 + exp(- log(p / (1 - p) + log(or))))
+  
+  res <- plogis(qlogis(p) + log(or))
   
   stopifnot(
     res >= 0,
