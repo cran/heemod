@@ -1,4 +1,4 @@
-## ---- echo=FALSE, include=FALSE-----------------------------------------------
+## ----echo=FALSE, include=FALSE------------------------------------------------
 library(heemod)
 library(ggplot2)
 
@@ -22,10 +22,10 @@ mat_comb <- define_transition(
   )
 mat_comb
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
+## ----fig.width = 6, fig.height=6, fig.align='center'--------------------------
 plot(mat_mono)
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
+## ----fig.width = 6, fig.height=6, fig.align='center'--------------------------
 plot(mat_comb)
 
 ## -----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ res_mod <- run_model(
 summary(res_mod,
         threshold = c(1000, 5000, 6000, 1e4))
 
-## ---- fig.align='center', fig.width=6, fig.height=6, message=FALSE------------
+## ----fig.align='center', fig.width=6, fig.height=6, message=FALSE-------------
 plot(res_mod, type = "counts", panel = "by_strategy") +
   xlab("Time") +
   theme_bw() +
@@ -111,7 +111,7 @@ plot(res_mod, type = "counts", panel = "by_strategy") +
     palette = "Set1"
   )
 
-## ---- fig.align='center', fig.width=6, fig.height=8, message=FALSE------------
+## ----fig.align='center', fig.width=6, fig.height=8, message=FALSE-------------
 plot(res_mod, type = "counts", panel = "by_state") +
   xlab("Time") +
   theme_bw() +
@@ -120,7 +120,7 @@ plot(res_mod, type = "counts", panel = "by_state") +
     palette = "Set1"
   )
 
-## ---- fig.align='center', fig.width=6, fig.height=8, message=FALSE------------
+## ----fig.align='center', fig.width=6, fig.height=8, message=FALSE-------------
 plot(res_mod, type = "values", panel = "by_value",
      free_y = TRUE) +
   xlab("Time") +

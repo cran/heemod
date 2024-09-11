@@ -1,4 +1,4 @@
-## ---- echo=FALSE, include=FALSE-----------------------------------------------
+## ----echo=FALSE, include=FALSE------------------------------------------------
 library(heemod)
 
 ## -----------------------------------------------------------------------------
@@ -38,10 +38,10 @@ res_mod <- run_model(
 )
 res_mod
 
-## ---- fig.width = 6, fig.height=4, fig.align='center'-------------------------
+## ----fig.width = 6, fig.height=4, fig.align='center'--------------------------
 plot(res_mod)
 
-## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE------------
+## ----fig.align='center', fig.height=4, fig.width=6, message=FALSE-------------
 library(ggplot2)
 
 plot(res_mod) +
@@ -53,7 +53,7 @@ plot(res_mod) +
     palette = "Set1"
   )
 
-## ---- fig.align='center', fig.height=4, fig.width=6, message=FALSE------------
+## ----fig.align='center', fig.height=4, fig.width=6, message=FALSE-------------
 library(ggplot2)
 
 plot(res_mod, bw = TRUE)

@@ -1,4 +1,4 @@
-## ---- echo=FALSE, include=FALSE-----------------------------------------------
+## ----echo=FALSE, include=FALSE------------------------------------------------
 library(heemod)
 library(dplyr)
 format_na <- function(x, char = " ") {
@@ -36,7 +36,7 @@ result <- run_model_tabular(
   location = system.file("tabular/thr", package = "heemod")
 )
 
-## ---- fig.width = 6, fig.align='center'---------------------------------------
+## ----fig.width = 6, fig.align='center'----------------------------------------
 result$model_runs
 plot(result$psa,
      type = "ce")

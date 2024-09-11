@@ -1,4 +1,4 @@
-## ---- echo=FALSE, include=FALSE-----------------------------------------------
+## ----echo=FALSE, include=FALSE------------------------------------------------
 library(heemod)
 library(ggplot2)
 
@@ -77,7 +77,7 @@ mat_np1 <- define_transition(
 )
 mat_np1
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
+## ----fig.width = 6, fig.height=6, fig.align='center'--------------------------
 plot(mat_standard)
 
 ## -----------------------------------------------------------------------------
@@ -150,7 +150,7 @@ res_mod <- run_model(
 ## -----------------------------------------------------------------------------
 summary(res_mod)
 
-## ---- fig.width = 6, fig.height=6, fig.align='center'-------------------------
+## ----fig.width = 6, fig.height=6, fig.align='center'--------------------------
 plot(res_mod, type = "counts", panel = "by_state", free_y = TRUE) +
   theme_bw() +
   scale_color_brewer(

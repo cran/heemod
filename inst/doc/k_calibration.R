@@ -1,7 +1,7 @@
-## ---- echo=FALSE, include=FALSE-----------------------------------------------
+## ----echo=FALSE, include=FALSE------------------------------------------------
 library(heemod)
 
-## ---- define, include = FALSE-------------------------------------------------
+## ----define, include = FALSE--------------------------------------------------
 param <- define_parameters(
     age_init = 60,
     sex = 0,

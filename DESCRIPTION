@@ -1,6 +1,6 @@
 Package: heemod
 Title: Markov Models for Health Economic Evaluations
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
     person("Kevin", "Zarca", email = "kevin.zarca@gmail.com", role = c("aut", "cre")),
     person("Antoine", "Filipovic-Pierucci", role = "aut"),
@@ -24,7 +24,7 @@ Imports: dplyr (>= 1.1.0), ggplot2 (>= 3.4.0), memoise (>= 2.0.0),
         (>= 1.0.0), glue (>= 1.6.0), lifecycle (>= 1.0.0), vctrs (>=
         0.6.0)
 VignetteBuilder: knitr
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.2
 Suggests: BCEA, diagram, flexsurv, knitr, logitnorm, lpSolve, mgcv,
         optimx, parallel, readxl, rgho (>= 3.0.0), rmarkdown, stringr,
         survival, testthat (>= 3.0.0), triangle, magrittr, cli
@@ -34,7 +34,7 @@ Config/testthat/edition: 3
 License: GPL (>= 3)
 URL: https://aphp.github.io/heemod/
 NeedsCompilation: no
-Packaged: 2024-01-31 11:55:27 UTC; kevin
+Packaged: 2024-09-11 12:33:47 UTC; kevin
 Author: Kevin Zarca [aut, cre],
   Antoine Filipovic-Pierucci [aut],
   Matthew Wiener [ctb],
@@ -45,4 +45,4 @@ Author: Kevin Zarca [aut, cre],
   Vince Daniels [ctb]
 Maintainer: Kevin Zarca <kevin.zarca@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-01-31 12:30:02 UTC
+Date/Publication: 2024-09-11 16:00:02 UTC
